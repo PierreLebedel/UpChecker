@@ -28,7 +28,11 @@ class ProjectController extends Controller
     {
         $this->authorize('create', Project::class);
 
-        return view('project.create');
+        return view('project.create', [
+            'project' => Project::make([
+                'user_id' => auth()->id(),
+            ]),
+        ]);
     }
 
     /**

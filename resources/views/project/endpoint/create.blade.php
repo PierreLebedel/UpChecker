@@ -19,11 +19,7 @@
     <form action="{{ route('endpoint.store', $project) }}" method="POST">
         @csrf
 
-        <div class="form-control">
-            <x-input-label for="endpoint_url" :value="__('URL')" />
-            <x-text-input id="endpoint_url" type="url" name="url" :value="old('url')" required autofocus />
-            <x-input-error :messages="$errors->get('url')" />
-        </div>
+        @include('project.endpoint.form')
 
         <div class="mt-8 flex justify-end gap-3">
             <a href="{{ route('project.show', $project) }}" class="btn btn-secondary">{{ __('Cancel') }}</a>

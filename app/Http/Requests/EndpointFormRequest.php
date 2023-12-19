@@ -14,7 +14,10 @@ class EndpointFormRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'url' => ['required', 'url'],
+            'url'                  => ['required', 'url'],
+            'expected_status_code' => ['required'],
+            'timeout'              => ['required', 'integer'],
+            'follow_redirects'     => ['required', 'boolean'],
         ];
     }
 }

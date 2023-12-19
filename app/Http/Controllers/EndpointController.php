@@ -23,6 +23,12 @@ class EndpointController extends Controller
 
         return view('project.endpoint.create', [
             'project' => $project,
+            'endpoint' => Endpoint::make([
+                'project_id' => $project->id,
+                'expected_status_code' => 200,
+                'timeout' => 30,
+                'follow_redirects' => true,
+            ]),
         ]);
     }
 
