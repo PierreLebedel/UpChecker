@@ -1,9 +1,7 @@
 <x-app-layout>
 
-    <x-slot name="header">
-        <h1 class="text-2xl">
-            {{ __('Home') }}
-        </h1>
+    <x-slot name="header_title">
+        {{ __('Home') }}
     </x-slot>
 
     <div class="bg-base-100">

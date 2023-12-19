@@ -55,6 +55,6 @@ class ProfileController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return Redirect::to('/')->with('status', __("Votre compte a bien été supprimé."));
+        return Redirect::to('/')->with('status', __('Votre compte a bien été supprimé.'));
     }
 }

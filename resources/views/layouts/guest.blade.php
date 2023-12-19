@@ -13,7 +13,7 @@
                 @endif
         
                 @if (session('status') == 'verification-link-sent')
-                <x-auth-session-status class="mb-4" status="{{ __('A new verification link has been sent to the email address you provided during registration.') }}" />
+                <x-auth-session-status class="mb-4" :status="__('A new verification link has been sent to the email address you provided during registration.')" />
                 @else        
                 <x-auth-session-status class="mb-4" :status="session('status')" />
                 @endif
