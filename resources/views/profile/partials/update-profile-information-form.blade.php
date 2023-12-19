@@ -46,6 +46,17 @@
             @endif
         </div>
 
+        <div class="form-control mt-4">
+            <x-input-label for="locale" :value="__('Locale')" />
+            <select class="select select-bordered w-1/2" name="locale" required>
+                <option disabled selected>{{ __('Choose') }}</option>
+                @foreach( config('app.locales') as $k=>$v )
+                <option value="{{ $k }}" {{ old('locale', $user->locale) == $k ? "selected" : "" }}>{{ $v }}</option>
+                @endforeach
+            </select>
+            <x-input-error :messages="$errors->get('locale')" />
+        </div>
+
         <div class="mt-6 flex justify-start items-center">
             <x-primary-button>{{ __('Save') }}</x-primary-button>
 
