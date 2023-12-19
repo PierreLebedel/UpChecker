@@ -4,8 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Project;
 use Illuminate\View\View;
-use Illuminate\Support\Str;
-use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Redirect;
 use App\Http\Requests\ProjectFormRequest;
@@ -41,7 +39,6 @@ class ProjectController extends Controller
         $this->authorize('create', Project::class);
 
         $project = Project::create($request->validated() + [
-            'slug' => Str::random(20),
             'user_id' => auth()->id(),
         ]);
 

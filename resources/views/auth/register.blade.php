@@ -35,6 +35,17 @@
             <x-input-error :messages="$errors->get('password_confirmation')" />
         </div>
 
+        <div class="form-control mt-4">
+            <x-input-label for="locale" :value="__('Locale')" />
+            <select class="select select-bordered w-1/2" name="locale" required>
+                <option value="" disabled selected>{{ __('Choose') }}</option>
+                @foreach( config('app.locales') as $k=>$v )
+                <option value="{{ $k }}" {{ old('locale') == $k ? "selected" : "" }}>{{ $v }}</option>
+                @endforeach
+            </select>
+            <x-input-error :messages="$errors->get('locale')" />
+        </div>
+
         <div class="flex items-center justify-end mt-8">
             <a class="btn btn-link" href="{{ route('login') }}">
                 {{ __('Already registered?') }}

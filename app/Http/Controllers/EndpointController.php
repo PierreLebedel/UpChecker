@@ -4,8 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Project;
 use App\Models\Endpoint;
-use Illuminate\Support\Str;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
 use App\Http\Requests\EndpointFormRequest;
 use Illuminate\Http\RedirectResponse;
@@ -36,7 +34,6 @@ class EndpointController extends Controller
         $this->authorize('create', Endpoint::class);
 
         $endpoint = Endpoint::create($request->validated() + [
-            'slug' => Str::random(20),
             'project_id' => $project->id,
         ]);
 

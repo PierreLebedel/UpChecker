@@ -29,6 +29,8 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
+        $request->session()->put('locale', auth()->user()->locale);
+
         return redirect()->intended(RouteServiceProvider::HOME)->with('status', __("You're logged in!"));
     }
 
@@ -37,11 +39,15 @@ class AuthenticatedSessionController extends Controller
      */
     public function destroy(Request $request): RedirectResponse
     {
+        $previousLocale = auth()->user()->locale;
+        
         Auth::guard('web')->logout();
 
         $request->session()->invalidate();
 
         $request->session()->regenerateToken();
+
+        $request->session()->put('locale', $previousLocale);
 
         return redirect('/');
     }
