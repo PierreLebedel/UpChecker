@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\User;
+use App\Models\Project;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -12,11 +12,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('projects', function (Blueprint $table) {
+        Schema::create('endpoints', function (Blueprint $table) {
             $table->id();
             $table->string('slug', 10);
-            $table->foreignIdFor(User::class)->constrained()->cascadeOnDelete();
-            $table->string('name');
+            $table->foreignIdFor(Project::class)->constrained()->cascadeOnDelete();
+            $table->string('url');
+            $table->string('expected_status_code', 10)->nullable();
             $table->timestamps();
 
             $table->index('slug');
@@ -28,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('projects');
+        Schema::dropIfExists('endpoints');
     }
 };

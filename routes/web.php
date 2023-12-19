@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\EndpointController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProjectController;
 use Illuminate\Support\Facades\Route;
@@ -25,7 +26,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
         return view('dashboard');
     })->name('dashboard');
 
-    Route::resource('project', ProjectController::class);
+    Route::resource('project', ProjectController::class)
+        ->parameters(['project' => 'project:slug']);
+
+    Route::resource('project/{project:slug}/endpoint', EndpointController::class)
+        ->except(['index'])
+        ->parameters([
+            'endpoint' => 'endpoint:slug',
+        ]);
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');

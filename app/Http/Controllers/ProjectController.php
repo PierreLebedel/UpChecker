@@ -4,10 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\Project;
 use Illuminate\View\View;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Redirect;
-use App\Http\Requests\ProjectCreateRequest;
+use App\Http\Requests\ProjectFormRequest;
 
 class ProjectController extends Controller
 {
@@ -15,8 +16,10 @@ class ProjectController extends Controller
     {
         $this->authorize('viewAny', Project::class);
 
+        $projects = auth()->user()->projects()->withCount('endpoints')->get();
+
         return view('project.index', [
-            'projects' => auth()->user()->projects,
+            'projects' => $projects,
         ]);
     }
 
@@ -33,11 +36,12 @@ class ProjectController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(ProjectCreateRequest $request): RedirectResponse
+    public function store(ProjectFormRequest $request): RedirectResponse
     {
         $this->authorize('create', Project::class);
 
         $project = Project::create($request->validated() + [
+            'slug' => Str::random(20),
             'user_id' => auth()->id(),
         ]);
 
@@ -71,10 +75,11 @@ class ProjectController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Project $project): RedirectResponse
+    public function update(ProjectFormRequest $request, Project $project): RedirectResponse
     {
         $this->authorize('update', $project);
 
+        $project->update( $request->validated() );
 
         return Redirect::route('project.show', $project)->with('status', __("Votre projet a bien été enregistré."));
     }

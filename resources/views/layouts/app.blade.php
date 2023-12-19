@@ -3,12 +3,14 @@
     @if (isset($header_title))
     <header class="bg-base-200 py-3">
         <div class="container flex justify-between items-center">
-            <h1 class="text-2xl py-2">
+            <h1 class="text-2xl font-semibold py-2 flex justify-start items-center gap-3">
                 {{ $header_title }}
             </h1>
 
             @if( isset($header_actions) )
+            <div class="flex gap-2">
                 {{ $header_actions }}
+            </div>
             @endif
         </div>
     </header>

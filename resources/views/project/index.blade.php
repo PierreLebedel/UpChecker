@@ -1,17 +1,20 @@
 <x-app-layout>
 
     <x-slot name="header_title">
-        {{ __('Mes projets') }}
+        <span>{{ __('My projects') }}</span>
+
+        @if( $projects->isNotEmpty() )
+        <span class="badge badge-primary">{{ $projects->count() }}</span>
+        @endif
     </x-slot>
 
     <x-slot name="header_actions">
-        <a href="{{ route('project.create') }}" class="btn btn-primary">{{ __("Créer un projet") }}</a>
+        <a href="{{ route('project.create') }}" class="btn btn-secondary btn-sm">{{ __("Create project") }}</a>
     </x-slot>
 
     <x-slot name="breadcrumb">
-        <li><a href="{{ route('home') }}">{{ config('app.name') }}</a></li>
         <li><a href="{{ route('dashboard') }}">{{ __('Dashboard') }}</a></li>
-        <li>{{ __('Mes projets') }}</li>
+        <li>{{ __('My projects') }}</li>
     </x-slot>
 
     @if( $projects->isEmpty() )
@@ -20,8 +23,8 @@
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                 d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
         </svg>
-        <span>{{ __("Aucun projet pour le moment.") }}</span>
-        <a href="{{ route('project.create') }}" class="btn btn-sm btn-primary">{{ __("Créer mon premier projet") }}</a>
+        <span>{{ __("No project yet.") }}</span>
+        <a href="{{ route('project.create') }}" class="btn btn-sm btn-primary">{{ __("Create first project") }}</a>
     </div>
     @else
     <div class="overflow-x-auto">
@@ -29,9 +32,10 @@
             <!-- head -->
             <thead>
                 <tr>
-                    <th>{{ __("Name") }}</th>
-                    <th>Job</th>
-                    <th>Favorite Color</th>
+                    <th>{{ __("Project name") }}</th>
+                    <th>{{ __('Project id') }}</th>
+                    <th>{{ __("Endpoints") }}</th>
+                    <th>{{ __('Created date') }}</th>
                     <th></th>
                 </tr>
             </thead>
@@ -41,17 +45,21 @@
                     <td>
                         <div class="flex items-center gap-3">
                             <div>
-                                <div class="font-bold">{{ $project->name }}</div>
-                                <div class="text-sm opacity-50">{{ $project->created_at->toDateTimeString() }}</div>
+                                <a href="{{ route('project.show', $project) }}" class="text-md font-semibold">{{ $project->name }}</a>
                             </div>
                         </div>
                     </td>
-                    <td>
-                        Zemlak, Daniel and Leannon
+                    <td class="font-mono">
+                        {{ $project->slug }}
                     </td>
-                    <td>Purple</td>
+                    <td>
+                        <span class="badge badge-neutral">{{ $project->endpoints_count }}</span>
+                    </td>
+                    <td>
+                        {{ $project->created_at->toDateTimeString() }}
+                    </td>
                     <td class="w-0">
-                        <a href="{{ route('project.show', $project) }}" class="btn btn-sm btn-secondary">{{ __("Détails") }}</a>
+                        <a href="{{ route('project.show', $project) }}" class="btn btn-sm btn-primary">{{ __("Details") }}</a>
                     </td>
                 </tr>
                 @endforeach

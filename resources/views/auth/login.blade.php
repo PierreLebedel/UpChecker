@@ -1,7 +1,7 @@
 <x-guest-layout>
 
     <x-slot name="header">
-        <h1 class="text-2xl">{{ __('Connexion') }}</h1>
+        <h1 class="text-2xl">{{ __('Log in') }}</h1>
     </x-slot>
 
     <form method="POST" action="{{ route('login') }}">

@@ -12,7 +12,7 @@
                     {{ __('Dashboard') }}
                 </x-nav-link>
                 <x-nav-link :href="route('project.index')" :active="request()->routeIs('project.*')">
-                    {{ __('Mes projets') }}
+                    {{ __('My projects') }}
                 </x-nav-link>
             </div>
             @endauth
@@ -30,7 +30,7 @@
                         <img alt="{{ Auth::user()->name }}"  src="https://daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg" class="block" />
                     </div>
                 </div>
-                <ul tabindex="0" class="mt-1 z-[1] p-2 shadow menu menu-sm dropdown-content bg-base-100 text-base-content rounded-lg w-auto whitespace-nowrap">
+                <ul tabindex="0" class="mt-1 z-[1] p-2 shadow menu dropdown-content bg-base-100 text-base-content rounded-lg w-auto whitespace-nowrap">
                     <li>
                         <a href="{{ route('profile.edit') }}">{{ __('Profile') }}</a>
                     </li>

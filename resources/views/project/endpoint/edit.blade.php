@@ -1,7 +1,7 @@
 <x-app-layout>
 
     <x-slot name="header_title">
-        {{ __('Edit project') }}
+        {{ __('Edit endpoint') }}
     </x-slot>
 
     <x-slot name="breadcrumb">
@@ -13,17 +13,23 @@
                 <span class="font-semibold">{{ $project->name }}</span>
             </a>
         </li>
+        <li>
+            <a href="{{ route('endpoint.show', [$project, $endpoint]) }}">
+                <span class="font-normal opacity-50">{{ __('Endpoint :') }}&nbsp;</span>
+                <span class="font-semibold">{{ $endpoint->url }}</span>
+            </a>
+        </li>
         <li>{{ __('Edit') }}</li>
     </x-slot>
 
-    <form action="{{ route('project.update', $project) }}" method="POST">
+    <form action="{{ route('endpoint.update', [$project, $endpoint]) }}" method="POST">
         @csrf
         @method('PUT')
 
         <div class="form-control">
-            <x-input-label for="project_name" :value="__('Project name')" />
-            <x-text-input id="project_name" type="text" name="name" :value="old('name', $project->name)" required autofocus />
-            <x-input-error :messages="$errors->get('name')" />
+            <x-input-label for="endpoint_url" :value="__('URL')" />
+            <x-text-input id="endpoint_url" type="url" name="url" :value="old('url', $endpoint->url)" required autofocus />
+            <x-input-error :messages="$errors->get('url')" />
         </div>
 
         <div class="mt-8 flex justify-end gap-3">
