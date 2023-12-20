@@ -3,6 +3,7 @@
 use App\Http\Controllers\EndpointController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProjectController;
+use App\Livewire\FullPageComponent;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -34,6 +35,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->parameters([
             'endpoint' => 'endpoint:slug',
         ]);
+
+    Route::get('/livewire', \App\Livewire\FullPageComponent::class)->name('livewire'); 
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');

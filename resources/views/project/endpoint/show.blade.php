@@ -6,7 +6,8 @@
     </x-slot>
 
     <x-slot name="header_actions">
-        <a href="{{ route('endpoint.edit', [$project, $endpoint]) }}" class="btn btn-secondary btn-sm">{{ __("Edit endpoint") }}</a>
+        <a href="{{ route('endpoint.edit', [$project, $endpoint]) }}" class="btn btn-primary btn-sm">{{ __("Edit endpoint") }}</a>
+        <livewire:endpoint-run-button :endpoint="$endpoint" />
     </x-slot>
 
     <x-slot name="breadcrumb">
@@ -24,7 +25,17 @@
         </li>
     </x-slot>
 
-    @dump($endpoint->getAttributes())
+    <div class="grid grid-cols-3 gap-8">
+        <div class="">
+            @dump($endpoint->getAttributes())
+        </div>
+        <div class="col-span-2 flex flex-col gap-8">
+            <livewire:endpoint-checkups-history :endpoint="$endpoint" />
+        </div>
+        
+    </div>  
+
+   
 
     <div class="mt-6 ">
         <x-danger-button x-data="" x-on:click.prevent="$dispatch('open-modal', 'confirm-endpoint-deletion')" class="btn-sm">{{ __('Delete endpoint') }}</x-danger-button>

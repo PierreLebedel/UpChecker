@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Models\Checkup;
 use App\Models\Endpoint;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -29,32 +30,34 @@ class EndpointCheckJob implements ShouldQueue
 
     public function handle(): void
     {
-        $request_start = microtime(true);
+        $checkup_started_at = now();
+        $response_microtime = microtime(true);
 
         try {
             $response = Http::withoutVerifying()
                 ->timeout($this->endpoint->timeout)
                 ->get($this->endpoint->url);
             $response_ok = $response->ok();
-            $response_status = $response->status();
+            $response_status_code = $response->status();
             $response_error_message = null;
 
         } catch (\Exception $e) {
             //dump($e->getMessage());
             $response_ok = false;
-            $response_status = null;
+            $response_status_code = null;
             $response_error_message = $e->getMessage();
         }
 
-        $response_time = microtime(true) - $request_start;
+        $response_microtime = microtime(true) - $response_microtime;
 
-        // $this->check->update([
-        //     'processed_at'           => now(),
-        //     'response_ok'            => $response_ok,
-        //     'response_status'        => $response_status,
-        //     'response_time'          => $response_time,
-        //     'response_error_message' => $response_error_message,
-        // ]);
+        Checkup::create([
+            'endpoint_id' => $this->endpoint->id,
+            'started_at' => $checkup_started_at,
+            'microtime' => $response_microtime,
+            'url' => $this->endpoint->url,
+            'status_code' => $response_status_code,
+            'exception_message' => $response_error_message,
+        ]);
 
         // if(!$this->check->isSuccessful()){
         //     if($this->link->last_check_successful){

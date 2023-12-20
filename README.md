@@ -25,6 +25,7 @@ Password : `password`
 ### Run during work
 ```shell 
 npm run dev;
+php artisan queue:listen;
 ```
 
 ### Run before commit
@@ -32,4 +33,9 @@ npm run dev;
 ./vendor/bin/pint;
 ./vendor/bin/pint -v; # verbose
 ./vendor/bin/pint --test; # inspect without changes
+```
+
+### Run on production
+```shell 
+php artisan queue:work;
 ```

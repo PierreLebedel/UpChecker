@@ -18,6 +18,9 @@ class Project extends Model
         'name',
     ];
 
+    protected $casts = [
+    ];
+
     public static function boot()
     {
         parent::boot();

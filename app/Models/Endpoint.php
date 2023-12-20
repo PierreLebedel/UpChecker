@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Str;
 
 class Endpoint extends Model
@@ -18,6 +19,11 @@ class Endpoint extends Model
         'expected_status_code',
         'timeout',
         'follow_redirects',
+    ];
+
+    protected $casts = [
+        'timeout' => 'integer',
+        'follow_redirects' => 'boolean',
     ];
 
     public static function boot()
@@ -34,5 +40,15 @@ class Endpoint extends Model
     public function project(): BelongsTo
     {
         return $this->belongsTo(Project::class);
+    }
+
+    public function checkups(): HasMany
+    {
+        return $this->hasMany(Checkup::class);
+    }
+
+    public function lastCheckup()
+    {
+        return $this->hasOne(Checkup::class)->latest();
     }
 }

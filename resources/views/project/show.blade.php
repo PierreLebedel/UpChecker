@@ -6,8 +6,8 @@
     </x-slot>
 
     <x-slot name="header_actions">
-        <a href="{{ route('project.edit', $project) }}" class="btn btn-secondary btn-sm">{{ __("Edit project") }}</a>
-        <a href="{{ route('endpoint.create', $project) }}" class="btn btn-primary btn-sm">{{ __("Add endpoint") }}</a>
+        <a href="{{ route('project.edit', $project) }}" class="btn btn-primary btn-sm">{{ __("Edit project") }}</a>
+        <a href="{{ route('endpoint.create', $project) }}" class="btn btn-secondary btn-sm">{{ __("Add endpoint") }}</a>
     </x-slot>
 
     <x-slot name="breadcrumb">
@@ -35,7 +35,8 @@
             <thead>
                 <tr>
                     <th>{{ __("URL") }}</th>
-                    <th>{{ __('Created date') }}</th>
+                    <th>{{ __('Last check up') }}</th>
+                    <th>{{ __('Status code') }}</th>
                     <th></th>
                 </tr>
             </thead>
@@ -50,10 +51,29 @@
                         </div>
                     </td>
                     <td>
-                        {{ $endpoint->created_at->toDateTimeString() }}
+                        {{ $endpoint->lastCheckup->started_at->toDateTimeString() ?? 'N/A' }}
+                    </td>
+                    <td>
+                        <div class="flex items-center gap-2">
+                            @if( !empty($endpoint->lastCheckup->status_code) )
+                            <span>{{ $endpoint->lastCheckup->status_code }}</span>
+                            @endif
+
+                            @if( !empty($endpoint->lastCheckup->exception_message) )
+                            <div class="tooltip" data-tip="{{ $endpoint->lastCheckup->exception_message }}">
+                                <span class="text-error">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 1.67c.955 0 1.845 .467 2.39 1.247l.105 .16l8.114 13.548a2.914 2.914 0 0 1 -2.307 4.363l-.195 .008h-16.225a2.914 2.914 0 0 1 -2.582 -4.2l.099 -.185l8.11 -13.538a2.914 2.914 0 0 1 2.491 -1.403zm.01 13.33l-.127 .007a1 1 0 0 0 0 1.986l.117 .007l.127 -.007a1 1 0 0 0 0 -1.986l-.117 -.007zm-.01 -7a1 1 0 0 0 -.993 .883l-.007 .117v4l.007 .117a1 1 0 0 0 1.986 0l.007 -.117v-4l-.007 -.117a1 1 0 0 0 -.993 -.883z" stroke-width="0" fill="currentColor" /></svg>
+                                </span>
+                            </div>
+                            @endif
+                        </div>
                     </td>
                     <td class="w-0">
-                        <a href="{{ route('endpoint.show', [$project, $endpoint]) }}" class="btn btn-sm btn-primary">{{ __("Details") }}</a>
+                        <div class="flex justify-center items-center gap-2">
+                            <a href="{{ route('endpoint.show', [$project, $endpoint]) }}" class="btn btn-sm btn-primary">{{ __("Details") }}</a>
+
+                            <livewire:endpoint-run-button :endpoint="$endpoint" :wire:key="$endpoint->id" />
+                        </div>
                     </td>
                 </tr>
                 @endforeach
