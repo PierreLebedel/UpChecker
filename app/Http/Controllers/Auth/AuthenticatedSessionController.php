@@ -40,7 +40,7 @@ class AuthenticatedSessionController extends Controller
     public function destroy(Request $request): RedirectResponse
     {
         $previousLocale = auth()->user()->locale;
-        
+
         Auth::guard('web')->logout();
 
         $request->session()->invalidate();

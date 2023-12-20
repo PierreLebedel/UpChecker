@@ -13,7 +13,7 @@ use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvid
 class AuthServiceProvider extends ServiceProvider
 {
     protected $policies = [
-        Project::class => ProjectPolicy::class,
+        Project::class  => ProjectPolicy::class,
         Endpoint::class => EndpointPolicy::class,
     ];
 

@@ -2,12 +2,11 @@
 
 namespace App\Models;
 
-use Illuminate\Support\Str;
-use Illuminate\Support\Facades\App;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Str;
 
 class Project extends Model
 {
@@ -19,11 +18,12 @@ class Project extends Model
         'name',
     ];
 
-    public static function boot() {
+    public static function boot()
+    {
         parent::boot();
-    
+
         static::creating(function (Model $model) {
-            if( !$model->slug || Str::of($model->slug)->length() != 20 ){
+            if (! $model->slug || Str::of($model->slug)->length() != 20) {
                 $model->slug = Str::random(20);
             }
         });
@@ -38,7 +38,4 @@ class Project extends Model
     {
         return $this->hasMany(Endpoint::class);
     }
-
-
-
 }

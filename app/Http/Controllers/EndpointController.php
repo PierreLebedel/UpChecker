@@ -2,15 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Project;
-use App\Models\Endpoint;
-use Illuminate\Support\Facades\Redirect;
 use App\Http\Requests\EndpointFormRequest;
+use App\Models\Endpoint;
+use App\Models\Project;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Redirect;
 
 class EndpointController extends Controller
 {
-
     /**
      * Show the form for creating a new resource.
      */
@@ -20,14 +19,13 @@ class EndpointController extends Controller
 
         //'slug' => Str::random(20),
 
-
         return view('project.endpoint.create', [
-            'project' => $project,
+            'project'  => $project,
             'endpoint' => Endpoint::make([
-                'project_id' => $project->id,
+                'project_id'           => $project->id,
                 'expected_status_code' => 200,
-                'timeout' => 30,
-                'follow_redirects' => true,
+                'timeout'              => 30,
+                'follow_redirects'     => true,
             ]),
         ]);
     }
@@ -43,7 +41,7 @@ class EndpointController extends Controller
             'project_id' => $project->id,
         ]);
 
-        return Redirect::route('project.show', $project)->with('status', __("Endpoint created successfully"));
+        return Redirect::route('project.show', $project)->with('status', __('Endpoint created successfully'));
     }
 
     /**
@@ -54,7 +52,7 @@ class EndpointController extends Controller
         $this->authorize('view', $endpoint);
 
         return view('project.endpoint.show', [
-            'project' => $project,
+            'project'  => $project,
             'endpoint' => $endpoint,
         ]);
     }
@@ -67,7 +65,7 @@ class EndpointController extends Controller
         $this->authorize('update', $endpoint);
 
         return view('project.endpoint.edit', [
-            'project' => $project,
+            'project'  => $project,
             'endpoint' => $endpoint,
         ]);
     }
@@ -79,9 +77,9 @@ class EndpointController extends Controller
     {
         $this->authorize('update', $endpoint);
 
-        $endpoint->update( $request->validated() );
+        $endpoint->update($request->validated());
 
-        return Redirect::route('endpoint.show', [$project, $endpoint])->with('status', __("Endpoint updated successfully."));
+        return Redirect::route('endpoint.show', [$project, $endpoint])->with('status', __('Endpoint updated successfully.'));
     }
 
     /**
@@ -93,6 +91,6 @@ class EndpointController extends Controller
 
         $endpoint->delete();
 
-        return Redirect::route('project.show', $project)->with('status', __("Endpoint deleted successfully."));
+        return Redirect::route('project.show', $project)->with('status', __('Endpoint deleted successfully.'));
     }
 }

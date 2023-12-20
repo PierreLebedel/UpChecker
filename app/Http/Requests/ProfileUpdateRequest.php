@@ -16,9 +16,9 @@ class ProfileUpdateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', Rule::unique(User::class)->ignore($this->user()->id)],
-            'locale' => ['required', 'string', Rule::in( array_keys( config('app.locales') ) )],
+            'name'   => ['required', 'string', 'max:255'],
+            'email'  => ['required', 'string', 'lowercase', 'email', 'max:255', Rule::unique(User::class)->ignore($this->user()->id)],
+            'locale' => ['required', 'string', Rule::in(array_keys(config('app.locales')))],
         ];
     }
 }

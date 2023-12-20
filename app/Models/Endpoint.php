@@ -2,10 +2,10 @@
 
 namespace App\Models;
 
-use Illuminate\Support\Str;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Support\Str;
 
 class Endpoint extends Model
 {
@@ -20,11 +20,12 @@ class Endpoint extends Model
         'follow_redirects',
     ];
 
-    public static function boot() {
+    public static function boot()
+    {
         parent::boot();
-    
+
         static::creating(function (Model $model) {
-            if( !$model->slug || Str::of($model->slug)->length() != 20 ){
+            if (! $model->slug || Str::of($model->slug)->length() != 20) {
                 $model->slug = Str::random(20);
             }
         });
@@ -34,8 +35,4 @@ class Endpoint extends Model
     {
         return $this->belongsTo(Project::class);
     }
-
-    
-
-
 }

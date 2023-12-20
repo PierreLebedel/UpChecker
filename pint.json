@@ -1,0 +1,25 @@
+{
+    "preset": "laravel",
+    "rules": {
+        "binary_operator_spaces": {
+            "default": "at_least_single_space",
+            "operators": {
+                "=>": "align_single_space"
+            }
+        }
+    },
+    "notPath": [
+        "lang/en/actions.php",
+        "lang/en/auth.php",
+        "lang/en/http-statuses.php",
+        "lang/en/pagination.php",
+        "lang/en/passwords.php",
+        "lang/en/validation.php",
+        "lang/fr/actions.php",
+        "lang/fr/auth.php",
+        "lang/fr/http-statuses.php",
+        "lang/fr/pagination.php",
+        "lang/fr/passwords.php",
+        "lang/fr/validation.php"
+    ]
+}

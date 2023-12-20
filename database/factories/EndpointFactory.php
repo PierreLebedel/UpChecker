@@ -17,10 +17,10 @@ class EndpointFactory extends Factory
     public function definition(): array
     {
         return [
-            'url' => fake()->url(),
+            'url'                  => fake()->url(),
             'expected_status_code' => 200,
-            'timeout' => mt_rand(5, 30),
-            'follow_redirects' => fake()->boolean(),
+            'timeout'              => mt_rand(5, 30),
+            'follow_redirects'     => fake()->boolean(),
         ];
     }
 }

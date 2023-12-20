@@ -4,18 +4,21 @@ namespace App\Jobs;
 
 use App\Models\Endpoint;
 use Illuminate\Bus\Queueable;
-use Illuminate\Support\Facades\Http;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Http;
 
 class EndpointCheckJob implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
 
     public $endpoint;
+
     public $project;
 
     public function __construct(Endpoint $endpoint)
@@ -28,7 +31,7 @@ class EndpointCheckJob implements ShouldQueue
     {
         $request_start = microtime(true);
 
-        try{
+        try {
             $response = Http::withoutVerifying()
                 ->timeout($this->endpoint->timeout)
                 ->get($this->endpoint->url);
@@ -36,7 +39,7 @@ class EndpointCheckJob implements ShouldQueue
             $response_status = $response->status();
             $response_error_message = null;
 
-        } catch(\Exception $e){
+        } catch (\Exception $e) {
             //dump($e->getMessage());
             $response_ok = false;
             $response_status = null;

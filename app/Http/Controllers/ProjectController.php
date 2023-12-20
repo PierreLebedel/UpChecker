@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ProjectFormRequest;
 use App\Models\Project;
-use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Redirect;
-use App\Http\Requests\ProjectFormRequest;
+use Illuminate\View\View;
 
 class ProjectController extends Controller
 {
@@ -46,7 +46,7 @@ class ProjectController extends Controller
             'user_id' => auth()->id(),
         ]);
 
-        return Redirect::route('project.show', $project)->with('status', __("Votre projet a bien été créé."));
+        return Redirect::route('project.show', $project)->with('status', __('Votre projet a bien été créé.'));
     }
 
     /**
@@ -80,9 +80,9 @@ class ProjectController extends Controller
     {
         $this->authorize('update', $project);
 
-        $project->update( $request->validated() );
+        $project->update($request->validated());
 
-        return Redirect::route('project.show', $project)->with('status', __("Votre projet a bien été enregistré."));
+        return Redirect::route('project.show', $project)->with('status', __('Votre projet a bien été enregistré.'));
     }
 
     /**
@@ -94,6 +94,6 @@ class ProjectController extends Controller
 
         $project->delete();
 
-        return Redirect::route('project.index')->with('status', __("Votre projet a bien été supprimé."));
+        return Redirect::route('project.index')->with('status', __('Votre projet a bien été supprimé.'));
     }
 }

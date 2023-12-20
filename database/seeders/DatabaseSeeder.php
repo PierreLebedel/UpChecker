@@ -18,16 +18,16 @@ class DatabaseSeeder extends Seeder
     {
         User::factory(10)
             ->create()
-            ->each(function($user){
+            ->each(function ($user) {
 
-                Project::factory( mt_rand(1,5) )
+                Project::factory(mt_rand(1, 5))
                     ->create([
-                        'user_id' => $user->id
+                        'user_id' => $user->id,
                     ])
-                    ->each(function($project) use ($user){
-                        Endpoint::factory( mt_rand(1,3) )
+                    ->each(function ($project) {
+                        Endpoint::factory(mt_rand(1, 3))
                             ->create([
-                                'project_id' => $project->id
+                                'project_id' => $project->id,
                             ]);
                     });
 
@@ -35,10 +35,9 @@ class DatabaseSeeder extends Seeder
 
         User::orderBy('id')->first()
             ->update([
-                'name' => "Dev",
+                'name'  => 'Dev',
                 'email' => 'dev@test.com',
             ]);
-
 
     }
 }

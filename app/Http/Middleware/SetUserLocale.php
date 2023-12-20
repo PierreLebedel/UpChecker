@@ -15,11 +15,11 @@ class SetUserLocale
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if(! $request->user()) {
+        if (! $request->user()) {
 
             $locale = $request->session()->get('locale');
 
-            if( $locale && array_key_exists($locale, config('app.locales')) ){
+            if ($locale && array_key_exists($locale, config('app.locales'))) {
                 app()->setLocale($locale);
             }
 
@@ -27,11 +27,11 @@ class SetUserLocale
         }
 
         $locale = $request->user()->locale ?? config('app.locale');
- 
+
         if (isset($locale) && array_key_exists($locale, config('app.locales'))) {
             app()->setLocale($locale);
         }
- 
+
         return $next($request);
     }
 }
