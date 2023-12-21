@@ -2,15 +2,18 @@
 
 namespace App\Livewire;
 
+use App\Models\Checkup;
 use Livewire\Component;
 use App\Models\Endpoint;
 use Livewire\Attributes\On;
+use Livewire\WithPagination;
 
 class EndpointCheckupsHistory extends Component
 {
+    use WithPagination;
+
     public $project;
     public $endpoint;
-    public $checkups;
 
     public function mount(Endpoint $endpoint)
     {
@@ -22,14 +25,15 @@ class EndpointCheckupsHistory extends Component
     #[On('echo-private:user.{project.user_id},CheckupCreatedEvent')]
     public function reloadCheckups()
     {
-        $this->checkups = $this->endpoint->checkups()
-            ->orderByDesc("started_at")
-            ->limit(20)
-            ->get();
+        $this->resetPage();
     }
 
     public function render()
     {
-        return view('livewire.endpoint-checkups-history');
+        return view('livewire.endpoint-checkups-history', [
+            'checkups' => $this->endpoint->checkups()
+                ->orderByDesc("started_at")
+                ->paginate(5),
+        ]);
     }
 }
