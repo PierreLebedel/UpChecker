@@ -34,7 +34,7 @@
                 <tr class="border-base-100">
                     <td>
                         <a href="{{ route('endpoint.show', [$project, $endpoint]) }}" class="text-base font-semibold">{{ $endpoint->url }}</a><br>
-                        <span class="opacity-50 text-sm">{{ __('ID:') }} {{ $endpoint->slug }}</span>
+                        <span class="font-mono opacity-50 text-sm">{{ __('ID:') }} {{ $endpoint->slug }}</span>
                     </td>
                     @if( $endpoint->lastCheckup )
                     <td>

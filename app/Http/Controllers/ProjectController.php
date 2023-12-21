@@ -10,16 +10,6 @@ use Illuminate\View\View;
 
 class ProjectController extends Controller
 {
-    public function index(): View
-    {
-        $this->authorize('viewAny', Project::class);
-
-        $projects = auth()->user()->projects()->withCount('endpoints')->get();
-
-        return view('project.index', [
-            'projects' => $projects,
-        ]);
-    }
 
     /**
      * Show the form for creating a new resource.

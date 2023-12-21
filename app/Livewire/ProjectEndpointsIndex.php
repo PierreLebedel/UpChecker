@@ -20,6 +20,7 @@ class ProjectEndpointsIndex extends Component
     }
 
     #[On('project-{project.id}.checkup-created')] 
+    //#[On('project-{project.id}.endpoint-deleted')] 
     public function reloadEndpoints()
     {
         $this->endpoints = $this->project->endpoints()->with('lastCheckup')->get();

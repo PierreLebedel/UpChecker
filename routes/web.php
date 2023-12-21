@@ -4,6 +4,7 @@ use App\Http\Controllers\EndpointController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProjectController;
 use App\Livewire\FullPageComponent;
+use App\Livewire\ProjectsIndex;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -28,7 +29,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     })->name('dashboard');
 
     Route::resource('project', ProjectController::class)
+        ->except(['index'])
         ->parameters(['project' => 'project:slug']);
+
+    Route::get('project', ProjectsIndex::class)->name('project.index');
 
     Route::resource('project/{project:slug}/endpoint', EndpointController::class)
         ->except(['index'])
