@@ -22,12 +22,12 @@
             
             @auth
             <div class="dropdown dropdown-end">
-                <div tabindex="0" role="button" class="btn btn-ghost rounded-lg p-0 gap-0">
-                    <div class="p-2">
+                <div tabindex="0" role="button" class="btn btn-ghost rounded-lg py-0 ps-2 pe-1 gap-0">
+                    <div class="pe-2">
                         {{ Auth::user()->name }}
                     </div>
-                    <div class="w-12 rounded-lg overflow-hidden">
-                        <img alt="{{ Auth::user()->name }}"  src="https://daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg" class="block" />
+                    <div class="w-10 rounded-lg overflow-hidden">
+                        <img alt="{{ Auth::user()->name }}"  src="{{ Auth::user()->avatarUrl }}" class="block" />
                     </div>
                 </div>
                 <ul tabindex="0" class="mt-1 z-[1] p-2 shadow menu dropdown-content bg-base-100 text-base-content rounded-lg w-auto whitespace-nowrap">

@@ -28,12 +28,11 @@
     </div>
     @else
     <div class="overflow-x-auto">
-        <table class="table">
+        <table class="table bg-base-200">
             <!-- head -->
             <thead>
-                <tr>
+                <tr class="border-base-100">
                     <th>{{ __("Project name") }}</th>
-                    <th>{{ __('Project id') }}</th>
                     <th>{{ __("Endpoints") }}</th>
                     <th>{{ __('Created date') }}</th>
                     <th></th>
@@ -41,16 +40,10 @@
             </thead>
             <tbody>
                 @foreach($projects as $project)
-                <tr>
+                <tr class="border-base-100">
                     <td>
-                        <div class="flex items-center gap-3">
-                            <div>
-                                <a href="{{ route('project.show', $project) }}" class="text-md font-semibold">{{ $project->name }}</a>
-                            </div>
-                        </div>
-                    </td>
-                    <td class="font-mono">
-                        {{ $project->slug }}
+                        <a href="{{ route('project.show', $project) }}" class="text-base font-semibold">{{ $project->name }}</a><br>
+                        <span class="opacity-50 text-sm">{{ __('ID:') }} {{ $project->slug }}</span>
                     </td>
                     <td>
                         <span class="badge badge-neutral">{{ $project->endpoints_count }}</span>

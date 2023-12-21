@@ -39,7 +39,7 @@ return [
     */
 
     //'layout' => 'components.layouts.app',
-    'layout' => 'layouts.app',
+    'layout' => 'layouts.app', // same as blade
 
     /*
     |---------------------------------------------------------------------------

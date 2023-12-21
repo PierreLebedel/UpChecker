@@ -30,6 +30,7 @@ class EndpointRunButton extends Component
         dispatch_sync(new EndpointCheckJob($this->endpoint));
 
         $this->dispatch('endpoint-'.$this->endpoint->id.'.checkup-created'); 
+        $this->dispatch('project-'.$this->endpoint->project_id.'.checkup-created'); 
 
         $this->isRunning = false;
     }

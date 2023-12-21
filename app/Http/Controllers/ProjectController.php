@@ -56,8 +56,6 @@ class ProjectController extends Controller
     {
         $this->authorize('view', $project);
 
-        $project->load('endpoints', 'endpoints.lastCheckup');
-
         return view('project.show', [
             'project' => $project,
         ]);
