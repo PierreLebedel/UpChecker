@@ -33,7 +33,7 @@ class EndpointCheckupsHistory extends Component
         return view('livewire.endpoint-checkups-history', [
             'checkups' => $this->endpoint->checkups()
                 ->orderByDesc("started_at")
-                ->paginate(5),
+                ->paginate(5, pageName: 'page'),
         ]);
     }
 }
