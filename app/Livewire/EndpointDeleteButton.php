@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use App\Events\EndpointDeletedEvent;
 use App\Models\Endpoint;
 use Livewire\Component;
 
@@ -28,8 +29,7 @@ class EndpointDeleteButton extends Component
 
         $this->endpoint->delete();
 
-        $this->dispatch('project-'.$project->id.'.endpoint-deleted'); 
-        $this->dispatch('user-'.$project->user_id.'.endpoint-deleted'); 
+        EndpointDeletedEvent::dispatch($project);
 
         $this->redirectRoute('project.show', $project);
     }

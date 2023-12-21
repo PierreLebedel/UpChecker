@@ -2,9 +2,9 @@
 
 namespace App\Livewire;
 
-use App\Jobs\EndpointCheckJob;
-use App\Models\Endpoint;
 use Livewire\Component;
+use App\Models\Endpoint;
+use App\Jobs\EndpointCheckJob;
 
 class EndpointRunButton extends Component
 {
@@ -25,12 +25,8 @@ class EndpointRunButton extends Component
     public function runNow()
     {
         $this->isRunning = true;
-        sleep(3);
 
         dispatch_sync(new EndpointCheckJob($this->endpoint));
-
-        $this->dispatch('endpoint-'.$this->endpoint->id.'.checkup-created'); 
-        $this->dispatch('project-'.$this->endpoint->project_id.'.checkup-created'); 
 
         $this->isRunning = false;
     }

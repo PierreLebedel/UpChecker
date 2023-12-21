@@ -19,8 +19,9 @@ class ProjectEndpointsIndex extends Component
         $this->reloadEndpoints();
     }
 
-    #[On('project-{project.id}.checkup-created')] 
-    //#[On('project-{project.id}.endpoint-deleted')] 
+    #[On('echo-private:user.{project.user_id},EndpointCreatedEvent')]
+    #[On('echo-private:user.{project.user_id},EndpointDeletedEvent')]
+    #[On('echo-private:user.{project.user_id},CheckupCreatedEvent')]
     public function reloadEndpoints()
     {
         $this->endpoints = $this->project->endpoints()->with('lastCheckup')->get();
