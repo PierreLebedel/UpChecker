@@ -89,6 +89,12 @@ return [
     'switch_to_role'  => 'Switch To Role',
     'tag'             => 'Tag',
     'tags'            => 'Tags',
+    'target_link'     => [
+        'blank'  => 'Open in a new window',
+        'parent' => 'Open in a parent frame',
+        'self'   => 'Open in a current window',
+        'top'    => 'Open in the topmost frame',
+    ],
     'translate'       => 'Translate',
     'translate_it'    => 'Translate It',
     'unpack'          => 'Unpack',

@@ -61,7 +61,6 @@
                     @endif
                 @endguest
     
-    
             </div>
 
         </div>

@@ -20,6 +20,7 @@ return new class() extends Migration
             $table->string('expected_status_code', 10)->nullable();
             $table->unsignedInteger('timeout')->nullable();
             $table->boolean('follow_redirects');
+            $table->unsignedInteger('checkup_delay');
             $table->timestamps();
         });
     }

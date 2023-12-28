@@ -19,11 +19,13 @@ class Endpoint extends Model
         'expected_status_code',
         'timeout',
         'follow_redirects',
+        'checkup_delay',
     ];
 
     protected $casts = [
         'timeout' => 'integer',
         'follow_redirects' => 'boolean',
+        'checkup_delay' => 'integer',
     ];
 
     public static function boot()

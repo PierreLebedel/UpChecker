@@ -1,4 +1,17 @@
 <div>
+
+    <x-slot name="header_title">
+        {{ __('My projects') }}
+    </x-slot>
+
+    <x-slot name="header_actions">
+        <a href="{{ route('project.create') }}" class="btn btn-secondary btn-sm">{{ __("Add project") }}</a>
+    </x-slot>
+
+    <x-slot name="breadcrumb">
+        <li><a href="{{ route('dashboard') }}">{{ __('Dashboard') }}</a></li>
+        <li>{{ __('My projects') }}</li>
+    </x-slot>
     
     @if( $projects->isEmpty() )
     <div role="alert" class="alert alert-info">
@@ -32,7 +45,7 @@
                         <span class="badge badge-neutral">{{ $project->endpoints_count }}</span>
                     </td>
                     <td>
-                        {{ $project->created_at->toDateTimeString() }}
+                        @datetime($project->created_at)
                     </td>
                     <td class="w-0">
                         <a href="{{ route('project.show', $project) }}" class="btn btn-sm btn-primary">{{ __("Details") }}</a>

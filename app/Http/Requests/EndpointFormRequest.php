@@ -18,6 +18,7 @@ class EndpointFormRequest extends FormRequest
             'expected_status_code' => ['required'],
             'timeout'              => ['required', 'integer'],
             'follow_redirects'     => ['required', 'boolean'],
+            'checkup_delay'        => ['required', 'integer'],
         ];
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Events;
 
+use App\Models\Endpoint;
 use App\Models\Project;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
@@ -17,10 +18,12 @@ class EndpointCreatedEvent implements ShouldBroadcastNow
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     public $project;
+    public $endpoint;
 
-    public function __construct(Project $project)
+    public function __construct(Endpoint $endpoint)
     {
-        $this->project = $project;
+        $this->endpoint = $endpoint;
+        $this->project = $this->endpoint->project;
     }
 
     public function broadcastOn(): array

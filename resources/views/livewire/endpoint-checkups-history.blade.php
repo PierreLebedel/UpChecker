@@ -26,7 +26,7 @@
         <tbody>
             @foreach($checkups as $checkup)
             <tr class="border-base-100">
-                <td>{{ $checkup->started_at }}</td>
+                <td>@datetime($checkup->started_at)</td>
                 <td>{{ $checkup->microtime }}</td>
                 <td>
                     <div class="flex items-center gap-2">

@@ -24,6 +24,7 @@
             <thead>
                 <tr class="border-base-100">
                     <th>{{ __("URL") }}</th>
+                    <th>{{ __('Delay') }}</th>
                     <th>{{ __('Last check up') }}</th>
                     <th>{{ __('Status code') }}</th>
                     <th></th>
@@ -36,9 +37,12 @@
                         <a href="{{ route('endpoint.show', [$project, $endpoint]) }}" class="text-base font-semibold">{{ $endpoint->url }}</a><br>
                         <span class="font-mono opacity-50 text-sm">{{ __('ID:') }} {{ $endpoint->slug }}</span>
                     </td>
+                    <td>
+                        {{ trans_choice(':number minute|:number minutes', $endpoint->checkup_delay, ['number'=>$endpoint->checkup_delay]) }}
+                    </td>
                     @if( $endpoint->lastCheckup )
                     <td>
-                        {{ $endpoint->lastCheckup->started_at->toDateTimeString() }}
+                        @datetime($endpoint->lastCheckup->started_at)
                     </td>
                     <td>
                         <div class="flex items-center gap-2">

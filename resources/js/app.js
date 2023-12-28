@@ -11,13 +11,16 @@ Alpine.start();
 
 if(window.UpChecker.user){
 
-    console.log('Echo private channel '+`user.${window.UpChecker.user.id}`);
+    console.log('Laravel Echo private channel '+`user.${window.UpChecker.user.id}`);
 
     Echo.private(`user.${window.UpChecker.user.id}`)
         .listen('EndpointCreatedEvent', (e) => {
             console.log(e);
         })
         .listen('EndpointDeletedEvent', (e) => {
+            console.log(e);
+        })
+        .listen('CheckupCreatedEvent', (e) => {
             console.log(e);
         });
 

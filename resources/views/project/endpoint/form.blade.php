@@ -24,3 +24,9 @@
     </div>
     
 </div>
+
+<div class="form-control">
+    <x-input-label for="endpoint_checkup_delay" :value="__('Checkup delay')" />
+    <x-text-input id="endpoint_checkup_delay" type="number" min="1" step="1" name="checkup_delay" :value="old('checkup_delay', $endpoint->checkup_delay)" required />
+    <x-input-error :messages="$errors->get('checkup_delay')" />
+</div>

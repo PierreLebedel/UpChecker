@@ -25,6 +25,7 @@ class EndpointController extends Controller
                 'expected_status_code' => 200,
                 'timeout'              => 30,
                 'follow_redirects'     => true,
+                'checkup_delay'        => 60,
             ]),
         ]);
     }
@@ -40,7 +41,7 @@ class EndpointController extends Controller
             'project_id' => $project->id,
         ]);
 
-        EndpointCreatedEvent::dispatch($project);
+        EndpointCreatedEvent::dispatch($endpoint);
 
         return Redirect::route('project.show', $project)->with('status', __('Endpoint created successfully'));
     }

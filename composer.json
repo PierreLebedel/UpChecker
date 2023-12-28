@@ -7,25 +7,25 @@
     "require": {
         "php": "^8.1",
         "ext-pdo_sqlite": "*",
-        "guzzlehttp/guzzle": "^7.2",
+        "guzzlehttp/guzzle": "^7.8",
         "laravel-lang/locales": "^2.3",
-        "laravel/framework": "^10.10",
-        "laravel/sanctum": "^3.3",
-        "laravel/tinker": "^2.8",
-        "livewire/livewire": "^3.3",
+        "laravel/framework": "^v10.39",
+        "laravel/sanctum": "^v3.3",
+        "laravel/tinker": "^v2.8",
+        "livewire/livewire": "^v3.3",
         "pusher/pusher-php-server": "^7.2"
     },
     "require-dev": {
-        "fakerphp/faker": "^1.9.1",
-        "laravel-lang/common": "^6.0",
-        "laravel/breeze": "^1.26",
-        "laravel/pint": "^1.13",
-        "laravel/sail": "^1.18",
-        "mockery/mockery": "^1.4.4",
-        "nunomaduro/collision": "^7.0",
-        "pestphp/pest": "^2.0",
-        "pestphp/pest-plugin-laravel": "^2.0",
-        "spatie/laravel-ignition": "^2.0"
+        "fakerphp/faker": "^v1.23.1",
+        "laravel-lang/common": "^6.1",
+        "laravel/breeze": "^v1.27",
+        "laravel/pint": "^v1.13",
+        "laravel/sail": "^v1.26",
+        "mockery/mockery": "^1.6",
+        "nunomaduro/collision": "^v7.10",
+        "pestphp/pest": "^v2.30",
+        "pestphp/pest-plugin-laravel": "^v2.2",
+        "spatie/laravel-ignition": "^2.3"
     },
     "autoload": {
         "psr-4": {
