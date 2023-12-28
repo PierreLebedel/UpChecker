@@ -5,11 +5,12 @@ namespace App\Jobs;
 use App\Models\Checkup;
 use App\Models\Endpoint;
 use Illuminate\Bus\Queueable;
+use App\Events\CheckupCreatedEvent;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Queue\SerializesModels;
+use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\Http;
 
 class EndpointCheckJob implements ShouldQueue
 {
@@ -50,7 +51,7 @@ class EndpointCheckJob implements ShouldQueue
 
         $response_microtime = microtime(true) - $response_microtime;
 
-        Checkup::create([
+        $checkup = Checkup::create([
             'endpoint_id' => $this->endpoint->id,
             'started_at' => $checkup_started_at,
             'microtime' => $response_microtime,
@@ -58,6 +59,8 @@ class EndpointCheckJob implements ShouldQueue
             'status_code' => $response_status_code,
             'exception_message' => $response_error_message,
         ]);
+
+        CheckupCreatedEvent::dispatch($checkup);
 
         // if(!$this->check->isSuccessful()){
         //     if($this->link->last_check_successful){

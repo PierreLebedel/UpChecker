@@ -21,7 +21,8 @@ class ProjectsIndex extends Component
         $this->reloadProjects();
     }
 
-    //#[On('user-{user.id}.endpoint-deleted')] 
+    #[On('echo-private:user.{user.id},EndpointCreatedEvent')]
+    #[On('echo-private:user.{user.id},EndpointDeletedEvent')]
     public function reloadProjects()
     {
         $this->projects = $this->user->projects()->withCount('endpoints')->get();

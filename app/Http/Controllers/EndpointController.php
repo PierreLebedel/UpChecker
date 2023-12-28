@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\EndpointFormRequest;
-use App\Models\Endpoint;
 use App\Models\Project;
+use App\Models\Endpoint;
+use App\Events\EndpointCreatedEvent;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Redirect;
+use App\Http\Requests\EndpointFormRequest;
 
 class EndpointController extends Controller
 {
@@ -16,8 +17,6 @@ class EndpointController extends Controller
     public function create(Project $project)
     {
         $this->authorize('create', Endpoint::class);
-
-        //'slug' => Str::random(20),
 
         return view('project.endpoint.create', [
             'project'  => $project,
@@ -40,6 +39,8 @@ class EndpointController extends Controller
         $endpoint = Endpoint::create($request->validated() + [
             'project_id' => $project->id,
         ]);
+
+        EndpointCreatedEvent::dispatch($project);
 
         return Redirect::route('project.show', $project)->with('status', __('Endpoint created successfully'));
     }

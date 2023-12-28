@@ -15,5 +15,11 @@
 
         @include('layouts.footer')
 
+        <script>
+            window.UpChecker = {!! json_encode([
+                'user' => (auth()->check()) ? auth()->user()->toArray() : false,
+            ]) !!};
+        </script>
+
     </body>
 </html>
