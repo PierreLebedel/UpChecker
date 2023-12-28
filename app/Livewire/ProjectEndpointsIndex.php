@@ -20,6 +20,7 @@ class ProjectEndpointsIndex extends Component
     }
 
     #[On('echo-private:user.{project.user_id},EndpointCreatedEvent')]
+    #[On('echo-private:user.{project.user_id},EndpointUpdatedEvent')]
     #[On('echo-private:user.{project.user_id},EndpointDeletedEvent')]
     #[On('echo-private:user.{project.user_id},CheckupCreatedEvent')]
     public function reloadEndpoints()

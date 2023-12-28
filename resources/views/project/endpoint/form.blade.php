@@ -20,6 +20,7 @@
 
     <div class="form-control">
         <x-input-label for="endpoint_follow_redirects" :value="__('Follow redirects')" />
+        <input type="hidden" name="follow_redirects" value="0" />
         <input type="checkbox" class="toggle toggle-primary mt-3" id="endpoint_follow_redirects" name="follow_redirects" value="1" {{ old('follow_redirects', $endpoint->follow_redirects) ? "checked" : "" }} />
     </div>
     

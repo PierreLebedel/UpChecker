@@ -21,6 +21,9 @@ class ProjectsIndex extends Component
         $this->reloadProjects();
     }
 
+    #[On('echo-private:user.{user.id},ProjectCreatedEvent')]
+    #[On('echo-private:user.{user.id},ProjectUpdatedEvent')]
+    #[On('echo-private:user.{user.id},ProjectDeletedEvent')]
     #[On('echo-private:user.{user.id},EndpointCreatedEvent')]
     #[On('echo-private:user.{user.id},EndpointDeletedEvent')]
     public function reloadProjects()

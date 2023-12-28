@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\ProjectFormRequest;
+use App\Events\ProjectCreatedEvent;
 use App\Models\Project;
+use Illuminate\View\View;
+use App\Events\ProjectDeletedEvent;
+use App\Events\ProjectUpdatedEvent;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Redirect;
-use Illuminate\View\View;
+use App\Http\Requests\ProjectFormRequest;
 
 class ProjectController extends Controller
 {
@@ -35,6 +38,8 @@ class ProjectController extends Controller
         $project = Project::create($request->validated() + [
             'user_id' => auth()->id(),
         ]);
+
+        ProjectCreatedEvent::dispatch($project);
 
         return Redirect::route('project.show', $project)->with('status', __('Your project was successfully created.'));
     }
@@ -72,6 +77,8 @@ class ProjectController extends Controller
 
         $project->update($request->validated());
 
+        ProjectUpdatedEvent::dispatch($project);
+
         return Redirect::route('project.show', $project)->with('status', __('Your project was successfully updated.'));
     }
 
@@ -82,7 +89,11 @@ class ProjectController extends Controller
     {
         $this->authorize('delete', $project);
 
+        $user = $project->user;
+
         $project->delete();
+
+        ProjectDeletedEvent::dispatch($user);
 
         return Redirect::route('project.index')->with('status', __('Your project was successfully deleted.'));
     }

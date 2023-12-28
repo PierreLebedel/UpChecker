@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Project;
 use App\Models\Endpoint;
 use App\Events\EndpointCreatedEvent;
+use App\Events\EndpointUpdatedEvent;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Redirect;
 use App\Http\Requests\EndpointFormRequest;
@@ -80,6 +81,8 @@ class EndpointController extends Controller
         $this->authorize('update', $endpoint);
 
         $endpoint->update($request->validated());
+
+        EndpointUpdatedEvent::dispatch($endpoint);
 
         return Redirect::route('endpoint.show', [$project, $endpoint])->with('status', __('Endpoint updated successfully.'));
     }

@@ -28,17 +28,17 @@ Route::middleware(['auth', 'verified'])->group(function () {
         return view('dashboard');
     })->name('dashboard');
 
-    Route::resource('project', ProjectController::class)
-        ->except(['index'])
-        ->parameters(['project' => 'project:slug']);
-
-    Route::get('project', ProjectsIndex::class)->name('project.index');
-
     Route::resource('project/{project:slug}/endpoint', EndpointController::class)
         ->except(['index'])
         ->parameters([
             'endpoint' => 'endpoint:slug',
         ]);
+        
+    Route::get('project', ProjectsIndex::class)->name('project.index');
+    
+    Route::resource('project', ProjectController::class)
+        ->except(['index'])
+        ->parameters(['project' => 'project:slug']);
 
     Route::get('/livewire', \App\Livewire\FullPageComponent::class)->name('livewire'); 
 
