@@ -37,7 +37,7 @@ class ProfileController extends Controller
 
         App::setLocale($request->user()->locale);
 
-        return Redirect::route('profile.edit')->with('status', 'profile-updated');
+        return Redirect::route('profile.edit')->with('status', __('Your profile was successfully updated.'));
     }
 
     /**

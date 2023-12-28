@@ -36,7 +36,7 @@ class ProjectController extends Controller
             'user_id' => auth()->id(),
         ]);
 
-        return Redirect::route('project.show', $project)->with('status', __('Votre projet a bien été créé.'));
+        return Redirect::route('project.show', $project)->with('status', __('Your project was successfully created.'));
     }
 
     /**
@@ -72,7 +72,7 @@ class ProjectController extends Controller
 
         $project->update($request->validated());
 
-        return Redirect::route('project.show', $project)->with('status', __('Votre projet a bien été enregistré.'));
+        return Redirect::route('project.show', $project)->with('status', __('Your project was successfully updated.'));
     }
 
     /**
@@ -84,6 +84,6 @@ class ProjectController extends Controller
 
         $project->delete();
 
-        return Redirect::route('project.index')->with('status', __('Votre projet a bien été supprimé.'));
+        return Redirect::route('project.index')->with('status', __('Your project was successfully deleted.'));
     }
 }
