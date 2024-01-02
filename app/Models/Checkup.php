@@ -21,7 +21,7 @@ class Checkup extends Model
 
     protected $casts = [
         'started_at' => 'datetime',
-        'microtime' => 'float',
+        'microtime'  => 'float',
     ];
 
     public function endpoint(): BelongsTo

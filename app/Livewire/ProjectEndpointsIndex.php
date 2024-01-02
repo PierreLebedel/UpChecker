@@ -3,13 +3,13 @@
 namespace App\Livewire;
 
 use App\Models\Project;
-use Livewire\Component;
 use Livewire\Attributes\On;
+use Livewire\Component;
 
 class ProjectEndpointsIndex extends Component
 {
-
     public $project;
+
     public $endpoints;
 
     public function mount(Project $project)

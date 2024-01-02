@@ -2,15 +2,15 @@
 
 namespace App\Jobs;
 
+use App\Events\CheckupCreatedEvent;
 use App\Models\Checkup;
 use App\Models\Endpoint;
 use Illuminate\Bus\Queueable;
-use App\Events\CheckupCreatedEvent;
-use Illuminate\Support\Facades\Http;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Http;
 
 class EndpointCheckJob implements ShouldQueue
 {
@@ -34,6 +34,8 @@ class EndpointCheckJob implements ShouldQueue
         $checkup_started_at = now();
         $response_microtime = microtime(true);
 
+        //info('Run job EndpointCheckJob for endpoint #'.$this->endpoint->id.' ('.$this->endpoint->url.')');
+
         try {
             $response = Http::withoutVerifying()
                 ->timeout($this->endpoint->timeout)
@@ -52,11 +54,11 @@ class EndpointCheckJob implements ShouldQueue
         $response_microtime = microtime(true) - $response_microtime;
 
         $checkup = Checkup::create([
-            'endpoint_id' => $this->endpoint->id,
-            'started_at' => $checkup_started_at,
-            'microtime' => $response_microtime,
-            'url' => $this->endpoint->url,
-            'status_code' => $response_status_code,
+            'endpoint_id'       => $this->endpoint->id,
+            'started_at'        => $checkup_started_at,
+            'microtime'         => $response_microtime,
+            'url'               => $this->endpoint->url,
+            'status_code'       => $response_status_code,
             'exception_message' => $response_error_message,
         ]);
 

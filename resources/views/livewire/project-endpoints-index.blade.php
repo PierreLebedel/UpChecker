@@ -38,7 +38,9 @@
                         <span class="font-mono opacity-50 text-sm">{{ __('ID:') }} {{ $endpoint->slug }}</span>
                     </td>
                     <td>
-                        {{ trans_choice(':number minute|:number minutes', $endpoint->checkup_delay, ['number'=>$endpoint->checkup_delay]) }}
+                        {{-- {{ trans_choice(':number minute|:number minutes', $endpoint->checkup_delay->value, ['number'=>$endpoint->checkup_delay->value]) }} --}}
+
+                        {{ $endpoint->checkup_delay->description() }}
                     </td>
                     @if( $endpoint->lastCheckup )
                     <td>

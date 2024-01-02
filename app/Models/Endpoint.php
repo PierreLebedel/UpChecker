@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\EndpointCheckupDelayEnum;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -23,9 +24,9 @@ class Endpoint extends Model
     ];
 
     protected $casts = [
-        'timeout' => 'integer',
+        'timeout'          => 'integer',
         'follow_redirects' => 'boolean',
-        'checkup_delay' => 'integer',
+        'checkup_delay'    => EndpointCheckupDelayEnum::class,
     ];
 
     public static function boot()
@@ -52,5 +53,10 @@ class Endpoint extends Model
     public function lastCheckup()
     {
         return $this->hasOne(Checkup::class)->latest();
+    }
+
+    public function checkupDelayCases(): array
+    {
+        return EndpointCheckupDelayEnum::cases();
     }
 }

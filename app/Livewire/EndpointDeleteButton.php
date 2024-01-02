@@ -8,7 +8,6 @@ use Livewire\Component;
 
 class EndpointDeleteButton extends Component
 {
-
     public $endpoint;
 
     public function mount(Endpoint $endpoint)
@@ -20,7 +19,7 @@ class EndpointDeleteButton extends Component
     {
         return view('livewire.endpoint-delete-button');
     }
-    
+
     public function confirmDelete()
     {
         $this->authorize('delete', $this->endpoint);
@@ -33,5 +32,4 @@ class EndpointDeleteButton extends Component
 
         $this->redirectRoute('project.show', $project);
     }
-
 }

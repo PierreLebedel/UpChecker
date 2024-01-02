@@ -16,10 +16,16 @@ class Kernel extends ConsoleKernel
     {
         // $schedule->command('inspire')->hourly();
 
+        /**
+         * Warning: the schedule:work command dont execute job,
+         * but only add it to the queue,
+         * which be executed by queue:listen;
+         */
         $endpoints = Endpoint::all();
 
-        foreach($endpoints as $endpoint){
-            //$schedule->job( new EndpointCheckJob($endpoint) )->everyMinute();
+        foreach ($endpoints as $endpoint) {
+            $frequencyMethod = $endpoint->checkup_delay->schedulingFrequencyMethod();
+            $schedule->job(new EndpointCheckJob($endpoint))->{$frequencyMethod}();
         }
     }
 

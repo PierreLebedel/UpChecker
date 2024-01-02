@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Project;
-use App\Models\Endpoint;
 use App\Events\EndpointCreatedEvent;
 use App\Events\EndpointUpdatedEvent;
+use App\Http\Requests\EndpointFormRequest;
+use App\Models\Endpoint;
+use App\Models\Project;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Redirect;
-use App\Http\Requests\EndpointFormRequest;
 
 class EndpointController extends Controller
 {

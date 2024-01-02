@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Enums\EndpointCheckupDelayEnum;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -21,7 +22,7 @@ class EndpointFactory extends Factory
             'expected_status_code' => 200,
             'timeout'              => mt_rand(5, 30),
             'follow_redirects'     => fake()->boolean(),
-            'checkup_delay'        => array_rand([1,2,5,10,15,30,60,120]),
+            'checkup_delay'        => fake()->randomElement(EndpointCheckupDelayEnum::cases())->value,
         ];
     }
 }

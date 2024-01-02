@@ -2,14 +2,14 @@
 
 namespace App\Livewire;
 
-use Livewire\Component;
-use App\Models\Endpoint;
 use App\Jobs\EndpointCheckJob;
+use App\Models\Endpoint;
+use Livewire\Component;
 
 class EndpointRunButton extends Component
 {
-
     public $endpoint;
+
     public $isRunning = false;
 
     public function mount(Endpoint $endpoint)

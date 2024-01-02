@@ -3,17 +3,16 @@
 namespace App\Http\Controllers;
 
 use App\Events\ProjectCreatedEvent;
-use App\Models\Project;
-use Illuminate\View\View;
 use App\Events\ProjectDeletedEvent;
 use App\Events\ProjectUpdatedEvent;
+use App\Http\Requests\ProjectFormRequest;
+use App\Models\Project;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Redirect;
-use App\Http\Requests\ProjectFormRequest;
+use Illuminate\View\View;
 
 class ProjectController extends Controller
 {
-
     /**
      * Show the form for creating a new resource.
      */

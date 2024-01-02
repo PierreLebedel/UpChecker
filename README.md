@@ -18,14 +18,15 @@ npm update;
 npm run build;
 ```
 
-You can now log in with credientials :
-Login : `dev@test.com`
-Password : `password`
+You can now log in with credientials:
+Login: `dev@test.com`
+Password: `password`
 
 ### Run during work
 ```shell 
 npm run dev;
 php artisan queue:listen;
+php artisan schedule:work;
 ```
 
 ### Run before commit
@@ -38,4 +39,5 @@ php artisan queue:listen;
 ### Run on production
 ```shell 
 php artisan queue:work;
+php artisan schedule:run;
 ```
