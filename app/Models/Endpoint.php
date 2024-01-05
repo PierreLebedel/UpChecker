@@ -34,8 +34,8 @@ class Endpoint extends Model
         parent::boot();
 
         static::creating(function (Model $model) {
-            if (! $model->slug || Str::of($model->slug)->length() != 20) {
-                $model->slug = Str::random(20);
+            if (! $model->slug || Str::of($model->slug)->length() != 12) {
+                $model->slug = Str::random(12);
             }
         });
     }
@@ -58,5 +58,10 @@ class Endpoint extends Model
     public function checkupDelayCases(): array
     {
         return EndpointCheckupDelayEnum::cases();
+    }
+
+    public function behaviors(): HasMany
+    {
+        return $this->hasMany(Behavior::class);
     }
 }

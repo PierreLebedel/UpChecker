@@ -8,17 +8,13 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Str;
 
-class Project extends Model
+class Behavior extends Model
 {
     use HasFactory;
 
     protected $fillable = [
+        'endpoint_id',
         'slug',
-        'user_id',
-        'name',
-    ];
-
-    protected $casts = [
     ];
 
     public static function boot()
@@ -32,13 +28,18 @@ class Project extends Model
         });
     }
 
-    public function user(): BelongsTo
+    public function endpoint(): BelongsTo
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(Endpoint::class);
     }
 
-    public function endpoints(): HasMany
+    public function rules(): HasMany
     {
-        return $this->hasMany(Endpoint::class);
+        return $this->hasMany(Rule::class);
+    }
+
+    public function actions(): HasMany
+    {
+        return $this->hasMany(Action::class);
     }
 }

@@ -30,7 +30,7 @@
 
         <div class="flex items-center justify-end mt-8">
             @if (Route::has('password.request'))
-                <a class="btn btn-link" href="{{ route('password.request') }}">
+                <a class="btn btn-link" href="{{ route('password.request') }}" tabindex="-1">
                     {{ __('Forgot your password?') }}
                 </a>
             @endif

@@ -27,6 +27,7 @@ Password: `password`
 npm run dev;
 php artisan queue:listen;
 php artisan schedule:work;
+php artisan queue:clear database; # clear all waiting jobs
 ```
 
 ### Run before commit

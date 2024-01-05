@@ -12,7 +12,7 @@
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                         {{ __('Dashboard') }}
                     </x-nav-link>
-                    <x-nav-link :href="route('project.index')" :active="request()->routeIs('project.*')">
+                    <x-nav-link :href="route('project.index')" :active="request()->routeIs('project.*') || request()->routeIs('endpoint.*')">
                         {{ __('My projects') }}
                     </x-nav-link>
                 </div>
@@ -55,6 +55,10 @@
     
                                 @if (Route::has('register'))
                                     <a href="{{ route('register') }}" class="btn btn-sm btn-secondary">{{ __('Register') }}</a>
+                                @else
+                                    <div class="tooltip tooltip-secondary tooltip-left" data-tip="{{ __("Registration is not enabled yet") }}">
+                                        <a href="#" class="btn btn-sm btn-secondary disabled">{{ __('Register') }}</a>
+                                    </div>
                                 @endif
                             @endauth
                         </div>

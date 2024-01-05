@@ -16,11 +16,11 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        User::factory(10)
+        User::factory(3)
             ->create()
             ->each(function ($user) {
 
-                Project::factory(mt_rand(1, 5))
+                Project::factory(mt_rand(1, 3))
                     ->create([
                         'user_id' => $user->id,
                     ])

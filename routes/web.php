@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\BehaviorController;
 use App\Http\Controllers\EndpointController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProjectController;
@@ -26,6 +27,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard', function () {
         return view('dashboard');
     })->name('dashboard');
+
+    Route::resource('project/{project:slug}/endpoint/{endpoint:slug}/behavior', BehaviorController::class)
+        ->except(['index', 'show'])
+        ->parameters([
+            'behavior' => 'behavior:slug',
+        ]);
 
     Route::resource('project/{project:slug}/endpoint', EndpointController::class)
         ->except(['index'])
