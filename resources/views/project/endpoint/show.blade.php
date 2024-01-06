@@ -13,9 +13,9 @@
         <div class="dropdown dropdown-end">
             <div tabindex="0" role="button" class="btn btn-sm">...</div>
             <ul tabindex="0" class="menu dropdown-content z-[1] p-2 shadow bg-base-100 rounded-box w-52 mt-4">
-              <li>@livewire('endpoint-delete-button', ['endpoint'=>$endpoint])</li>
+                <li>@livewire('endpoint-delete-link', ['endpoint'=>$endpoint])</li>
             </ul>
-          </div>
+        </div>
     </x-slot>
 
     <x-slot name="breadcrumb">

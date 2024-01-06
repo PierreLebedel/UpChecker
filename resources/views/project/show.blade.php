@@ -8,6 +8,13 @@
     <x-slot name="header_actions">
         <a href="{{ route('project.edit', $project) }}" class="btn btn-primary btn-sm">{{ __("Edit project") }}</a>
         <a href="{{ route('endpoint.create', $project) }}" class="btn btn-secondary btn-sm">{{ __("Add endpoint") }}</a>
+
+        <div class="dropdown dropdown-end">
+            <div tabindex="0" role="button" class="btn btn-sm">...</div>
+            <ul tabindex="0" class="menu dropdown-content z-[1] p-2 shadow bg-base-100 rounded-box w-52 mt-4">
+                <li>@livewire('project-delete-link', ['project'=>$project])</li>
+            </ul>
+        </div>
     </x-slot>
 
     <x-slot name="breadcrumb">
@@ -20,30 +27,5 @@
     </x-slot>
 
     <livewire:project-endpoints-index :project="$project" />
-
-    <div class="mt-6 ">
-        <x-danger-button x-data="" x-on:click.prevent="$dispatch('open-modal', 'confirm-project-deletion')" class="btn-sm">{{ __('Delete project') }}</x-danger-button>
-    </div>
-
-    <x-modal name="confirm-project-deletion" focusable maxWidth="md">
-        <form method="post" action="{{ route('project.destroy', $project) }}">
-            @csrf
-            @method('delete')
-
-            <h2 class="text-xl">
-                {{ __('Are you sure you want to delete this project?') }}
-            </h2>
-
-            <div class="mt-8 flex justify-end">
-                <x-secondary-button x-on:click="$dispatch('close')">
-                    {{ __('Cancel') }}
-                </x-secondary-button>
-
-                <x-danger-button class="ms-3">
-                    {{ __('Delete project') }}
-                </x-danger-button>
-            </div>
-        </form>
-    </x-modal>
 
 </x-app-layout>

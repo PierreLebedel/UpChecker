@@ -2,11 +2,10 @@
     
     <a href="#" x-data="" x-on:click.prevent="$dispatch('open-modal', 'confirm-endpoint-deletion')">{{ __('Delete endpoint') }}</a>
 
-    @push('modals')
+    @teleport('body')
     <x-modal name="confirm-endpoint-deletion" focusable maxWidth="md">
-        <form method="post" action="{{ route('endpoint.destroy', [$endpoint->project, $endpoint]) }}" wire:submit="confirmDelete()">
+        <form action="#" wire:submit="confirmDelete()">
             @csrf
-            @method('delete')
 
             <h2 class="text-xl">
                 {{ __('Are you sure you want to delete this endpoint?') }}
@@ -23,5 +22,5 @@
             </div>
         </form>
     </x-modal>
-    @endpush
+    @endteleport
 </div>

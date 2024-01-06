@@ -35,7 +35,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ]);
 
     Route::resource('project/{project:slug}/endpoint', EndpointController::class)
-        ->except(['index'])
+        ->except(['index', 'destroy'])
         ->parameters([
             'endpoint' => 'endpoint:slug',
         ]);
@@ -43,7 +43,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('project', ProjectsIndex::class)->name('project.index');
 
     Route::resource('project', ProjectController::class)
-        ->except(['index'])
+        ->except(['index', 'destroy'])
         ->parameters(['project' => 'project:slug']);
 
     Route::get('/livewire', \App\Livewire\FullPageComponent::class)->name('livewire');

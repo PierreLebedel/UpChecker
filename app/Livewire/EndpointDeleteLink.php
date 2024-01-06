@@ -6,7 +6,7 @@ use App\Events\EndpointDeletedEvent;
 use App\Models\Endpoint;
 use Livewire\Component;
 
-class EndpointDeleteButton extends Component
+class EndpointDeleteLink extends Component
 {
     public $endpoint;
 
@@ -17,7 +17,7 @@ class EndpointDeleteButton extends Component
 
     public function render()
     {
-        return view('livewire.endpoint-delete-button');
+        return view('livewire.endpoint-delete-link');
     }
 
     public function confirmDelete()
@@ -29,6 +29,8 @@ class EndpointDeleteButton extends Component
         $this->endpoint->delete();
 
         EndpointDeletedEvent::dispatch($project);
+
+        session()->flash('status', __('Endpoint deleted successfully.'));
 
         $this->redirectRoute('project.show', $project);
     }

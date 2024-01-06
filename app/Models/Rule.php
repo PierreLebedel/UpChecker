@@ -21,7 +21,7 @@ class Rule extends Model
 
     protected $casts = [
         'position'          => 'integer',
-        'compare_field'    => BehaviorRuleEnum::class,
+        'compare_field'     => BehaviorRuleEnum::class,
     ];
 
     public function behavior(): BelongsTo

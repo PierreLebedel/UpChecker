@@ -3,9 +3,9 @@
 namespace App\Models;
 
 use App\Enums\BehaviorActionEnum;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Action extends Model
 {
@@ -19,7 +19,7 @@ class Action extends Model
 
     protected $casts = [
         'position'          => 'integer',
-        'type'    => BehaviorActionEnum::class,
+        'type'              => BehaviorActionEnum::class,
     ];
 
     public function behavior(): BelongsTo

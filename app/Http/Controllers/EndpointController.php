@@ -87,15 +87,4 @@ class EndpointController extends Controller
         return Redirect::route('endpoint.show', [$project, $endpoint])->with('status', __('Endpoint updated successfully.'));
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Project $project, Endpoint $endpoint)
-    {
-        $this->authorize('delete', $endpoint);
-
-        $endpoint->delete();
-
-        return Redirect::route('project.show', $project)->with('status', __('Endpoint deleted successfully.'));
-    }
 }

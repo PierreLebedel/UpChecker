@@ -80,20 +80,5 @@ class ProjectController extends Controller
 
         return Redirect::route('project.show', $project)->with('status', __('Your project was successfully updated.'));
     }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Project $project): RedirectResponse
-    {
-        $this->authorize('delete', $project);
-
-        $user = $project->user;
-
-        $project->delete();
-
-        ProjectDeletedEvent::dispatch($user);
-
-        return Redirect::route('project.index')->with('status', __('Your project was successfully deleted.'));
-    }
+    
 }
