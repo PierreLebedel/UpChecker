@@ -1,5 +1,7 @@
 <div>
 
+    @dump($rules)
+
     @foreach($rules as $key => $rule)
     <div class="mb-4">
 

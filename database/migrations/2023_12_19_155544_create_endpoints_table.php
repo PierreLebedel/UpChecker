@@ -14,7 +14,7 @@ return new class() extends Migration
     {
         Schema::create('endpoints', function (Blueprint $table) {
             $table->id();
-            $table->string('slug', 10)->unique();
+            $table->string('slug', 12)->unique();
             $table->foreignIdFor(Project::class)->constrained()->cascadeOnDelete();
             $table->string('url');
             $table->string('expected_status_code', 10)->nullable();

@@ -37,14 +37,28 @@
                 <a href="{{ route('behavior.create', [$project, $endpoint]) }}" class="btn btn-sm btn-primary">{{ __("Create first behavior") }}</a>
             </div>
             @else
-                <h2>{{ $endpoint->behaviors->count() }} {{ __('behaviors') }}</h2>
+                <h2 class="text-2xl">{{ $endpoint->behaviors->count() }} {{ __('behaviors') }}</h2>
+
+                <div class="gap-4">
                 @foreach( $endpoint->behaviors as $behavior )
-                    @dump($behavior)
+                    <div class="card bg-base-200 shadow-xl pt-4">
+                        <header class="mb-4 px-4">
+                            <h2 class="card-title">
+                                {{ __('Behavior') }}
+                            </h2>
+                            <a href="{{ route('behavior.edit', [$project, $endpoint, $behavior]) }}" class="btn btn-primary">{{ __("Edit behavior") }}</a>
+                        </header>
+
+
+                        @dump($behavior)
+                    </div>    
+                
                 @endforeach
+                </div>
             @endif
 
 
-            @dump($endpoint->getAttributes())
+            {{-- @dump($endpoint->getAttributes()) --}}
 
         </div>
         <div class="flex flex-col gap-8">

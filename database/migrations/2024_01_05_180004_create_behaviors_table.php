@@ -14,6 +14,7 @@ return new class extends Migration
     {
         Schema::create('behaviors', function (Blueprint $table) {
             $table->id();
+            $table->string('slug', 12)->unique();
             $table->foreignIdFor(Endpoint::class)->constrained()->cascadeOnDelete();
             $table->timestamps();
         });

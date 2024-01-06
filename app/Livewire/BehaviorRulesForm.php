@@ -19,7 +19,7 @@ class BehaviorRulesForm extends Component
 
         $this->rules = collect();
 
-        if ($this->rules->isEmpty()) {
+        if ($this->behavior->rules->isEmpty()) {
             $this->addRule();
         } else {
             foreach ($this->behavior->rules as $rule) {

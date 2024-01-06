@@ -2,6 +2,8 @@
 
     @use('App\Enums\BehaviorRuleEnum', 'Rules')
 
+    <x-text-input type="text" name="rules[{{$key}}][id]" wire:model.defer="rule.id" />
+
     <div class="form-control">
         <select class="select select-bordered w-full" id="rule_{{$key}}_compare_field" name="rules[{{$key}}][compare_field]" wire:model.live="rule.compare_field" required>
             <option value="" selected>{{ __("Choose") }}</option>
@@ -23,7 +25,7 @@
     </div>
 
     <div class="form-control">
-        <x-text-input id="rule_{{$key}}_compare_value" type="text" name="rules[{{$key}}][compare_value]" wire:model.defer="rules.compare_value" required />
+        <x-text-input id="rule_{{$key}}_compare_value" type="text" name="rules[{{$key}}][compare_value]" wire:model.defer="rule.compare_value" required />
         <x-input-error :messages="$errors->get('rules.{{$key}}.compare_value')" />
     </div>
 </div>

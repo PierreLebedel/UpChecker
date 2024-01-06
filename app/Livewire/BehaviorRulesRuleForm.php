@@ -18,6 +18,7 @@ class BehaviorRulesRuleForm extends Component
         $this->key = $key;
 
         $this->rule = array_merge([
+            'id' => null,
             'compare_field' => null,
             'compare_sign'  => null,
             'compare_value' => null,

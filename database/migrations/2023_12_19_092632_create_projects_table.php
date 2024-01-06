@@ -14,7 +14,7 @@ return new class() extends Migration
     {
         Schema::create('projects', function (Blueprint $table) {
             $table->id();
-            $table->string('slug', 10)->unique();
+            $table->string('slug', 12)->unique();
             $table->foreignIdFor(User::class)->constrained()->cascadeOnDelete();
             $table->string('name');
             $table->timestamps();
