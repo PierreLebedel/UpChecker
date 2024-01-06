@@ -2,14 +2,16 @@
 
 namespace App\Livewire;
 
-use Livewire\Component;
 use App\Enums\BehaviorActionEnum;
 use App\Models\Action;
+use Livewire\Component;
 
 class BehaviorActionsActionForm extends Component
 {
     public string $key;
+
     public Action $action;
+
     public ?string $type;
 
     public ?string $partialFormView = null;

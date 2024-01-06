@@ -2,8 +2,8 @@
 
 namespace App\Contracts\BehaviorAction;
 
-use App\Models\Action;
 use App\Contracts\BehaviorActionInterface;
+use App\Models\Action;
 
 abstract class AbstractAction implements BehaviorActionInterface
 {

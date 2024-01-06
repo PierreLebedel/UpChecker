@@ -2,8 +2,6 @@
 
 namespace App\Contracts\BehaviorAction;
 
-use App\Contracts\BehaviorAction\AbstractAction;
-
 class ActionEmail extends AbstractAction
 {
     public function run(): void
