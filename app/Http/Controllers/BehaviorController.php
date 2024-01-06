@@ -66,30 +66,39 @@ class BehaviorController extends Controller
         $formArray = $request->validated();
 
         $rulesIds = [];
-        foreach( $formArray['rules'] as $rule ){
-            if($rule['id']>0){
-                $rulesIds[ $rule['id'] ] = $rule['id'];
+        foreach( $formArray['rules'] as $ruleArray ){
+            if($ruleArray['id']>0){
+                $rule = Rule::find( $ruleArray['id'] );
+                $rule->update($ruleArray);
+            }else{
+                $rule = Rule::create(array_merge([
+                    'behavior_id' => $behavior->id,
+                ], $ruleArray));
             }
+            $rulesIds[ $rule->id ] = $rule->id;
         }
 
-        // $behavior delete rules not in ids
-
-        dd($rulesIds);
-
+        Rule::where('behavior_id', $behavior->id)
+            ->whereNotIn('id', $rulesIds)
+            ->delete();
 
         $actionsIds = [];
-        foreach( $formArray['actions'] as $action ){
-            if($action['id']>0){
-                $actionsIds[ $action['id'] ] = $action['id'];
+        foreach( $formArray['actions'] as $actionArray ){
+            if($actionArray['id']>0){
+                $action = Action::find( $actionArray['id'] );
+                $action->update($actionArray);
+            }else{
+                $action = Action::create(array_merge([
+                    'behavior_id' => $behavior->id,
+                ], $actionArray));
             }
+            $actionsIds[ $action->id ] = $action->id;
         }
 
-        // $behavior delete actions not in ids
-
-        dd($actionsIds);
-
-
-
+        Action::where('behavior_id', $behavior->id)
+            ->whereNotIn('id', $actionsIds)
+            ->delete();
+            
         return Redirect::route('endpoint.show', [$project, $endpoint])->with('status', __('Behavior updated successfully.'));
     }
 
