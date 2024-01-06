@@ -5,6 +5,7 @@ namespace App\Enums;
 use App\Contracts\BehaviorAction\ActionEmail;
 use App\Contracts\BehaviorAction\ActionSms;
 use App\Contracts\BehaviorActionInterface;
+use App\Models\Action;
 
 enum BehaviorActionEnum: string
 {
@@ -19,11 +20,11 @@ enum BehaviorActionEnum: string
         };
     }
 
-    public function getInstance(): BehaviorActionInterface
+    public function getInstance(Action $action): BehaviorActionInterface
     {
         return match ($this) {
-            self::Email    => new ActionEmail(),
-            self::Sms      => new ActionSms(),
+            self::Email    => new ActionEmail($action),
+            self::Sms      => new ActionSms($action),
         };
     }
 }

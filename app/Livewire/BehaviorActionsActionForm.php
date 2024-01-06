@@ -4,30 +4,30 @@ namespace App\Livewire;
 
 use Livewire\Component;
 use App\Enums\BehaviorActionEnum;
+use App\Models\Action;
 
 class BehaviorActionsActionForm extends Component
 {
-    public $key;
-
-    public $action;
+    public string $key;
+    public Action $action;
+    public ?string $type;
 
     public ?string $partialFormView = null;
 
-    public function mount($key, $action)
+    public function mount(string $key, Action $action)
     {
         $this->key = $key;
 
-        $this->action = array_merge([
-            'id'   => null,
-            'type' => null,
-        ], $action);
+        $this->action = $action;
+
+        $this->type = $this->action->type->value ?? null;
 
         $this->updateFormView();
     }
 
     public function updated($property)
     {
-        if ($property == 'action.type') {
+        if ($property == 'type') {
             $this->updateFormView();
         }
     }
@@ -36,10 +36,10 @@ class BehaviorActionsActionForm extends Component
     {
         $this->partialFormView = null;
 
-        if ($this->action['type']) {
-            $enumCase = BehaviorActionEnum::tryFrom($this->action['type']);
+        if ($this->type) {
+            $enumCase = BehaviorActionEnum::tryFrom($this->type);
             if ($enumCase) {
-                $this->partialFormView = $enumCase->getInstance()->formView();
+                $this->partialFormView = $enumCase->getInstance($this->action)->formView();
             }
         }
     }

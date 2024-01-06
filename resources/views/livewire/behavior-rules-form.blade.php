@@ -6,7 +6,7 @@
         @livewire('behavior-rules-rule-form', [
             'key'  => $key,
             'rule' => $rule
-        ], key($key)) 
+        ], key($rule['temp_uniqid'])) 
 
         @if($key > 0)
         <button type="button" wire:click="removeRule({{$key}})" class="btn btn-sm btn-danger mt-3">{{ __("Remove rule") }}</button>

@@ -15,4 +15,9 @@ class ActionEmail extends AbstractAction
     {
         return 'project.endpoint.behavior.actions.action-email';
     }
+
+    public function toString(): string
+    {
+        return __('Email to ').$this->action->params['email_to'];
+    }
 }

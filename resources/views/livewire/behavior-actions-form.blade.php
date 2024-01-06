@@ -8,7 +8,7 @@
         @livewire('behavior-actions-action-form', [
             'key'  => $key,
             'action' => $action
-        ], key($key)) 
+        ], key($action->temp_uniqid)) 
 
         @if($key > 0)
         <button type="button" wire:click="removeAction({{$key}})" class="btn btn-sm btn-danger mt-3">{{ __("Remove action") }}</button>

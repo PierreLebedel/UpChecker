@@ -82,7 +82,7 @@
                             <ul class="list-disc list-inside">
                                 @foreach($behavior->actions as $action)
                                 <li>
-                                    {{ $action->type }}
+                                    {{ $action->type->getInstance($action)->toString() }}
                                 </li>
                                 @endforeach
                            </ul>
