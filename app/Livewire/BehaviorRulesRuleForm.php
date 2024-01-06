@@ -18,7 +18,7 @@ class BehaviorRulesRuleForm extends Component
         $this->key = $key;
 
         $this->rule = array_merge([
-            'id' => null,
+            'id'            => null,
             'compare_field' => null,
             'compare_sign'  => null,
             'compare_value' => null,
@@ -40,7 +40,7 @@ class BehaviorRulesRuleForm extends Component
 
         if ($this->rule['compare_field']) {
             $enumCase = BehaviorRuleEnum::tryFrom($this->rule['compare_field']);
-            if($enumCase){
+            if ($enumCase) {
                 $this->signs = $enumCase->getSignsArray();
             }
         }

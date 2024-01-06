@@ -14,7 +14,7 @@ class BehaviorFormRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'rules' => ['required', 'array'],
+            'rules'   => ['required', 'array'],
             'actions' => ['required', 'array'],
         ];
     }

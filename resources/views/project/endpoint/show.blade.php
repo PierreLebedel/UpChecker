@@ -37,20 +37,50 @@
                 <a href="{{ route('behavior.create', [$project, $endpoint]) }}" class="btn btn-sm btn-primary">{{ __("Create first behavior") }}</a>
             </div>
             @else
-                <h2 class="text-2xl">{{ $endpoint->behaviors->count() }} {{ __('behaviors') }}</h2>
+                {{-- <h2 class="text-2xl">{{ $endpoint->behaviors->count() }} {{ __('behaviors') }}</h2> --}}
 
                 <div class="gap-4">
                 @foreach( $endpoint->behaviors as $behavior )
                     <div class="card bg-base-200 shadow-xl pt-4">
                         <header class="mb-4 px-4">
-                            <h2 class="card-title">
-                                {{ __('Behavior') }}
-                            </h2>
-                            <a href="{{ route('behavior.edit', [$project, $endpoint, $behavior]) }}" class="btn btn-primary">{{ __("Edit behavior") }}</a>
+                            <div class="flex justify-between items-center">
+                                <h2 class="card-title">
+                                    {{ __('Behavior') }} #{{ $loop->index+1 }}
+                                </h2>
+                                <div>
+                                    <a href="{{ route('behavior.edit', [$project, $endpoint, $behavior]) }}" class="btn btn-primary btn-sm">{{ __("Edit behavior") }}</a>
+                                    <a href="{{ route('behavior.destroy', [$project, $endpoint, $behavior]) }}" class="btn btn-error btn-sm">{{ __("Delete") }}</a>
+                                </div>
+                                
+                            </div>
+                            
                         </header>
 
+                        <div class="px-4 pb-4">
+                           <h3 class="text-lg">{{ __("Rules:") }}</h3>
+                           <ul class="list-disc list-inside">
+                                @foreach($behavior->rules as $rule)
+                                <li>
+                                    {{ $rule->compare_field }}
+                                    {{ $rule->compare_sign }}
+                                    {{ $rule->compare_value }}
+                                </li>
+                                @endforeach
+                           </ul>
 
-                        @dump($behavior)
+                            <hr class="my-3">
+
+                            <h3 class="text-lg">{{ __("Actions:") }}</h3>
+                            <ul class="list-disc list-inside">
+                                @foreach($behavior->actions as $action)
+                                <li>
+                                    {{ $action->type }}
+                                </li>
+                                @endforeach
+                           </ul>
+                        </div>
+
+                        {{-- @dump($behavior) --}}
                     </div>    
                 
                 @endforeach

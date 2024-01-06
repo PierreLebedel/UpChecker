@@ -15,13 +15,11 @@ enum BehaviorRuleEnum: string
         };
     }
 
-    public function description(): string
+    public function getDescription(): string
     {
         return match ($this) {
             self::ResponseStatusCode => __('Response Status Code'),
             self::ResponseDelay      => __('Response Delay'),
         };
     }
-
-    
 }

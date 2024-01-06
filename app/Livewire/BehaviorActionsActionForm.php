@@ -17,7 +17,7 @@ class BehaviorActionsActionForm extends Component
         $this->key = $key;
 
         $this->action = array_merge([
-            'id' => null,
+            'id'   => null,
             'type' => null,
         ], $action);
     }

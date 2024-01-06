@@ -12,7 +12,7 @@ enum EndpointCheckupDelayEnum: int
     case everyThirtyMinutes = 30;
     case everyHour = 60;
 
-    public function description(): string
+    public function getDescription(): string
     {
         return match ($this) {
             self::everyMinute         => __('Every minute'),

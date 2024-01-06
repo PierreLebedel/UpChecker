@@ -40,7 +40,7 @@
                     <td>
                         {{-- {{ trans_choice(':number minute|:number minutes', $endpoint->checkup_delay->value, ['number'=>$endpoint->checkup_delay->value]) }} --}}
 
-                        {{ $endpoint->checkup_delay->description() }}
+                        {{ $endpoint->checkup_delay->getDescription() }}
                     </td>
                     @if( $endpoint->lastCheckup )
                     <td>

@@ -2,13 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Rule;
-use App\Models\Project;
-use App\Models\Behavior;
-use App\Models\Endpoint;
-use Illuminate\Http\Request;
 use App\Http\Requests\BehaviorFormRequest;
 use App\Models\Action;
+use App\Models\Behavior;
+use App\Models\Endpoint;
+use App\Models\Project;
+use App\Models\Rule;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Redirect;
 
@@ -35,13 +34,13 @@ class BehaviorController extends Controller
             'endpoint_id' => $endpoint->id,
         ]);
 
-        foreach( $formArray['rules'] as $ruleArray ){
+        foreach ($formArray['rules'] as $ruleArray) {
             Rule::create(array_merge([
                 'behavior_id' => $behavior->id,
             ], $ruleArray));
         }
 
-        foreach( $formArray['actions'] as $actionArray ){
+        foreach ($formArray['actions'] as $actionArray) {
             Action::create(array_merge([
                 'behavior_id' => $behavior->id,
             ], $actionArray));
@@ -66,16 +65,16 @@ class BehaviorController extends Controller
         $formArray = $request->validated();
 
         $rulesIds = [];
-        foreach( $formArray['rules'] as $ruleArray ){
-            if($ruleArray['id']>0){
-                $rule = Rule::find( $ruleArray['id'] );
+        foreach ($formArray['rules'] as $ruleArray) {
+            if ($ruleArray['id'] > 0) {
+                $rule = Rule::find($ruleArray['id']);
                 $rule->update($ruleArray);
-            }else{
+            } else {
                 $rule = Rule::create(array_merge([
                     'behavior_id' => $behavior->id,
                 ], $ruleArray));
             }
-            $rulesIds[ $rule->id ] = $rule->id;
+            $rulesIds[$rule->id] = $rule->id;
         }
 
         Rule::where('behavior_id', $behavior->id)
@@ -83,22 +82,22 @@ class BehaviorController extends Controller
             ->delete();
 
         $actionsIds = [];
-        foreach( $formArray['actions'] as $actionArray ){
-            if($actionArray['id']>0){
-                $action = Action::find( $actionArray['id'] );
+        foreach ($formArray['actions'] as $actionArray) {
+            if ($actionArray['id'] > 0) {
+                $action = Action::find($actionArray['id']);
                 $action->update($actionArray);
-            }else{
+            } else {
                 $action = Action::create(array_merge([
                     'behavior_id' => $behavior->id,
                 ], $actionArray));
             }
-            $actionsIds[ $action->id ] = $action->id;
+            $actionsIds[$action->id] = $action->id;
         }
 
         Action::where('behavior_id', $behavior->id)
             ->whereNotIn('id', $actionsIds)
             ->delete();
-            
+
         return Redirect::route('endpoint.show', [$project, $endpoint])->with('status', __('Behavior updated successfully.'));
     }
 

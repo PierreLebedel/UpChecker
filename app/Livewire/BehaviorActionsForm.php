@@ -34,9 +34,7 @@ class BehaviorActionsForm extends Component
             $action = Action::make();
         }
 
-        $this->actions->push([
-            'type' => $action->type,
-        ]);
+        $this->actions->push($action->toArray());
     }
 
     public function removeAction($key)

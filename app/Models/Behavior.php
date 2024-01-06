@@ -35,11 +35,11 @@ class Behavior extends Model
 
     public function rules(): HasMany
     {
-        return $this->hasMany(Rule::class);
+        return $this->hasMany(Rule::class)->orderBy('position');
     }
 
     public function actions(): HasMany
     {
-        return $this->hasMany(Action::class);
+        return $this->hasMany(Action::class)->orderBy('position');
     }
 }

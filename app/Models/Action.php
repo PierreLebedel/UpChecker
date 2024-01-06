@@ -2,9 +2,10 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Enums\BehaviorActionEnum;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Action extends Model
 {
@@ -12,7 +13,13 @@ class Action extends Model
 
     protected $fillable = [
         'behavior_id',
+        'position',
         'type',
+    ];
+
+    protected $casts = [
+        'position'          => 'integer',
+        'type'    => BehaviorActionEnum::class,
     ];
 
     public function behavior(): BelongsTo

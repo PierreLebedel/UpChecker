@@ -2,13 +2,13 @@
 
     @use('App\Enums\BehaviorRuleEnum', 'Rules')
 
-    <x-text-input type="text" name="rules[{{$key}}][id]" wire:model.defer="rule.id" />
+    <x-text-input type="hidden" name="rules[{{$key}}][id]" wire:model.defer="rule.id" />
 
     <div class="form-control">
         <select class="select select-bordered w-full" id="rule_{{$key}}_compare_field" name="rules[{{$key}}][compare_field]" wire:model.live="rule.compare_field" required>
             <option value="" selected>{{ __("Choose") }}</option>
             @foreach( Rules::cases() as $r )
-            <option value="{{ $r->value }}" @selected($rule['compare_field'] === $r->value) >{{ $r->description() }}</option>
+            <option value="{{ $r->value }}" @selected($rule['compare_field'] === $r->value) >{{ $r->getDescription() }}</option>
             @endforeach
         </select>
         <x-input-error :messages="$errors->get('rules.{{$key}}.compare_field')" />

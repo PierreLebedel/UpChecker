@@ -37,7 +37,7 @@
     <select id="endpoint_checkup_delay" name="checkup_delay" class="select select-bordered w-full" required>
         <option value="" disabled>{{ __('Choose') }}</option>
         @foreach( $endpoint->checkupDelayCases() as $delay )
-        <option value="{{ $delay->value }}" @selected($delay->value == old('checkup_delay', $endpoint->checkup_delay)) >{{ $delay->description() }}</option>
+        <option value="{{ $delay->value }}" @selected($delay->value == old('checkup_delay', $endpoint->checkup_delay)) >{{ $delay->getDescription() }}</option>
         @endforeach
     </select>
     <x-input-error :messages="$errors->get('checkup_delay')" />
