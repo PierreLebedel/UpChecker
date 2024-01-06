@@ -18,8 +18,6 @@
             <a href="https://laravel.com/" target="_blank">Laravel</a>
             <a href="https://tailwindcss.com/" target="_blank">Tailwind CSS</a>
             <a href="https://daisyui.com/" target="_blank">daisyUI</a>
-
-            
         </nav>
     </div>
 </footer>

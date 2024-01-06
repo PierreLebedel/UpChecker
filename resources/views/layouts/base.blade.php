@@ -15,6 +15,8 @@
 
         @include('layouts.footer')
 
+        @stack('modals')
+
         <script>
             window.UpChecker = {!! json_encode([
                 'user' => (auth()->check()) ? auth()->user()->toArray() : false,
