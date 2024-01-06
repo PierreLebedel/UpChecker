@@ -86,5 +86,4 @@ class EndpointController extends Controller
 
         return Redirect::route('endpoint.show', [$project, $endpoint])->with('status', __('Endpoint updated successfully.'));
     }
-
 }

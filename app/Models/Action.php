@@ -15,11 +15,13 @@ class Action extends Model
         'behavior_id',
         'position',
         'type',
+        'params',
     ];
 
     protected $casts = [
-        'position'          => 'integer',
-        'type'              => BehaviorActionEnum::class,
+        'position' => 'integer',
+        'type'     => BehaviorActionEnum::class,
+        'params'   => 'array',
     ];
 
     public function behavior(): BelongsTo

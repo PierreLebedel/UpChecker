@@ -2,9 +2,9 @@
 
 namespace App\Contracts\BehaviorAction;
 
-use App\Contracts\BehaviorActionInterface;
+use App\Contracts\BehaviorAction\AbstractAction;
 
-class ActionSms implements BehaviorActionInterface
+class ActionSms extends AbstractAction
 {
     public function run(): void
     {

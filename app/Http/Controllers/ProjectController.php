@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Events\ProjectCreatedEvent;
-use App\Events\ProjectDeletedEvent;
 use App\Events\ProjectUpdatedEvent;
 use App\Http\Requests\ProjectFormRequest;
 use App\Models\Project;
@@ -80,5 +79,4 @@ class ProjectController extends Controller
 
         return Redirect::route('project.show', $project)->with('status', __('Your project was successfully updated.'));
     }
-    
 }

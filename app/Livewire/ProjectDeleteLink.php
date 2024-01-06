@@ -2,11 +2,9 @@
 
 namespace App\Livewire;
 
+use App\Events\ProjectDeletedEvent;
 use App\Models\Project;
 use Livewire\Component;
-use App\Models\Endpoint;
-use App\Events\ProjectDeletedEvent;
-use App\Events\EndpointDeletedEvent;
 
 class ProjectDeleteLink extends Component
 {

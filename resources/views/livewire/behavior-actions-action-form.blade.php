@@ -13,4 +13,13 @@
         </select>
         <x-input-error :messages="$errors->get('actions.{{$key}}.type')" />
     </div>
+
+    <div class="col-span-2">
+        @if($partialFormView)
+            @include($partialFormView, [
+                'action'=>$action,
+                'key'  => $key,
+            ])
+        @endif
+    </div>
 </div>
