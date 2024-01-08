@@ -34,9 +34,7 @@ class BehaviorActionsForm extends Component
             $action = Action::make();
         }
 
-        $action->temp_uniqid = uniqid();
-
-        $this->actions->push($action);
+        $this->actions->put(uniqid(), $action);
     }
 
     public function removeAction($key)

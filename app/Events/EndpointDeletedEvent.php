@@ -13,7 +13,7 @@ class EndpointDeletedEvent implements ShouldBroadcastNow
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public $project;
+    public Project $project;
 
     public function __construct(Project $project)
     {

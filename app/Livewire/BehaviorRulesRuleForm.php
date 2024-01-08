@@ -3,45 +3,41 @@
 namespace App\Livewire;
 
 use App\Enums\BehaviorRuleEnum;
+use App\Models\Rule;
 use Livewire\Component;
 
 class BehaviorRulesRuleForm extends Component
 {
-    public $key;
+    public $customkey;
 
     public $rule;
 
-    public array $signs;
+    public ?string $type;
 
-    public function mount($key, $rule)
+    public ?array $params;
+
+    public ?string $partialFormView = null;
+
+    public function mount(string $customkey, Rule $rule)
     {
-        $this->key = $key;
+        $this->customkey = $customkey;
 
-        $this->rule = array_merge([
-            'id'            => null,
-            'compare_field' => null,
-            'compare_sign'  => null,
-            'compare_value' => null,
-        ], $rule);
+        $this->rule = $rule;
 
-        $this->updateCompareSigns();
+        $this->type = $this->rule->type->value ?? null;
+
+        $this->updatedType();
     }
 
-    public function updated($property)
+    public function updatedType()
     {
-        if ($property == 'rule.compare_field') {
-            $this->updateCompareSigns();
-        }
-    }
+        $this->partialFormView = null;
 
-    public function updateCompareSigns()
-    {
-        $this->signs = [];
-
-        if ($this->rule['compare_field']) {
-            $enumCase = BehaviorRuleEnum::tryFrom($this->rule['compare_field']);
+        if ($this->type) {
+            $enumCase = BehaviorRuleEnum::tryFrom($this->type);
             if ($enumCase) {
-                $this->signs = $enumCase->getSignsArray();
+                $this->rule->type = $enumCase;
+                $this->partialFormView = $enumCase->getInstance($this->rule)->getFormView();
             }
         }
     }

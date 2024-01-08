@@ -34,14 +34,16 @@ class BehaviorRulesForm extends Component
             $rule = Rule::make();
         }
 
-        $rule->temp_uniqid = uniqid();
-
-        $this->rules->push($rule->toArray());
+        $this->rules->put(uniqid(), $rule);
     }
 
     public function removeRule($key)
     {
+        dump($this->rules);
+
         $this->rules->pull($key);
+
+        dd($this->rules);
     }
 
     public function render()

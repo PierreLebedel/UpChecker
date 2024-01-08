@@ -6,12 +6,12 @@
     </x-slot>
 
     <x-slot name="header_actions">
-        <a href="{{ route('project.edit', $project) }}" class="btn btn-primary btn-sm">{{ __("Edit project") }}</a>
         <a href="{{ route('endpoint.create', $project) }}" class="btn btn-secondary btn-sm">{{ __("Add endpoint") }}</a>
 
         <div class="dropdown dropdown-end">
             <div tabindex="0" role="button" class="btn btn-sm">...</div>
             <ul tabindex="0" class="menu dropdown-content z-[1] p-2 shadow bg-base-100 rounded-box w-52 mt-4">
+                <li><a href="{{ route('project.edit', $project) }}">{{ __("Edit project") }}</a></li>
                 <li>@livewire('project-delete-link', ['project'=>$project])</li>
             </ul>
         </div>

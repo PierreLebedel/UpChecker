@@ -14,14 +14,14 @@ class Rule extends Model
     protected $fillable = [
         'behavior_id',
         'position',
-        'compare_field',
-        'compare_sign',
-        'compare_value',
+        'type',
+        'params',
     ];
 
     protected $casts = [
-        'position'          => 'integer',
-        'compare_field'     => BehaviorRuleEnum::class,
+        'position' => 'integer',
+        'type'     => BehaviorRuleEnum::class,
+        'params'   => 'array',
     ];
 
     public function behavior(): BelongsTo

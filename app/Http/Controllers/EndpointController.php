@@ -44,7 +44,7 @@ class EndpointController extends Controller
 
         EndpointCreatedEvent::dispatch($endpoint);
 
-        return Redirect::route('project.show', $project)->with('status', __('Endpoint created successfully'));
+        return Redirect::route('endpoint.show', [$project, $endpoint])->with('status', __('Endpoint created successfully'));
     }
 
     /**

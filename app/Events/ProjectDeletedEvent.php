@@ -13,7 +13,7 @@ class ProjectDeletedEvent implements ShouldBroadcastNow
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public $user;
+    public User $user;
 
     public function __construct(User $user)
     {

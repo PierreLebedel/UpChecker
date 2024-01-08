@@ -13,7 +13,7 @@ class EndpointUpdatedEvent implements ShouldBroadcastNow
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public $endpoint;
+    public Endpoint $endpoint;
 
     public function __construct(Endpoint $endpoint)
     {

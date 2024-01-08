@@ -2,14 +2,18 @@
 
 namespace App\Contracts\BehaviorAction;
 
+use App\Models\Checkup;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\CheckupActionEmailMailable;
+
 class ActionEmail extends AbstractAction
 {
-    public function run(): void
+    public function run(Checkup $checkup): void
     {
-        dd('run email');
+        Mail::send( new CheckupActionEmailMailable($this->action, $checkup) );
     }
 
-    public function formView(): ?string
+    public function getFormView(): ?string
     {
         return 'project.endpoint.behavior.actions.action-email';
     }

@@ -6,13 +6,12 @@
     </x-slot>
 
     <x-slot name="header_actions">
-        <a href="{{ route('endpoint.edit', [$project, $endpoint]) }}" class="btn btn-primary btn-sm">{{ __("Edit endpoint") }}</a>
-
         <livewire:endpoint-run-button :endpoint="$endpoint" />
 
         <div class="dropdown dropdown-end">
             <div tabindex="0" role="button" class="btn btn-sm">...</div>
             <ul tabindex="0" class="menu dropdown-content z-[1] p-2 shadow bg-base-100 rounded-box w-52 mt-4">
+                <li><a href="{{ route('endpoint.edit', [$project, $endpoint]) }}">{{ __("Edit endpoint") }}</a></li>
                 <li>@livewire('endpoint-delete-link', ['endpoint'=>$endpoint])</li>
             </ul>
         </div>
@@ -69,9 +68,7 @@
                            <ul class="list-disc list-inside">
                                 @foreach($behavior->rules as $rule)
                                 <li>
-                                    {{ $rule->compare_field }}
-                                    {{ $rule->compare_sign }}
-                                    {{ $rule->compare_value }}
+                                    {{ $rule->type->getInstance($rule)->toString() }}
                                 </li>
                                 @endforeach
                            </ul>

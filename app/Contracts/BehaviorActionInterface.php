@@ -3,14 +3,15 @@
 namespace App\Contracts;
 
 use App\Models\Action;
+use App\Models\Checkup;
 
 interface BehaviorActionInterface
 {
     public function __construct(Action $action);
 
-    public function run(): void;
+    public function run(Checkup $checkup): void;
 
-    public function formView(): ?string;
+    public function getFormView(): ?string;
 
     public function toString(): string;
 }

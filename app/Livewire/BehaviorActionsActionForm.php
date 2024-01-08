@@ -8,7 +8,7 @@ use Livewire\Component;
 
 class BehaviorActionsActionForm extends Component
 {
-    public string $key;
+    public string $customkey;
 
     public Action $action;
 
@@ -16,9 +16,9 @@ class BehaviorActionsActionForm extends Component
 
     public ?string $partialFormView = null;
 
-    public function mount(string $key, Action $action)
+    public function mount(string $customkey, Action $action)
     {
-        $this->key = $key;
+        $this->customkey = $customkey;
 
         $this->action = $action;
 
@@ -41,7 +41,7 @@ class BehaviorActionsActionForm extends Component
         if ($this->type) {
             $enumCase = BehaviorActionEnum::tryFrom($this->type);
             if ($enumCase) {
-                $this->partialFormView = $enumCase->getInstance($this->action)->formView();
+                $this->partialFormView = $enumCase->getInstance($this->action)->getFormView();
             }
         }
     }

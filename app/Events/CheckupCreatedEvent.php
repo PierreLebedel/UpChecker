@@ -3,6 +3,8 @@
 namespace App\Events;
 
 use App\Models\Checkup;
+use App\Models\Endpoint;
+use App\Models\Project;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
@@ -13,11 +15,11 @@ class CheckupCreatedEvent implements ShouldBroadcastNow
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public $project;
+    public Project $project;
 
-    public $endpoint;
+    public Endpoint $endpoint;
 
-    public $checkup;
+    public Checkup $checkup;
 
     public function __construct(Checkup $checkup)
     {

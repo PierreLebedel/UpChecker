@@ -10,7 +10,7 @@ use App\Models\Action;
 enum BehaviorActionEnum: string
 {
     case Email = 'Email';
-    case Sms = 'SMS';
+    //case Sms = 'SMS';
 
     public function getDescription(): string
     {

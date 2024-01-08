@@ -14,10 +14,7 @@ use Illuminate\Support\Facades\Http;
 
 class EndpointCheckJob implements ShouldQueue
 {
-    use Dispatchable;
-    use InteractsWithQueue;
-    use Queueable;
-    use SerializesModels;
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     public $endpoint;
 
@@ -34,19 +31,14 @@ class EndpointCheckJob implements ShouldQueue
         $checkup_started_at = now();
         $response_microtime = microtime(true);
 
-        //info('Run job EndpointCheckJob for endpoint #'.$this->endpoint->id.' ('.$this->endpoint->url.')');
-
         try {
             $response = Http::withoutVerifying()
                 ->timeout($this->endpoint->timeout)
                 ->get($this->endpoint->url);
-            $response_ok = $response->ok();
             $response_status_code = $response->status();
             $response_error_message = null;
 
         } catch (\Exception $e) {
-            //dump($e->getMessage());
-            $response_ok = false;
             $response_status_code = null;
             $response_error_message = $e->getMessage();
         }
@@ -63,15 +55,5 @@ class EndpointCheckJob implements ShouldQueue
         ]);
 
         CheckupCreatedEvent::dispatch($checkup);
-
-        // if(!$this->check->isSuccessful()){
-        //     if($this->link->last_check_successful){
-        //         Mail::send(new CheckNotSuccessfulMail($this->check));
-        //     }
-        // }
-
-        // $this->link->update([
-        //     'last_check_successful' => $this->check->isSuccessful(),
-        // ]);
     }
 }

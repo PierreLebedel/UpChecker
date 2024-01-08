@@ -14,13 +14,13 @@ abstract class AbstractAction implements BehaviorActionInterface
         $this->action = $action;
     }
 
-    public function formView(): ?string
-    {
-        return null;
-    }
-
     public function toString(): string
     {
         return $this->action->type->value;
+    }
+
+    public function getFormView(): ?string
+    {
+        return null;
     }
 }
