@@ -39,6 +39,7 @@ php artisan queue:clear database; # clear all waiting jobs
 
 ### Run on production
 ```shell 
+npm run build;
 php artisan queue:work;
 php artisan schedule:run;
 ```

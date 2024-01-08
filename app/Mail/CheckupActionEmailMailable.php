@@ -3,16 +3,15 @@
 namespace App\Mail;
 
 use App\Models\Action;
-use App\Models\Checkup;
 use App\Models\Behavior;
+use App\Models\Checkup;
 use App\Models\Endpoint;
 use App\Models\Project;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
-use Illuminate\Queue\SerializesModels;
 use Illuminate\Mail\Mailables\Envelope;
-use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Queue\SerializesModels;
 
 class CheckupActionEmailMailable extends Mailable
 {

@@ -2,15 +2,15 @@
 
 namespace App\Contracts\BehaviorAction;
 
+use App\Mail\CheckupActionEmailMailable;
 use App\Models\Checkup;
 use Illuminate\Support\Facades\Mail;
-use App\Mail\CheckupActionEmailMailable;
 
 class ActionEmail extends AbstractAction
 {
     public function run(Checkup $checkup): void
     {
-        Mail::send( new CheckupActionEmailMailable($this->action, $checkup) );
+        Mail::send(new CheckupActionEmailMailable($this->action, $checkup));
     }
 
     public function getFormView(): ?string
