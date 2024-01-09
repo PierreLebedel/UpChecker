@@ -1,7 +1,6 @@
 <?php
 
-use App\Models\Account;
-use App\Models\Behavior;
+use App\Models\User;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -13,11 +12,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('actions', function (Blueprint $table) {
+        Schema::create('accounts', function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(Behavior::class)->constrained()->cascadeOnDelete();
-            $table->foreignIdFor(Account::class)->nullable()->constrained()->nullOnDelete();
-            $table->unsignedInteger('position')->default(0);
+            $table->foreignIdFor(User::class)->constrained()->cascadeOnDelete();
             $table->string('type');
             $table->json('params')->nullable();
             $table->timestamps();
@@ -29,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('actions');
+        Schema::dropIfExists('accounts');
     }
 };

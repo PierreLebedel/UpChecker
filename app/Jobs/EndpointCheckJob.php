@@ -36,10 +36,12 @@ class EndpointCheckJob implements ShouldQueue
                 ->timeout($this->endpoint->timeout)
                 ->get($this->endpoint->url);
             $response_status_code = $response->status();
+            $response_body = $response->body();
             $response_error_message = null;
 
         } catch (\Exception $e) {
             $response_status_code = null;
+            $response_body = null;
             $response_error_message = $e->getMessage();
         }
 
@@ -51,6 +53,7 @@ class EndpointCheckJob implements ShouldQueue
             'microtime'         => $response_microtime,
             'url'               => $this->endpoint->url,
             'status_code'       => $response_status_code,
+            'response_body'     => $response_body,
             'exception_message' => $response_error_message,
         ]);
 

@@ -39,11 +39,7 @@ class BehaviorRulesForm extends Component
 
     public function removeRule($key)
     {
-        dump($this->rules);
-
         $this->rules->pull($key);
-
-        dd($this->rules);
     }
 
     public function render()

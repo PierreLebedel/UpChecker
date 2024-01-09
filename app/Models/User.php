@@ -37,6 +37,11 @@ class User extends Authenticatable
         return $this->hasMany(Project::class);
     }
 
+    public function accounts(): HasMany
+    {
+        return $this->hasMany(Account::class);
+    }
+
     protected function avatarUrl(): Attribute
     {
         return Attribute::make(

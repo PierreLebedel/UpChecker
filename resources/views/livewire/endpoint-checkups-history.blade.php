@@ -21,6 +21,7 @@
                     <th>{{ __('Date') }}</th>
                     <th>{{ __('Duration') }}</th>
                     <th>{{ __('Status code') }}</th>
+                    <th>{{ __("Actions") }}</th>
                 </tr>
             </thead>
             <tbody>
@@ -49,6 +50,13 @@
                             @endif
                         </div>
                         
+                    </td>
+                    <td>
+                        @if( empty($checkup->actions) )
+                            N/A
+                        @else
+                            <b>{{ count($checkup->actions) }}</b>
+                        @endif
                     </td>
                 </tr>
                 @endforeach

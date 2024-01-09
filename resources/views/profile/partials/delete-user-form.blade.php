@@ -8,7 +8,7 @@
         </p>
     </header>
 
-    <div class="mt-6 ">
+    <div class="mt-6 text-center">
         <x-danger-button x-data="" x-on:click.prevent="$dispatch('open-modal', 'confirm-user-deletion')" class="btn-sm">{{ __('Delete Account') }}</x-danger-button>
     </div>
 

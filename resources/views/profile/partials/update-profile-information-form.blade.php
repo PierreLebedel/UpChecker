@@ -57,18 +57,20 @@
             <x-input-error :messages="$errors->get('locale')" />
         </div>
 
-        <div class="mt-6 flex justify-start items-center">
-            <x-primary-button>{{ __('Save') }}</x-primary-button>
-
+        <div class="mt-6 flex justify-end items-center">
             @if (session('status') === 'profile-updated')
                 <p
                     x-data="{ show: true }"
                     x-show="show"
                     x-transition
                     x-init="setTimeout(() => show = false, 2000)"
-                    class="text-sm text-success ms-4"
+                    class="text-sm text-success me-4"
                 >{{ __('Saved.') }}</p>
             @endif
+            
+            <x-primary-button>{{ __('Save') }}</x-primary-button>
+
+            
         </div>
     </form>
 </section>

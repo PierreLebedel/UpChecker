@@ -16,12 +16,15 @@ class Checkup extends Model
         'microtime',
         'url',
         'status_code',
+        'response_body',
         'exception_message',
+        'actions',
     ];
 
     protected $casts = [
         'started_at' => 'datetime',
         'microtime'  => 'float',
+        'actions' => 'array'
     ];
 
     public function endpoint(): BelongsTo

@@ -19,7 +19,9 @@ return new class extends Migration
             $table->unsignedDecimal('microtime', 10, 7);
             $table->string('url', 255)->nullable();
             $table->string('status_code', 10)->nullable();
+            $table->text('response_body')->nullable();
             $table->string('exception_message')->nullable();
+            $table->json('actions')->nullable();
             $table->timestamps();
         });
     }

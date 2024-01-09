@@ -2,13 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\ProfileUpdateRequest;
-use Illuminate\Http\RedirectResponse;
+use Illuminate\View\View;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Redirect;
-use Illuminate\View\View;
+use App\Http\Requests\UserAccountRequest;
+use App\Http\Requests\ProfileUpdateRequest;
+use App\Models\Account;
 
 class ProfileController extends Controller
 {
@@ -38,6 +40,22 @@ class ProfileController extends Controller
         App::setLocale($request->user()->locale);
 
         return Redirect::route('profile.edit')->with('status', __('Your profile was successfully updated.'));
+    }
+
+    public function storeAccount(UserAccountRequest $request): RedirectResponse
+    {
+        Account::create(array_merge($request->validated(), [
+            'user_id' => auth()->id(),
+        ]));
+
+        return Redirect::route('profile.edit')->with('status', __('External account successfully created.'));
+    }
+
+    public function updateAccount(UserAccountRequest $request, Account $account): RedirectResponse
+    {
+        $account->update($request->validated());
+
+        return Redirect::route('profile.edit')->with('status', __('External account successfully updated.'));
     }
 
     /**

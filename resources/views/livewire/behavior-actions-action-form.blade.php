@@ -15,9 +15,18 @@
     </div>
 
     <div class="col-span-2">
+
+        @if( $type && $accountType = Actions::tryFrom($type)->getClassName()::needAccountType() )
+            @include('project.endpoint.behavior.actions.action-account-select', [
+                'action' => $action,
+                'customkey'  => $customkey,
+                'accountType' => $accountType,
+            ])
+        @endif
+
         @if($partialFormView)
             @include($partialFormView, [
-                'action'=>$action,
+                'action' => $action,
                 'customkey'  => $customkey,
             ])
         @endif

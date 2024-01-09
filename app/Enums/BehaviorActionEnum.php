@@ -23,12 +23,18 @@ enum BehaviorActionEnum: string
         };
     }
 
-    public function getInstance(Action $action): BehaviorActionInterface
+    public function getClassName(): string
     {
         return match ($this) {
-            self::Email                 => new ActionEmail($action),
-            //self::Sms                   => new ActionSms($action),
-            self::NextcloudNotification => new ActionNextcloudNotification($action),
+            self::Email => ActionEmail::class,
+            //self::Sms      => ActionSms::class,
+            self::NextcloudNotification => ActionNextcloudNotification::class,
         };
+    }
+
+    public function getInstance(Action $action): BehaviorActionInterface
+    {
+        $className = $this->getClassName();
+        return new $className($action);
     }
 }

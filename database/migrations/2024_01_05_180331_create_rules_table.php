@@ -16,7 +16,7 @@ return new class extends Migration
             $table->id();
             $table->foreignIdFor(Behavior::class)->constrained()->cascadeOnDelete();
             $table->unsignedInteger('position')->default(0);
-            $table->string('type')->nullable();
+            $table->string('type');
             $table->json('params')->nullable();
             $table->timestamps();
         });

@@ -3,21 +3,31 @@
 namespace App\Contracts\BehaviorAction;
 
 use App\Models\Checkup;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Http;
+use App\Contracts\AccountType\AccountTypeNexcloud;
 
 class ActionNextcloudNotification extends AbstractAction
 {
+
+    public static function needAccountType(): ?string
+    {
+        return AccountTypeNexcloud::class;
+    }
+
     public function run(Checkup $checkup): void
     {
-        $username = '';
-        $password = '';
-        $domain   = Str::of('https://www.test.com/nextcloud/')
-            ->replaceStart('https://', '')
-            ->replaceStart('http://', '')
-            ->replaceEnd('/', '');
+        if( !$this->action->account ){
+            return;
+        }
 
-        if (empty($username) || empty($password) || $domain == 'www.test.com/nextcloud') {
+        $accountTypeInstance = $this->action->account->type->getInstance($this->action->account);
+
+        $domain   = $accountTypeInstance->getCleanDomain($accountTypeInstance->getParam('domain'));
+        $username = $accountTypeInstance->getParam('username');
+        $password = $accountTypeInstance->getParam('password');
+
+        if ( empty($domain) || empty($username) || empty($password) ) {
             return;
         }
 
@@ -29,6 +39,8 @@ class ActionNextcloudNotification extends AbstractAction
                 'longMessage'  => 'You receive this notification because the last checkup of endpoint '.$checkup->endpoint->url.' satisfied all the rules configured in '.config('app.name'),
             ])
             ->post('https://'.$domain.'/ocs/v2.php/apps/notifications/api/v2/admin_notifications/'.$username);
+
+        $this->afterRun($checkup);
 
         dd($response->body());
     }

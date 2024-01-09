@@ -6,6 +6,7 @@ use App\Enums\BehaviorActionEnum;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Action extends Model
 {
@@ -13,6 +14,7 @@ class Action extends Model
 
     protected $fillable = [
         'behavior_id',
+        'account_id',
         'position',
         'type',
         'params',
@@ -27,5 +29,10 @@ class Action extends Model
     public function behavior(): BelongsTo
     {
         return $this->belongsTo(Behavior::class);
+    }
+
+    public function account(): BelongsTo
+    {
+        return $this->belongsTo(Account::class);
     }
 }

@@ -49,6 +49,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/livewire', \App\Livewire\FullPageComponent::class)->name('livewire');
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::post('/profile/account', [ProfileController::class, 'storeAccount'])->name('profile.storeAccount');
+    Route::put('/profile/account/{account}', [ProfileController::class, 'updateAccount'])->name('profile.updateAccount');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });

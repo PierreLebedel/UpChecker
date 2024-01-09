@@ -11,6 +11,7 @@ class ActionEmail extends AbstractAction
     public function run(Checkup $checkup): void
     {
         Mail::send(new CheckupActionEmailMailable($this->action, $checkup));
+        $this->afterRun($checkup);
     }
 
     public function getFormView(): ?string
