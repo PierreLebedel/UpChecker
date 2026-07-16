@@ -46,7 +46,11 @@ class FortifyServiceProvider extends ServiceProvider
     private function configureViews(): void
     {
         Fortify::loginView(fn () => view('pages::auth.login'));
-        Fortify::registerView(fn () => view('pages::auth.register'));
+        Fortify::registerView(function () {
+            abort_unless(config('upchecker.registration_enabled'), 404);
+
+            return view('pages::auth.register');
+        });
         Fortify::resetPasswordView(fn () => view('pages::auth.reset-password'));
         Fortify::requestPasswordResetLinkView(fn () => view('pages::auth.forgot-password'));
     }
