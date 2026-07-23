@@ -1,0 +1,116 @@
+@props([
+    'monitors',
+    'showProjectColumn' => true,
+    'showMonitorActions' => null,
+])
+
+@php
+    $showMonitorActions ??= ! $showProjectColumn;
+@endphp
+
+<div class="overflow-x-auto">
+    <flux:table>
+        <flux:table.columns>
+            @if ($showProjectColumn)
+                <flux:table.column>URL</flux:table.column>
+                <flux:table.column>Projet</flux:table.column>
+            @else
+                <flux:table.column>Nom</flux:table.column>
+                <flux:table.column>URL</flux:table.column>
+            @endif
+            <flux:table.column>Statut</flux:table.column>
+            <flux:table.column>Historique</flux:table.column>
+            <flux:table.column>Dernière exec.</flux:table.column>
+            <flux:table.column>Dernière erreur</flux:table.column>
+            <flux:table.column>Prochaine exec.</flux:table.column>
+            @if ($showMonitorActions)
+                <flux:table.column></flux:table.column>
+            @endif
+        </flux:table.columns>
+
+        <flux:table.rows>
+            @foreach ($monitors as $monitor)
+                <flux:table.row :key="$monitor->id">
+
+                    @if ($showProjectColumn)
+                        <flux:table.cell>
+                            <div class="min-w-64">
+                                <a href="{{ route('monitors.show', $monitor) }}" wire:navigate class="font-medium text-zinc-900 hover:text-zinc-700 dark:text-zinc-100 dark:hover:text-zinc-300">
+                                    {{ $monitor->name }}
+                                </a>
+                                <div class="truncate text-xs text-zinc-500 dark:text-zinc-400">{{ $monitor->url }}</div>
+                            </div>
+                        </flux:table.cell>
+                        <flux:table.cell>
+                            <a href="{{ route('projects.show', $monitor->project) }}" wire:navigate class="whitespace-nowrap text-sm font-medium text-zinc-700 hover:text-zinc-950 dark:text-zinc-300 dark:hover:text-zinc-100">
+                                {{ $monitor->project->name }}
+                            </a>
+                        </flux:table.cell>
+                    @else
+                        <flux:table.cell>
+                            <a href="{{ route('monitors.show', $monitor) }}" wire:navigate class="font-medium text-zinc-900 hover:text-zinc-700 dark:text-zinc-100 dark:hover:text-zinc-300">
+                                {{ $monitor->name }}
+                            </a>
+                        </flux:table.cell>
+                        <flux:table.cell>
+                            <div class="truncate text-xs text-zinc-500 dark:text-zinc-400">{{ $monitor->url }}</div>
+                        </flux:table.cell>
+                    @endif
+
+                    <flux:table.cell class="w-1">
+                        <div class="flex flex-wrap items-center gap-2">
+                            <flux:badge variant="solid" :color="$monitor->current_status->color()">
+                                {{ $monitor->current_status->label() }}
+                            </flux:badge>
+                            @unless ($monitor->enabled)
+                                <flux:badge color="zinc">Désactivé</flux:badge>
+                            @endunless
+                        </div>
+                    </flux:table.cell>
+
+                    <flux:table.cell class="w-1">
+                        <x-monitor-check-sparkline :results="$monitor->checkResults" />
+                    </flux:table.cell>
+
+                    <flux:table.cell class="w-1">
+                        <x-relative-time :date="$monitor->last_checked_at" />
+                    </flux:table.cell>
+
+                    <flux:table.cell class="w-1">
+                        <x-relative-time :date="$monitor->last_failure_at" fallback="aucune" />
+                    </flux:table.cell>
+
+                    <flux:table.cell class="w-1">
+                        <x-relative-time :date="$monitor->next_check_at" fallback="non-planifiée" due />
+                    </flux:table.cell>
+
+                    @if ($showMonitorActions)
+                        <flux:table.cell class="w-1">
+                            <div class="flex justify-end">
+                                <flux:dropdown align="end">
+                                    <flux:button size="sm" variant="subtle" icon="ellipsis-horizontal" square aria-label="Actions du contrôle" />
+
+                                    <flux:menu>
+                                        <flux:menu.item icon="eye" :href="route('monitors.show', $monitor)" wire:navigate>
+                                            Voir le détail
+                                        </flux:menu.item>
+                                        <flux:menu.item icon="arrow-path" wire:click="checkNow('{{ $monitor->id }}')">
+                                            Vérifier maintenant
+                                        </flux:menu.item>
+                                        <flux:menu.item icon="pencil" wire:click="openEditMonitorModal('{{ $monitor->id }}')">
+                                            Modifier l'URL
+                                        </flux:menu.item>
+                                        <flux:menu.separator />
+                                        <flux:menu.item icon="trash" class="text-rose-600 hover:bg-rose-50 hover:text-rose-700 dark:text-rose-400 dark:hover:bg-rose-950/40 dark:hover:text-rose-300" wire:click="openDeleteMonitorModal('{{ $monitor->id }}')">
+                                            Supprimer l'URL
+                                        </flux:menu.item>
+                                    </flux:menu>
+                                </flux:dropdown>
+                            </div>
+                        </flux:table.cell>
+                    @endif
+                </flux:table.row>
+            @endforeach
+        </flux:table.rows>
+    </flux:table>
+</div>

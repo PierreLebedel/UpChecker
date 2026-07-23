@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\MonitorCheckCriterionType;
 use App\Enums\MonitorStatus;
 use Database\Factories\MonitorFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
@@ -21,11 +22,7 @@ use Illuminate\Support\Carbon;
  * @property bool $enabled
  * @property int $interval_minutes
  * @property int $timeout_seconds
- * @property int $expected_http_status
- * @property string|null $expected_json_key
- * @property string|null $expected_json_value
- * @property string|null $expected_body_contains
- * @property int|null $max_response_time_ms
+ * @property array<int, array<string, mixed>> $check_criteria
  * @property MonitorStatus $current_status
  * @property Carbon|null $last_checked_at
  * @property Carbon|null $last_success_at
@@ -42,11 +39,7 @@ use Illuminate\Support\Carbon;
     'enabled',
     'interval_minutes',
     'timeout_seconds',
-    'expected_http_status',
-    'expected_json_key',
-    'expected_json_value',
-    'expected_body_contains',
-    'max_response_time_ms',
+    'check_criteria',
     'current_status',
     'last_checked_at',
     'last_success_at',
@@ -66,9 +59,22 @@ class Monitor extends Model
         'enabled' => true,
         'interval_minutes' => 5,
         'timeout_seconds' => 10,
-        'expected_http_status' => 200,
+        'check_criteria' => '[{"type":"http_status","expected":200}]',
         'current_status' => 'unknown',
     ];
+
+    /**
+     * @return array<int, array<string, mixed>>
+     */
+    public static function defaultCheckCriteria(): array
+    {
+        return [
+            [
+                'type' => MonitorCheckCriterionType::HttpStatus->value,
+                'expected' => 200,
+            ],
+        ];
+    }
 
     /**
      * @return BelongsTo<Project, $this>
@@ -118,8 +124,7 @@ class Monitor extends Model
             'enabled' => 'boolean',
             'interval_minutes' => 'integer',
             'timeout_seconds' => 'integer',
-            'expected_http_status' => 'integer',
-            'max_response_time_ms' => 'integer',
+            'check_criteria' => 'array',
             'current_status' => MonitorStatus::class,
             'last_checked_at' => 'datetime',
             'last_success_at' => 'datetime',

@@ -13,6 +13,7 @@ This application is a Laravel application and its main Laravel ecosystems packag
 - laravel/fortify (FORTIFY) - v1
 - laravel/framework (LARAVEL) - v13
 - laravel/prompts (PROMPTS) - v0
+- laravel/reverb (REVERB) - v1
 - livewire/flux (FLUXUI_FREE) - v2
 - livewire/livewire (LIVEWIRE) - v4
 - larastan/larastan (LARASTAN) - v3
@@ -24,6 +25,7 @@ This application is a Laravel application and its main Laravel ecosystems packag
 - pestphp/pest (PEST) - v4
 - phpunit/phpunit (PHPUNIT) - v12
 - tailwindcss (TAILWINDCSS) - v4
+- laravel-echo (ECHO) - v2
 
 ## Skills Activation
 

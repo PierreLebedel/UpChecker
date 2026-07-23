@@ -13,4 +13,24 @@ enum CheckStatus: string
     {
         return $this !== self::Up;
     }
+
+    public function label(): string
+    {
+        return match ($this) {
+            self::Up => 'OK',
+            self::Down => 'Indisponible',
+            self::Timeout => 'Timeout',
+            self::Invalid => 'Réponse invalide',
+        };
+    }
+
+    public function color(): string
+    {
+        return match ($this) {
+            self::Up => 'emerald',
+            self::Down => 'rose',
+            self::Timeout => 'orange',
+            self::Invalid => 'violet',
+        };
+    }
 }

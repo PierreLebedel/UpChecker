@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\MonitorCheckCriterionType;
 use App\Enums\MonitorStatus;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -20,11 +21,9 @@ return new class extends Migration
             $table->boolean('enabled')->default(true);
             $table->unsignedTinyInteger('interval_minutes')->default(5);
             $table->unsignedTinyInteger('timeout_seconds')->default(10);
-            $table->unsignedSmallInteger('expected_http_status')->default(200);
-            $table->string('expected_json_key')->nullable();
-            $table->string('expected_json_value')->nullable();
-            $table->text('expected_body_contains')->nullable();
-            $table->unsignedInteger('max_response_time_ms')->nullable();
+            $table->json('check_criteria')->default(json_encode([
+                ['type' => MonitorCheckCriterionType::HttpStatus->value, 'expected' => 200],
+            ]));
             $table->string('current_status')->default(MonitorStatus::Unknown->value);
             $table->timestamp('last_checked_at')->nullable();
             $table->timestamp('last_success_at')->nullable();

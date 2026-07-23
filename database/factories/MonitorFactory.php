@@ -26,7 +26,7 @@ class MonitorFactory extends Factory
             'enabled' => true,
             'interval_minutes' => 5,
             'timeout_seconds' => 10,
-            'expected_http_status' => 200,
+            'check_criteria' => Monitor::defaultCheckCriteria(),
             'current_status' => MonitorStatus::Unknown,
             'next_check_at' => now(),
         ];

@@ -3,6 +3,7 @@
 use App\Enums\AlertChannel;
 use App\Enums\AlertDeliveryStatus;
 use App\Enums\CheckStatus;
+use App\Enums\MonitorCheckCriterionType;
 use App\Enums\MonitorStatus;
 use App\Models\AlertDelivery;
 use App\Models\CheckResult;
@@ -38,7 +39,9 @@ test('monitor defaults are aligned with the product plan', function () {
     expect($monitor->enabled)->toBeTrue()
         ->and($monitor->interval_minutes)->toBe(5)
         ->and($monitor->timeout_seconds)->toBe(10)
-        ->and($monitor->expected_http_status)->toBe(200)
+        ->and($monitor->check_criteria)->toBe([
+            ['type' => MonitorCheckCriterionType::HttpStatus->value, 'expected' => 200],
+        ])
         ->and($monitor->current_status)->toBe(MonitorStatus::Unknown);
 });
 
@@ -53,10 +56,13 @@ test('monitor due scope returns enabled monitors ready to be checked', function 
 test('enum failure helpers expose monitoring semantics', function () {
     expect(MonitorStatus::Up->isFailure())->toBeFalse()
         ->and(MonitorStatus::Down->isFailure())->toBeTrue()
+        ->and(MonitorStatus::Down->color())->toBe('rose')
         ->and(MonitorStatus::Timeout->isFailure())->toBeTrue()
         ->and(MonitorStatus::Invalid->isFailure())->toBeTrue()
         ->and(CheckStatus::Up->isFailure())->toBeFalse()
-        ->and(CheckStatus::Down->isFailure())->toBeTrue();
+        ->and(CheckStatus::Down->isFailure())->toBeTrue()
+        ->and(CheckStatus::Down->label())->toBe('Indisponible')
+        ->and(CheckStatus::Down->color())->toBe('rose');
 });
 
 test('alert delivery defaults to mail and pending', function () {

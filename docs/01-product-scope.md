@@ -23,7 +23,7 @@ L'application doit rester volontairement simple en V1. Les notions d'equipe, de 
 - Gerer ses projets.
 - Gerer les URLs surveillees d'un projet.
 - Definir une regle de succes simple pour chaque URL.
-- Choisir un intervalle de verification parmi 1, 5, 15, 30 ou 60 minutes.
+- Choisir un intervalle de verification parmi 1, 2, 5, 15, 30 ou 60 minutes.
 - Executer les verifications via le scheduler Laravel et des jobs en queue.
 - Enregistrer chaque resultat de verification pendant un mois.
 - Envoyer un email au proprietaire lors du passage d'un etat OK vers un etat d'erreur.
