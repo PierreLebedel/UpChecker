@@ -36,16 +36,16 @@
         </div>
 
         <div class="flex flex-wrap gap-2">
-                <flux:button size="sm" icon="plus" wire:click="addCriterion('{{ $httpStatusCriterion->value }}')" :disabled="$this->hasHttpStatusCriterion()">
-                    Code HTTP
-                </flux:button>
-                <flux:button size="sm" icon="plus" wire:click="addCriterion('{{ $jsonPathCriterion->value }}')">
-                    Champ JSON
-                </flux:button>
-                <flux:button size="sm" icon="plus" wire:click="addCriterion('{{ $bodyContainsCriterion->value }}')">
-                    Texte réponse
-                </flux:button>
-            </div>
+            <flux:button size="sm" icon="plus" wire:click="addCriterion('{{ $httpStatusCriterion->value }}')" :disabled="$this->hasHttpStatusCriterion()">
+                Code HTTP
+            </flux:button>
+            <flux:button size="sm" icon="plus" wire:click="addCriterion('{{ $jsonPathCriterion->value }}')">
+                Champ JSON
+            </flux:button>
+            <flux:button size="sm" icon="plus" wire:click="addCriterion('{{ $bodyContainsCriterion->value }}')">
+                Texte réponse
+            </flux:button>
+        </div>
 
         <flux:error name="checkCriteria" />
 

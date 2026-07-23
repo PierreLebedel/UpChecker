@@ -25,12 +25,8 @@
             <flux:spacer />
 
             <flux:sidebar.nav>
-                <flux:sidebar.item icon="folder-git-2" href="https://github.com/laravel/livewire-starter-kit" target="_blank">
+                <flux:sidebar.item icon="arrow-top-right-on-square" href="https://github.com/PierreLebedel/UpChecker" target="_blank">
                     {{ __('Repository') }}
-                </flux:sidebar.item>
-
-                <flux:sidebar.item icon="book-open-text" href="https://laravel.com/docs/starter-kits#livewire" target="_blank">
-                    {{ __('Documentation') }}
                 </flux:sidebar.item>
             </flux:sidebar.nav>
 
@@ -47,6 +43,7 @@
                 <flux:profile
                     :initials="auth()->user()->initials()"
                     icon-trailing="chevron-down"
+                    avatar:color="rose"
                 />
 
                 <flux:menu>
@@ -56,6 +53,7 @@
                                 <flux:avatar
                                     :name="auth()->user()->name"
                                     :initials="auth()->user()->initials()"
+                                    color="rose"
                                 />
 
                                 <div class="grid flex-1 text-start text-sm leading-tight">
