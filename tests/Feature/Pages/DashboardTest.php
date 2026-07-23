@@ -112,7 +112,7 @@ test('dashboard displays recent failure cards above monitored urls', function ()
     $this->actingAs($user)
         ->get(route('dashboard'))
         ->assertOk()
-        ->assertSeeInOrder(['Erreurs des dernières 24 h', 'Dernière exec.'])
+        ->assertSeeInOrder(['Erreurs récentes', 'Dernière exec.'])
         ->assertSee('API publique')
         ->assertSee('https://example.com/health')
         ->assertSee('Production')
@@ -143,7 +143,7 @@ test('dashboard hides recent failure section when there are no failures in the l
     $this->actingAs($user)
         ->get(route('dashboard'))
         ->assertOk()
-        ->assertDontSee('Erreurs des dernières 24 h')
+        ->assertDontSee('Erreurs récentes')
         ->assertDontSee('Old failure marker.');
 });
 
@@ -272,7 +272,7 @@ test('dashboard refreshes monitor cards when a monitor check completed event is 
 
     $component
         ->call('refreshAfterMonitorCheckCompleted')
-        ->assertSee('Erreurs des dernières 24 h')
+        ->assertSee('Erreurs récentes')
         ->assertSee('Indisponible')
         ->assertSee('1 erreur')
         ->assertSee('300 ms')

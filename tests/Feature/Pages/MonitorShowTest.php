@@ -175,7 +175,7 @@ test('monitor detail page displays an overdue next check as now', function () {
         ->assertSee('data-relative-time-mode="due"', false);
 });
 
-test('monitor detail chart uses the latest one hundred fifty checks independently from table history', function () {
+test('monitor detail chart uses the latest one hundred twenty checks independently from table history', function () {
     Carbon::setTestNow(Carbon::parse('2026-07-16 12:00:00'));
 
     $user = User::factory()->create();
@@ -185,11 +185,11 @@ test('monitor detail chart uses the latest one hundred fifty checks independentl
     CheckResult::factory()->for($monitor)->create([
         'status' => CheckStatus::Up,
         'response_time_ms' => 900,
-        'checked_at' => now()->subMinutes(151),
+        'checked_at' => now()->subMinutes(121),
         'checked_url' => $monitor->url,
     ]);
 
-    foreach (range(1, 150) as $minute) {
+    foreach (range(1, 120) as $minute) {
         $factory = $minute === 40
             ? CheckResult::factory()->down()
             : CheckResult::factory();
@@ -206,10 +206,10 @@ test('monitor detail chart uses the latest one hundred fifty checks independentl
     $this->actingAs($user)
         ->get(route('monitors.show', $monitor))
         ->assertOk()
-        ->assertSee('16/07/2026 09:30:00 - OK - 250 ms', false)
+        ->assertSee('16/07/2026 10:00:00 - OK - 220 ms', false)
         ->assertSee('16/07/2026 11:20:00 - Indisponible - 250 ms - HTTP 500 - Unexpected HTTP status 500.', false)
         ->assertSee('16/07/2026 11:59:00 - OK - 101 ms', false)
-        ->assertDontSee('16/07/2026 09:29:00 - OK - 900 ms', false)
+        ->assertDontSee('16/07/2026 09:59:00 - OK - 900 ms', false)
         ->assertSee('Unexpected HTTP status 500.')
         ->assertSee('250 ms');
 });
