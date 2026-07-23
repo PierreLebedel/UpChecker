@@ -11,7 +11,7 @@
             </flux:sidebar.header>
 
             <flux:sidebar.nav>
-                <flux:sidebar.group :heading="__('Platform')" class="grid">
+                {{--<flux:sidebar.group :heading="__('Platform')" class="grid">--}}
                     <flux:sidebar.item icon="home" :href="route('dashboard')" :current="request()->routeIs('dashboard')" wire:navigate>
                         {{ __('Dashboard') }}
                     </flux:sidebar.item>
@@ -19,15 +19,13 @@
                     <flux:sidebar.item icon="folder-git-2" :href="route('projects.index')" :current="request()->routeIs('projects.*') || request()->routeIs('monitors.*')" wire:navigate>
                         {{ __('Projets') }}
                     </flux:sidebar.item>
-                </flux:sidebar.group>
+                {{--</flux:sidebar.group>--}}
             </flux:sidebar.nav>
 
             <flux:spacer />
 
             <flux:sidebar.nav>
-                <flux:sidebar.item icon="arrow-top-right-on-square" href="https://github.com/PierreLebedel/UpChecker" target="_blank">
-                    {{ __('Repository') }}
-                </flux:sidebar.item>
+                <flux:sidebar.item icon="arrow-top-right-on-square" href="https://github.com/PierreLebedel/UpChecker" target="_blank">Repo GitHub</flux:sidebar.item>
             </flux:sidebar.nav>
 
             <x-desktop-user-menu class="hidden lg:block" :name="auth()->user()->name" />
@@ -67,9 +65,7 @@
                     <flux:menu.separator />
 
                     <flux:menu.radio.group>
-                        <flux:menu.item :href="route('profile.edit')" icon="cog" wire:navigate>
-                            {{ __('Settings') }}
-                        </flux:menu.item>
+                        <flux:menu.item :href="route('profile.edit')" icon="cog" wire:navigate>Réglages</flux:menu.item>
                     </flux:menu.radio.group>
 
                     <flux:menu.separator />
@@ -82,9 +78,7 @@
                             icon="arrow-right-start-on-rectangle"
                             class="w-full cursor-pointer"
                             data-test="logout-button"
-                        >
-                            {{ __('Log out') }}
-                        </flux:menu.item>
+                        >Déconnexion</flux:menu.item>
                     </form>
                 </flux:menu>
             </flux:dropdown>
