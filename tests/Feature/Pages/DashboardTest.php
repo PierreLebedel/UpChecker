@@ -14,7 +14,7 @@ afterEach(function () {
     Carbon::setTestNow();
 });
 
-test('dashboard displays monitor cards sorted by name', function () {
+test('dashboard displays monitor rows sorted by project name then monitor name', function () {
     Carbon::setTestNow(Carbon::parse('2026-07-16 12:00:00'));
 
     $user = User::factory()->create();
@@ -55,7 +55,7 @@ test('dashboard displays monitor cards sorted by name', function () {
     $this->actingAs($user)
         ->get(route('dashboard'))
         ->assertOk()
-        ->assertSeeInOrder(['Admin API', 'Zebra API'])
+        ->assertSeeInOrder(['Backoffice', 'Admin API', 'Production', 'Zebra API'])
         ->assertSee('Backoffice')
         ->assertSee('Production')
         ->assertSee(route('projects.show', $backoffice), false)

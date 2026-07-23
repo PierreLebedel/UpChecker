@@ -11,14 +11,13 @@
 <div class="overflow-x-auto">
     <flux:table>
         <flux:table.columns>
+            <flux:table.column><span class="sr-only">Statut</span></flux:table.column>
             @if ($showProjectColumn)
                 <flux:table.column>URL</flux:table.column>
-                <flux:table.column>Projet</flux:table.column>
             @else
                 <flux:table.column>Nom</flux:table.column>
                 <flux:table.column>URL</flux:table.column>
             @endif
-            <flux:table.column>Statut</flux:table.column>
             <flux:table.column>Historique</flux:table.column>
             <flux:table.column><flux:icon name="clock" /></flux:table.column>
             <flux:table.column>Dernière exec.</flux:table.column>
@@ -33,19 +32,26 @@
             @foreach ($monitors as $monitor)
                 <flux:table.row :key="$monitor->id">
 
+                    <flux:table.cell class="w-1 pe-1">
+                        <flux:badge variant="solid" :color="$monitor->current_status->color()" class="size-3.5 rounded-full! p-0!" title="Statut : {{ $monitor->current_status->label() }}">
+                            <span class="sr-only">{{ $monitor->current_status->label() }}</span>
+                        </flux:badge>
+                    </flux:table.cell>
+
                     @if ($showProjectColumn)
                         <flux:table.cell>
                             <div class="min-w-64">
-                                <a href="{{ route('monitors.show', $monitor) }}" wire:navigate class="font-medium text-zinc-900 hover:text-zinc-700 dark:text-zinc-100 dark:hover:text-zinc-300">
-                                    {{ $monitor->name }}
-                                </a>
+                                <div class="flex flex-wrap items-baseline gap-1">
+                                    <a href="{{ route('projects.show', $monitor->project) }}" wire:navigate class="font-medium text-xs text-zinc-500 hover:text-zinc-950 dark:text-zinc-400 dark:hover:text-zinc-100">
+                                        {{ $monitor->project->name }}
+                                    </a>
+                                    <span class="text-zinc-400 dark:text-zinc-500 text-xs">/</span>
+                                    <a href="{{ route('monitors.show', $monitor) }}" wire:navigate class="font-medium text-zinc-900 hover:text-zinc-700 dark:text-zinc-100 dark:hover:text-zinc-300">
+                                        {{ $monitor->name }}
+                                    </a>
+                                </div>
                                 <div class="truncate text-xs text-zinc-500 dark:text-zinc-400">{{ $monitor->url }}</div>
                             </div>
-                        </flux:table.cell>
-                        <flux:table.cell>
-                            <a href="{{ route('projects.show', $monitor->project) }}" wire:navigate class="whitespace-nowrap text-sm font-medium text-zinc-700 hover:text-zinc-950 dark:text-zinc-300 dark:hover:text-zinc-100">
-                                {{ $monitor->project->name }}
-                            </a>
                         </flux:table.cell>
                     @else
                         <flux:table.cell>
@@ -57,17 +63,6 @@
                             <div class="truncate text-xs">{{ $monitor->url }}</div>
                         </flux:table.cell>
                     @endif
-
-                    <flux:table.cell class="w-1">
-                        <div class="flex flex-wrap items-center gap-2">
-                            <flux:badge variant="solid" :color="$monitor->current_status->color()">
-                                {{ $monitor->current_status->label() }}
-                            </flux:badge>
-                            @unless ($monitor->enabled)
-                                <flux:badge color="zinc">Désactivé</flux:badge>
-                            @endunless
-                        </div>
-                    </flux:table.cell>
 
                     <flux:table.cell class="w-1">
                         <x-monitor-check-sparkline :results="$monitor->checkResults" />

@@ -2,6 +2,7 @@
 
 use App\Enums\CheckStatus;
 use App\Models\Monitor;
+use App\Models\Project;
 use Carbon\CarbonInterface;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Carbon;
@@ -29,6 +30,9 @@ new #[Title('Dashboard')] class extends Component
     #[Computed]
     public function monitors(): Collection
     {
+        $monitorTable = (new Monitor)->getTable();
+        $projectTable = (new Project)->getTable();
+
         return Monitor::query()
             ->select([
                 'id',
@@ -56,6 +60,9 @@ new #[Title('Dashboard')] class extends Component
                     ->latest('checked_at')
                     ->limit(30),
             ])
+            ->orderBy(Project::query()
+                ->select('name')
+                ->whereColumn("{$projectTable}.id", "{$monitorTable}.project_id"))
             ->orderBy('name')
             ->get();
     }
@@ -67,6 +74,8 @@ new #[Title('Dashboard')] class extends Component
     public function monitorsWithRecentFailures(): Collection
     {
         $recentFailuresSince = $this->recentFailuresSince();
+        $monitorTable = (new Monitor)->getTable();
+        $projectTable = (new Project)->getTable();
 
         return Monitor::query()
             ->select([
@@ -105,6 +114,9 @@ new #[Title('Dashboard')] class extends Component
                     ->where('status', '!=', CheckStatus::Up->value)
                     ->where('checked_at', '>=', $recentFailuresSince),
             ])
+            ->orderBy(Project::query()
+                ->select('name')
+                ->whereColumn("{$projectTable}.id", "{$monitorTable}.project_id"))
             ->orderBy('name')
             ->get();
     }

@@ -510,9 +510,9 @@ new #[Title('Détail URL')] class extends Component
                 <div class="overflow-x-auto">
                     <flux:table>
                         <flux:table.columns>
+                            <flux:table.column></flux:table.column>
                             <flux:table.column>Date</flux:table.column>
                             <flux:table.column></flux:table.column>
-                            <flux:table.column>Statut</flux:table.column>
                             <flux:table.column>HTTP</flux:table.column>
                             <flux:table.column>Temps</flux:table.column>
                             <flux:table.column>Message</flux:table.column>
@@ -521,19 +521,21 @@ new #[Title('Détail URL')] class extends Component
                         <flux:table.rows>
                             @foreach ($this->checkResults as $checkResult)
                                 <flux:table.row :key="$checkResult->id">
+                                    <flux:table.cell class="w-1 pe-1">
+                                        <flux:badge variant="solid" :color="$checkResult->status->color()" class="size-3.5 rounded-full! p-0!" title="Statut : {{ $checkResult->status->label() }}">
+                                            <span class="sr-only">{{ $checkResult->status->label() }}</span>
+                                        </flux:badge>
+                                    </flux:table.cell>
                                     <flux:table.cell>
                                         <div class="whitespace-nowrap">{{ $checkResult->checked_at->format('d/m/Y H:i') }}</div>
                                     </flux:table.cell>
                                     <flux:table.cell>
                                         <x-relative-time :date="$checkResult->checked_at" class="block text-sm text-zinc-500 dark:text-zinc-400" />
                                     </flux:table.cell>
-                                    <flux:table.cell>
-                                        <flux:badge :color="$checkResult->status->color()">{{ $checkResult->status->label() }}</flux:badge>
-                                    </flux:table.cell>
                                     <flux:table.cell>{{ $checkResult->http_status ?? '—' }}</flux:table.cell>
                                     <flux:table.cell>{{ $checkResult->response_time_ms ? $checkResult->response_time_ms.' ms' : '—' }}</flux:table.cell>
                                     <flux:table.cell>
-                                        <div class="max-w-xl truncate">{{ $checkResult->error_message ?? $checkResult->response_excerpt ?? '—' }}</div>
+                                        <div class="max-w-xl truncate text-xs">{{ $checkResult->error_message ?? $checkResult->response_excerpt ?? '—' }}</div>
                                     </flux:table.cell>
                                 </flux:table.row>
                             @endforeach

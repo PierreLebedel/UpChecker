@@ -8,6 +8,7 @@
     @if ($date instanceof DateTimeInterface)
         @php
             $isDue = $due && $date <= now();
+            $isCurrent = abs($date->getTimestamp() - now()->getTimestamp()) < 60;
         @endphp
 
         <time
@@ -16,7 +17,7 @@
             data-relative-time-mode="{{ $due ? 'due' : 'relative' }}"
             title="{{ $date->format('d/m/Y H:i:s') }}"
             {{ $attributes }}
-        >{{ $isDue ? 'maintenant' : $date->diffForHumans() }}</time>
+        >{{ $isDue || $isCurrent ? 'maintenant' : $date->diffForHumans() }}</time>
     @else
         <span {{ $attributes }}>{{ $fallback }}</span>
     @endif

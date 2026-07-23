@@ -32,8 +32,8 @@ enum MonitorStatus: string
             self::Unknown => 'zinc',
             self::Up => 'emerald',
             self::Down => 'rose',
-            self::Timeout => 'orange',
-            self::Invalid => 'violet',
+            self::Timeout => 'rose',
+            self::Invalid => 'orange',
         };
     }
 

@@ -58,11 +58,15 @@ test('enum failure helpers expose monitoring semantics', function () {
         ->and(MonitorStatus::Down->isFailure())->toBeTrue()
         ->and(MonitorStatus::Down->color())->toBe('rose')
         ->and(MonitorStatus::Timeout->isFailure())->toBeTrue()
+        ->and(MonitorStatus::Timeout->color())->toBe('rose')
         ->and(MonitorStatus::Invalid->isFailure())->toBeTrue()
+        ->and(MonitorStatus::Invalid->color())->toBe('orange')
         ->and(CheckStatus::Up->isFailure())->toBeFalse()
         ->and(CheckStatus::Down->isFailure())->toBeTrue()
         ->and(CheckStatus::Down->label())->toBe('Indisponible')
-        ->and(CheckStatus::Down->color())->toBe('rose');
+        ->and(CheckStatus::Down->color())->toBe('rose')
+        ->and(CheckStatus::Timeout->color())->toBe('rose')
+        ->and(CheckStatus::Invalid->color())->toBe('orange');
 });
 
 test('alert delivery defaults to mail and pending', function () {

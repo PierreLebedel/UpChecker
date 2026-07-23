@@ -29,8 +29,8 @@ enum CheckStatus: string
         return match ($this) {
             self::Up => 'emerald',
             self::Down => 'rose',
-            self::Timeout => 'orange',
-            self::Invalid => 'violet',
+            self::Timeout => 'rose',
+            self::Invalid => 'orange',
         };
     }
 }

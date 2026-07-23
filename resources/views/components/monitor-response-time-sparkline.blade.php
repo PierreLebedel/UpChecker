@@ -51,8 +51,8 @@
     $statusColor = fn ($status) => match ($status->value) {
         'up' => '#10b981',
         'down' => '#f43f5e',
-        'timeout' => '#f97316',
-        'invalid' => '#8b5cf6',
+        'timeout' => '#f43f5e',
+        'invalid' => '#f97316',
         default => '#71717a',
     };
 
@@ -135,8 +135,8 @@
             <div class="flex items-center gap-3">
                 <span class="inline-flex items-center gap-1.5"><span class="size-2 rounded-full bg-emerald-500"></span>Succès</span>
                 <span class="inline-flex items-center gap-1.5"><span class="size-2 rounded-full bg-rose-500"></span>Erreur</span>
-                <span class="inline-flex items-center gap-1.5"><span class="size-2 rounded-full bg-orange-500"></span>Timeout</span>
-                <span class="inline-flex items-center gap-1.5"><span class="size-2 rounded-full bg-violet-500"></span>Invalide</span>
+                <span class="inline-flex items-center gap-1.5"><span class="size-2 rounded-full bg-rose-500"></span>Timeout</span>
+                <span class="inline-flex items-center gap-1.5"><span class="size-2 rounded-full bg-orange-500"></span>Invalide</span>
             </div>
             <div class="flex items-center gap-1">
                 <span>{{ $windowStart->timezone($displayTimezone)->format('H\hi') }}</span>

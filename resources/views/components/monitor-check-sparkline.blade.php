@@ -31,8 +31,8 @@
             $color = match ($checkResult->status->value) {
                 'up' => 'bg-emerald-500',
                 'down' => 'bg-rose-500',
-                'timeout' => 'bg-orange-500',
-                'invalid' => 'bg-violet-500',
+                'timeout' => 'bg-rose-500',
+                'invalid' => 'bg-orange-500',
                 default => 'bg-zinc-400',
             };
             $title = $checkResult->checked_at->format('d/m/Y H:i:s').' - '.$checkResult->status->label();

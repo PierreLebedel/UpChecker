@@ -20,7 +20,7 @@ const formatRelativeTime = (date, mode = 'relative') => {
         return 'maintenant';
     }
 
-    if (absDiff < 1000) {
+    if (absDiff < 60000) {
         return 'maintenant';
     }
 
