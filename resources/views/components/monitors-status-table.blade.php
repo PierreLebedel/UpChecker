@@ -20,6 +20,7 @@
             @endif
             <flux:table.column>Statut</flux:table.column>
             <flux:table.column>Historique</flux:table.column>
+            <flux:table.column><flux:icon name="clock" /></flux:table.column>
             <flux:table.column>Dernière exec.</flux:table.column>
             <flux:table.column>Dernière erreur</flux:table.column>
             <flux:table.column>Prochaine exec.</flux:table.column>
@@ -70,6 +71,10 @@
 
                     <flux:table.cell class="w-1">
                         <x-monitor-check-sparkline :results="$monitor->checkResults" />
+                    </flux:table.cell>
+
+                    <flux:table.cell class="w-1">
+                        {{ $monitor->interval_minutes }}&nbsp;min
                     </flux:table.cell>
 
                     <flux:table.cell class="w-1">

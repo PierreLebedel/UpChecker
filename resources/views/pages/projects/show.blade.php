@@ -87,6 +87,7 @@ new #[Title('Projet')] class extends Component
                 'last_checked_at',
                 'last_failure_at',
                 'next_check_at',
+                'interval_minutes',
             ])
             ->whereBelongsTo($this->currentProject, 'project')
             ->with([

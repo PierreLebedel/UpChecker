@@ -37,6 +37,7 @@ new #[Title('Dashboard')] class extends Component
                 'last_checked_at',
                 'last_failure_at',
                 'next_check_at',
+                'interval_minutes',
             ])
             ->whereHas('project', fn ($query) => $query->whereBelongsTo(Auth::user()))
             ->with([
