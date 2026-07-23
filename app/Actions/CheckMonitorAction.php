@@ -88,6 +88,7 @@ class CheckMonitorAction
     }
 
     /**
+     * @param  array<string, mixed>  $criterion
      * @return array{0: CheckStatus, 1: string|null}
      */
     private function evaluateHttpStatusCriterion(array $criterion, Response $response): array
