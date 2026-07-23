@@ -7,8 +7,10 @@ use App\Models\Monitor;
 use App\Models\Project;
 use App\Models\User;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Cache;
 
 afterEach(function () {
+    Cache::flush();
     Carbon::setTestNow();
 });
 
@@ -145,6 +147,64 @@ test('dashboard hides recent failure section when there are no failures in the l
         ->assertOk()
         ->assertDontSee('Erreurs récentes')
         ->assertDontSee('Old failure marker.');
+});
+
+test('dashboard can forget recent failures until a newer failure is recorded', function () {
+    Carbon::setTestNow(Carbon::parse('2026-07-16 12:00:00'));
+
+    $user = User::factory()->create();
+    $project = Project::factory()->for($user)->create(['name' => 'Production']);
+    $monitor = Monitor::factory()->for($project)->create([
+        'name' => 'API publique',
+        'url' => 'https://example.com/health',
+        'current_status' => MonitorStatus::Down,
+        'last_failure_at' => now()->subMinutes(5),
+    ]);
+
+    CheckResult::factory()->down()->for($monitor)->create([
+        'checked_at' => now()->subMinutes(5),
+        'checked_url' => $monitor->url,
+        'error_message' => 'Initial failure marker.',
+    ]);
+    CheckResult::factory()->down()->for($monitor)->create([
+        'checked_at' => now()->subHours(2),
+        'checked_url' => $monitor->url,
+        'error_message' => 'Older failure marker.',
+    ]);
+
+    $component = Livewire\Livewire::actingAs($user)
+        ->test('pages::dashboard')
+        ->assertSee('Erreurs récentes')
+        ->assertSee('2 erreurs')
+        ->assertSee('Initial failure marker.');
+
+    $component
+        ->call('forgetRecentFailures')
+        ->assertDontSee('Erreurs récentes')
+        ->assertDontSee('Initial failure marker.');
+
+    expect(Cache::has("users:{$user->id}:dashboard:recent-failures-forgotten-at"))->toBeTrue();
+
+    Carbon::setTestNow(Carbon::parse('2026-07-16 12:02:00'));
+
+    CheckResult::factory()->down()->for($monitor)->create([
+        'response_time_ms' => 320,
+        'checked_at' => now(),
+        'checked_url' => $monitor->url,
+        'error_message' => 'New failure marker.',
+    ]);
+
+    $monitor->forceFill([
+        'last_failure_at' => now(),
+    ])->save();
+
+    $component
+        ->call('refreshAfterMonitorCheckCompleted')
+        ->assertSee('Erreurs récentes')
+        ->assertSee('1 erreur')
+        ->assertSee('New failure marker.')
+        ->assertDontSee('Initial failure marker.')
+        ->assertDontSee('Older failure marker.');
 });
 
 test('dashboard displays an overdue next check as now', function () {

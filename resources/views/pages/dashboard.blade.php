@@ -2,8 +2,11 @@
 
 use App\Enums\CheckStatus;
 use App\Models\Monitor;
+use Carbon\CarbonInterface;
+use Illuminate\Support\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Title;
 use Livewire\Component;
@@ -63,6 +66,8 @@ new #[Title('Dashboard')] class extends Component
     #[Computed]
     public function monitorsWithRecentFailures(): Collection
     {
+        $recentFailuresSince = $this->recentFailuresSince();
+
         return Monitor::query()
             ->select([
                 'id',
@@ -77,7 +82,7 @@ new #[Title('Dashboard')] class extends Component
             ->whereHas('project', fn ($query) => $query->whereBelongsTo(Auth::user()))
             ->whereHas('checkResults', fn ($query) => $query
                 ->where('status', '!=', CheckStatus::Up->value)
-                ->where('checked_at', '>=', now()->subDay()))
+                ->where('checked_at', '>=', $recentFailuresSince))
             ->with([
                 'project:id,user_id,name',
                 'checkResults' => fn ($query) => $query
@@ -91,17 +96,24 @@ new #[Title('Dashboard')] class extends Component
                         'checked_at',
                     ])
                     ->where('status', '!=', CheckStatus::Up->value)
-                    ->where('checked_at', '>=', now()->subDay())
+                    ->where('checked_at', '>=', $recentFailuresSince)
                     ->latest('checked_at')
                     ->limit(1),
             ])
             ->withCount([
                 'checkResults as recent_failures_count' => fn ($query) => $query
                     ->where('status', '!=', CheckStatus::Up->value)
-                    ->where('checked_at', '>=', now()->subDay()),
+                    ->where('checked_at', '>=', $recentFailuresSince),
             ])
             ->orderBy('name')
             ->get();
+    }
+
+    public function forgetRecentFailures(): void
+    {
+        Cache::forever($this->recentFailuresForgottenAtCacheKey(), now()->toIso8601String());
+
+        unset($this->monitorsWithRecentFailures);
     }
 
     /**
@@ -110,6 +122,25 @@ new #[Title('Dashboard')] class extends Component
     public function refreshAfterMonitorCheckCompleted(array $event = []): void
     {
         unset($this->monitors, $this->monitorsWithRecentFailures);
+    }
+
+    private function recentFailuresSince(): CarbonInterface
+    {
+        $since = now()->subDay();
+        $forgottenAt = Cache::get($this->recentFailuresForgottenAtCacheKey());
+
+        if (! is_string($forgottenAt) || $forgottenAt === '') {
+            return $since;
+        }
+
+        $forgottenSince = Carbon::parse($forgottenAt);
+
+        return $forgottenSince->greaterThan($since) ? $forgottenSince : $since;
+    }
+
+    private function recentFailuresForgottenAtCacheKey(): string
+    {
+        return 'users:'.Auth::id().':dashboard:recent-failures-forgotten-at';
     }
 }; ?>
 
@@ -120,14 +151,17 @@ new #[Title('Dashboard')] class extends Component
 
     @if ($this->monitorsWithRecentFailures->isNotEmpty())
     <div class="space-y-4">
-        <div>
-            <div class="flex flex-wrap items-center gap-3 min-h-10">
-                <flux:heading size="xl">
-                    Erreurs récentes
-                </flux:heading>
-                <flux:badge variant="solid" color="rose">{{ $this->monitorsWithRecentFailures->count() }}</flux:badge>
-            </div>
-        </div>
+	        <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+	            <div class="flex flex-wrap items-center gap-3 min-h-10">
+	                <flux:heading size="xl">
+	                    Erreurs récentes
+	                </flux:heading>
+	                <flux:badge variant="solid" color="rose">{{ $this->monitorsWithRecentFailures->count() }}</flux:badge>
+	            </div>
+                <flux:button icon="x-mark" wire:click="forgetRecentFailures" wire:loading.attr="disabled">
+                    Oublier
+                </flux:button>
+	        </div>
         <div class="grid gap-3">
             <div class="grid gap-3 lg:grid-cols-2 2xl:grid-cols-3">
                 @foreach ($this->monitorsWithRecentFailures as $monitor)
