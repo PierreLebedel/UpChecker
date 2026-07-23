@@ -20,7 +20,7 @@ new #[Title('Détail URL')] class extends Component
 {
     use WithPagination;
 
-    private const int SparklineCheckResultLimit = 150;
+    private const int SparklineCheckResultLimit = 120;
 
     public string $monitor;
 
@@ -396,7 +396,7 @@ new #[Title('Détail URL')] class extends Component
 
 <section class="flex w-full flex-col gap-6">
     <flux:breadcrumbs>
-        <flux:breadcrumbs.item :href="route('dashboard')" separator="slash">Home</flux:breadcrumbs.item>
+        <flux:breadcrumbs.item :href="route('dashboard')" separator="slash">Dashboard</flux:breadcrumbs.item>
         <flux:breadcrumbs.item :href="route('projects.index')" separator="slash">Projets</flux:breadcrumbs.item>
         <flux:breadcrumbs.item :href="route('projects.show', $this->currentMonitor->project)" separator="slash">{{ $this->currentMonitor->project->name }}</flux:breadcrumbs.item>
         <flux:breadcrumbs.item separator="slash">{{ $this->currentMonitor->name }}</flux:breadcrumbs.item>
@@ -404,10 +404,7 @@ new #[Title('Détail URL')] class extends Component
 
     <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div class="min-w-0">
-
-            
-
-            <div class="mt-4 flex flex-wrap items-center gap-3">
+            <div class="flex flex-wrap items-center gap-3">
                 <flux:heading size="xl">{{ $this->currentMonitor->name }}</flux:heading>
                 <flux:badge variant="solid" :color="$this->currentMonitor->current_status->color()">
                     {{ $this->currentMonitor->current_status->label() }}
@@ -415,9 +412,9 @@ new #[Title('Détail URL')] class extends Component
                 @unless ($this->currentMonitor->enabled)
                     <flux:badge color="zinc">Désactivé</flux:badge>
                 @endunless
+                
+                <flux:text class="">{{ $this->currentMonitor->url }}</flux:text>
             </div>
-
-            <flux:text class="mt-1 break-all">{{ $this->currentMonitor->url }}</flux:text>
         </div>
 
         <div class="flex flex-wrap gap-2">
@@ -432,7 +429,7 @@ new #[Title('Détail URL')] class extends Component
     </div>
 
     <div class="grid grid-cols-1 gap-4 lg:grid-cols-5">
-        <flux:card class="lg:col-span-2">
+        <flux:card class="lg:col-span-2 py-3">
             <div class="flex flex-col gap-4">
                 <div>
                     <flux:heading size="lg">Statut actuel</flux:heading>
@@ -459,7 +456,7 @@ new #[Title('Détail URL')] class extends Component
             </div>
         </flux:card>
 
-        <flux:card>
+        <flux:card class=" py-3">
             <div class="flex flex-col gap-4">
                 <flux:heading size="lg">Vérification</flux:heading>
 
@@ -476,8 +473,8 @@ new #[Title('Détail URL')] class extends Component
             </div>
         </flux:card>
 
-        <flux:card class="lg:col-span-2">
-            <div class="flex flex-col gap-4">
+        <flux:card class="lg:col-span-2 py-3">
+            <div class="flex flex-col gap-3">
                 <flux:heading size="lg">Critères attendus</flux:heading>
 
                 <div class="flex flex-wrap gap-2">
@@ -489,7 +486,7 @@ new #[Title('Détail URL')] class extends Component
         </flux:card>
     </div>
 
-    <flux:card class="flex flex-col gap-4">
+    <flux:card class="flex flex-col gap-3 py-3">
         <div>
             <flux:heading size="lg">Temps de réponse</flux:heading>
         </div>
@@ -497,7 +494,7 @@ new #[Title('Détail URL')] class extends Component
         <x-monitor-response-time-sparkline :results="$this->chartCheckResults" description="Temps de réponse et erreurs sur les 150 dernières exécutions" />
     </flux:card>
 
-    <flux:card id="monitor-check-history" class="flex flex-col gap-4">
+    <flux:card id="monitor-check-history" class="flex flex-col gap-3 py-3">
         <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <flux:heading size="lg">Historique</flux:heading>
 

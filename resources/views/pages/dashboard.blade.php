@@ -65,9 +65,15 @@ new #[Title('Dashboard')] class extends Component
 }; ?>
 
 <section class="flex w-full flex-col gap-6">
+    <flux:breadcrumbs>
+        <flux:breadcrumbs.item separator="slash">Dashboard</flux:breadcrumbs.item>
+    </flux:breadcrumbs>
     <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-            <flux:heading size="xl">Dashboard</flux:heading>
+        <div class="flex flex-wrap items-center gap-3">
+            <flux:heading size="xl">
+                URL surveillées
+            </flux:heading>
+            <flux:badge inset="top bottom">{{ $this->monitors->count() }}</flux:badge>
         </div>
 
         <flux:button icon="folder-plus" :href="route('projects.index')" wire:navigate>

@@ -134,6 +134,34 @@ test('dashboard mini chart only displays the latest thirty check results', funct
         ->assertDontSee('999 ms');
 });
 
+test('dashboard mini chart pads missing check results with gray placeholders', function () {
+    Carbon::setTestNow(Carbon::parse('2026-07-16 12:00:00'));
+
+    $user = User::factory()->create();
+    $project = Project::factory()->for($user)->create();
+    $monitor = Monitor::factory()->for($project)->create([
+        'name' => 'API',
+    ]);
+
+    foreach (range(1, 2) as $minute) {
+        CheckResult::factory()->for($monitor)->create([
+            'status' => CheckStatus::Up,
+            'response_time_ms' => 100 + $minute,
+            'checked_at' => now()->subMinutes($minute),
+            'checked_url' => $monitor->url,
+        ]);
+    }
+
+    $response = $this->actingAs($user)->get(route('dashboard'));
+
+    $response
+        ->assertOk()
+        ->assertSee('Historique des 30 dernières vérifications')
+        ->assertSee('102 ms');
+
+    expect(substr_count($response->getContent(), 'data-monitor-check-placeholder'))->toBe(28);
+});
+
 test('dashboard refreshes monitor cards when a monitor check completed event is received', function () {
     Carbon::setTestNow(Carbon::parse('2026-07-16 12:00:00'));
 

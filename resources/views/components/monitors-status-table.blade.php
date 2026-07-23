@@ -53,7 +53,7 @@
                             </a>
                         </flux:table.cell>
                         <flux:table.cell>
-                            <div class="truncate text-xs text-zinc-500 dark:text-zinc-400">{{ $monitor->url }}</div>
+                            <div class="truncate text-xs">{{ $monitor->url }}</div>
                         </flux:table.cell>
                     @endif
 

@@ -25,7 +25,7 @@ class CheckMonitorAction
 
         try {
             $response = Http::timeout($monitor->timeout_seconds)
-                ->connectTimeout(min(3, $monitor->timeout_seconds))
+                ->connectTimeout($monitor->timeout_seconds)
                 ->withOptions(['allow_redirects' => true])
                 ->get($monitor->url);
 

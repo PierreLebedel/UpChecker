@@ -87,7 +87,7 @@
     };
 @endphp
 
-<div {{ $attributes->merge(['class' => 'rounded-lg border border-zinc-200 bg-zinc-50/60 p-3 dark:border-zinc-700 dark:bg-zinc-900/40']) }} data-monitor-response-time-sparkline>
+<div {{ $attributes->merge(['class' => 'rounded-lg border border-zinc-200 p-3 dark:border-zinc-700']) }} data-monitor-response-time-sparkline>
     @if ($points->isEmpty())
         <div class="flex h-56 items-center justify-center rounded border border-dashed border-zinc-200 text-sm text-zinc-500 dark:border-zinc-700 dark:text-zinc-400">
             Aucune vérification à afficher
@@ -131,17 +131,17 @@
             @endforeach
         </svg>
 
-        <div class="mt-2 flex flex-wrap items-center justify-between gap-2 text-xs text-zinc-500 dark:text-zinc-400">
+        <div class="mt-2 flex flex-wrap items-center justify-center gap-5 text-xs text-zinc-500 dark:text-zinc-400 ">
             <div class="flex items-center gap-3">
                 <span class="inline-flex items-center gap-1.5"><span class="size-2 rounded-full bg-emerald-500"></span>Succès</span>
                 <span class="inline-flex items-center gap-1.5"><span class="size-2 rounded-full bg-rose-500"></span>Erreur</span>
                 <span class="inline-flex items-center gap-1.5"><span class="size-2 rounded-full bg-orange-500"></span>Timeout</span>
                 <span class="inline-flex items-center gap-1.5"><span class="size-2 rounded-full bg-violet-500"></span>Invalide</span>
             </div>
-            <div class="flex items-center gap-2">
-                <span>{{ $windowStart->timezone($displayTimezone)->format('H:i') }}</span>
+            <div class="flex items-center gap-1">
+                <span>{{ $windowStart->timezone($displayTimezone)->format('H\hi') }}</span>
                 <span aria-hidden="true">-</span>
-                <span>{{ $windowEnd->timezone($displayTimezone)->format('H:i') }}</span>
+                <span>{{ $windowEnd->timezone($displayTimezone)->format('H\hi') }}</span>
             </div>
         </div>
     @endif

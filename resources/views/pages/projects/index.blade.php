@@ -546,8 +546,11 @@ new #[Title('Projets')] class extends Component
     </flux:breadcrumbs>
 
     <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-            <flux:heading size="xl">Projets</flux:heading>
+        <div class="flex flex-wrap items-center gap-3">
+            <flux:heading size="xl">
+                Projets
+            </flux:heading>
+            <flux:badge inset="top bottom">{{ $this->projects->count() }}</flux:badge>
         </div>
 
         <flux:button icon="plus" wire:click="openCreateProjectModal">
@@ -556,7 +559,7 @@ new #[Title('Projets')] class extends Component
     </div>
 
     @if ($this->projects->isEmpty())
-        <flux:card class="max-w-2xl">
+        <flux:card class="max-w-2xl py-3">
             <div class="flex flex-col gap-4">
                 <div>
                     <flux:heading>Aucun projet</flux:heading>

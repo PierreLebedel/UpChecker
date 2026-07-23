@@ -480,8 +480,11 @@ new #[Title('Projet')] class extends Component
     </flux:breadcrumbs>
 
     <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-            <flux:heading size="xl">{{ $this->currentProject->name }}</flux:heading>
+        <div class="flex flex-wrap items-center gap-3">
+            <flux:heading size="xl">
+                {{ $this->currentProject->name }}
+            </flux:heading>
+            <flux:badge inset="top bottom">{{ $this->monitors->count() }}</flux:badge>
         </div>
 
         <div class="flex flex-wrap gap-2">
@@ -491,10 +494,6 @@ new #[Title('Projet')] class extends Component
 
             <flux:button icon="pencil-square" wire:click="openEditProjectModal('{{ $this->project }}')">
                 Modifier
-            </flux:button>
-
-            <flux:button icon="arrow-left" :href="route('projects.index')" wire:navigate>
-                Retour aux projets
             </flux:button>
         </div>
     </div>

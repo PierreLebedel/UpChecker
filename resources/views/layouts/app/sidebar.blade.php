@@ -16,7 +16,7 @@
                         {{ __('Dashboard') }}
                     </flux:sidebar.item>
 
-                    <flux:sidebar.item icon="folder-git-2" :href="route('projects.index')" :current="request()->routeIs('projects.*')" wire:navigate>
+                    <flux:sidebar.item icon="folder-git-2" :href="route('projects.index')" :current="request()->routeIs('projects.*') || request()->routeIs('monitors.*')" wire:navigate>
                         {{ __('Projets') }}
                     </flux:sidebar.item>
                 </flux:sidebar.group>
