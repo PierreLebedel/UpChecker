@@ -12,12 +12,7 @@
     <flux:table>
         <flux:table.columns>
             <flux:table.column><span class="sr-only">Statut</span></flux:table.column>
-            @if ($showProjectColumn)
-                <flux:table.column>URL</flux:table.column>
-            @else
-                <flux:table.column>Nom</flux:table.column>
-                <flux:table.column>URL</flux:table.column>
-            @endif
+            <flux:table.column>URL</flux:table.column>
             <flux:table.column>Historique</flux:table.column>
             <flux:table.column><flux:icon name="clock" /></flux:table.column>
             <flux:table.column>Dernière exec.</flux:table.column>
@@ -38,31 +33,22 @@
                         </flux:badge>
                     </flux:table.cell>
 
-                    @if ($showProjectColumn)
-                        <flux:table.cell>
-                            <div class="min-w-64">
-                                <div class="flex flex-wrap items-baseline gap-1">
-                                    <a href="{{ route('projects.show', $monitor->project) }}" wire:navigate class="font-medium text-xs text-zinc-500 hover:text-zinc-950 dark:text-zinc-400 dark:hover:text-zinc-100">
-                                        {{ $monitor->project->name }}
-                                    </a>
-                                    <span class="text-zinc-400 dark:text-zinc-500 text-xs">/</span>
-                                    <a href="{{ route('monitors.show', $monitor) }}" wire:navigate class="font-medium text-zinc-900 hover:text-zinc-700 dark:text-zinc-100 dark:hover:text-zinc-300">
-                                        {{ $monitor->name }}
-                                    </a>
-                                </div>
-                                <div class="truncate text-xs text-zinc-500 dark:text-zinc-400">{{ $monitor->url }}</div>
+                    <flux:table.cell>
+                        <div class="flex flex-wrap gap-y-0 gap-x-2 items-baseline">
+                            <div class="flex flex-wrap items-baseline gap-1">
+                                @if ($showProjectColumn)
+                                <a href="{{ route('projects.show', $monitor->project) }}" wire:navigate class="font-medium text-xs text-zinc-500 hover:text-zinc-950 dark:text-zinc-400 dark:hover:text-zinc-100">
+                                    {{ $monitor->project->name }}
+                                </a>
+                                <span class="text-zinc-400 dark:text-zinc-500 text-xs">/</span>
+                                @endif
+                                <a href="{{ route('monitors.show', $monitor) }}" wire:navigate class="font-medium text-zinc-900 hover:text-zinc-700 dark:text-zinc-100 dark:hover:text-zinc-300">
+                                    {{ $monitor->name }}
+                                </a>
                             </div>
-                        </flux:table.cell>
-                    @else
-                        <flux:table.cell>
-                            <a href="{{ route('monitors.show', $monitor) }}" wire:navigate class="font-medium text-zinc-900 hover:text-zinc-700 dark:text-zinc-100 dark:hover:text-zinc-300">
-                                {{ $monitor->name }}
-                            </a>
-                        </flux:table.cell>
-                        <flux:table.cell>
-                            <div class="truncate text-xs">{{ $monitor->url }}</div>
-                        </flux:table.cell>
-                    @endif
+                            <div class="truncate text-xs text-zinc-500 dark:text-zinc-400">{{ $monitor->url }}</div>
+                        </div>
+                    </flux:table.cell>
 
                     <flux:table.cell class="w-1">
                         <x-monitor-check-sparkline :results="$monitor->checkResults" />
