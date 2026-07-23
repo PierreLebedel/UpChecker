@@ -126,6 +126,7 @@ test('monitor detail page can update the current monitor from the edit modal', f
         ->assertSet('showEditMonitorModal', true)
         ->assertSet('monitorName', 'Old API')
         ->assertSet('url', 'https://old.example.com')
+        ->assertSee($project->name.' /')
         ->set('monitorName', 'New API')
         ->set('url', 'https://new.example.com')
         ->set('enabled', false)

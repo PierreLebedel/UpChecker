@@ -163,7 +163,7 @@ new #[Title('Dashboard')] class extends Component
 
     @if ($this->monitorsWithRecentFailures->isNotEmpty())
     <div class="space-y-4">
-        <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div class="flex gap-3 flex-row items-center justify-between">
             <div class="flex flex-wrap items-center gap-3 min-h-10">
                 <flux:heading size="xl">
                     Erreurs récentes
@@ -231,7 +231,7 @@ new #[Title('Dashboard')] class extends Component
     @endif
 
     <div class="space-y-4">
-        <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div class="flex gap-3 flex-row items-center justify-between">
             <div class="flex flex-wrap items-center gap-3">
                 <flux:heading size="xl">
                     URL surveillées
@@ -240,7 +240,7 @@ new #[Title('Dashboard')] class extends Component
             </div>
 
             <flux:button icon="folder-git-2" :href="route('projects.index')" wire:navigate>
-                Gérer les projets
+                Gérer<span class="hidden sm:inline"> les projets</span>
             </flux:button>
         </div>
         @if ($this->monitors->isEmpty())

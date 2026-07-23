@@ -2,15 +2,23 @@
     $httpStatusCriterion = \App\Enums\MonitorCheckCriterionType::HttpStatus;
     $jsonPathCriterion = \App\Enums\MonitorCheckCriterionType::JsonPath;
     $bodyContainsCriterion = \App\Enums\MonitorCheckCriterionType::BodyContains;
+    $projectNamePrefix = trim((string) ($projectNamePrefix ?? ''));
+    $projectNamePrefix = $projectNamePrefix === '' ? 'Projet' : $projectNamePrefix;
 @endphp
 
 <div class="grid gap-5">
     <div class="grid gap-4 md:grid-cols-2">
-        <flux:input wire:model="monitorName" label="Nom du contrôle" required />
+        <flux:field>
+            <flux:label>Nom du contrôle</flux:label>
+            <flux:input.group>
+                <flux:input.group.prefix>{{ $projectNamePrefix }} /</flux:input.group.prefix>
+                <flux:input wire:model="monitorName" required />
+            </flux:input.group>
+        </flux:field>
         <flux:input wire:model="url" label="URL" type="url" placeholder="https://example.com/health" required />
     </div>
 
-    <div class="grid gap-4 md:grid-cols-2">
+    <div class="grid gap-4 md:grid-cols-3">
         <flux:select wire:model="intervalMinutes" label="Intervalle">
             <option value="1">1 minute</option>
             <option value="2">2 minutes</option>
@@ -21,9 +29,11 @@
         </flux:select>
 
         <flux:input wire:model="timeoutSeconds" label="Timeout" type="number" min="1" max="60" />
-    </div>
 
-    <flux:checkbox wire:model="enabled" label="Contrôle actif" />
+        <div class="pt-9">
+            <flux:checkbox wire:model="enabled" label="Contrôle actif" />
+        </div>
+    </div>
 
     <flux:separator />
 

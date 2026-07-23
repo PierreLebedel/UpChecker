@@ -515,6 +515,7 @@ new #[Title('Projets')] class extends Component
         }
 
         return Monitor::query()
+            ->with('project:id,user_id,name')
             ->whereKey($monitorId)
             ->whereHas('project', fn ($query) => $query->whereBelongsTo(Auth::user()))
             ->first();
@@ -546,7 +547,7 @@ new #[Title('Projets')] class extends Component
     </flux:breadcrumbs>
 
     <div class="space-y-4">
-        <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div class="flex gap-3 flex-row items-center justify-between">
             <div class="flex flex-wrap items-center gap-3">
                 <flux:heading size="xl">
                     Projets
@@ -555,7 +556,7 @@ new #[Title('Projets')] class extends Component
             </div>
 
             <flux:button icon="plus" wire:click="openCreateProjectModal">
-                Ajouter un projet
+                Nouveau<span class="hidden sm:inline"> projet</span>
             </flux:button>
         </div>
 
@@ -582,14 +583,14 @@ new #[Title('Projets')] class extends Component
                     @endphp
 
                     <flux:card wire:key="project-row-{{ $project->id }}" class="flex flex-col gap-1 py-3">
-                        <div class="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between pt-1">
+                        <div class="flex gap-4 flex-row items-center justify-between pt-1">
                             <div class="flex flex-wrap items-center gap-3">
+                                <flux:badge variant="solid" :color="$status->color()" class="size-3.5 rounded-full! p-0!" title="Statut : {{ $status->label() }}"></flux:badge>
                                 <flux:heading size="lg">
                                     <a href="{{ route('projects.show', $project) }}" wire:navigate class="hover:text-zinc-700 dark:hover:text-zinc-300">
                                         {{ $project->name }}
                                     </a>
                                 </flux:heading>
-                                <flux:badge variant="solid" :color="$status->color()">{{ $status->label() }}</flux:badge>
                             </div>
 
                             <div class="flex flex-wrap justify-end gap-2">
@@ -630,9 +631,9 @@ new #[Title('Projets')] class extends Component
                 <flux:subheading>Le premier contrôle est créé en même temps que le projet.</flux:subheading>
             </div>
 
-            <flux:input wire:model="projectName" label="Nom du projet" required autofocus />
+            <flux:input wire:model.live="projectName" label="Nom du projet" required autofocus />
 
-            @include('pages.projects.monitor-form-fields')
+            @include('pages.projects.monitor-form-fields', ['projectNamePrefix' => $projectName])
 
             <div class="flex justify-end gap-2">
                 <flux:modal.close>
@@ -668,7 +669,7 @@ new #[Title('Projets')] class extends Component
                 <flux:subheading>{{ $this->selectedProject()?->name }}</flux:subheading>
             </div>
 
-            @include('pages.projects.monitor-form-fields')
+            @include('pages.projects.monitor-form-fields', ['projectNamePrefix' => $this->selectedProject()?->name])
 
             <div class="flex justify-end gap-2">
                 <flux:modal.close>
@@ -686,7 +687,7 @@ new #[Title('Projets')] class extends Component
                 <flux:subheading>{{ $this->selectedMonitor()?->url }}</flux:subheading>
             </div>
 
-            @include('pages.projects.monitor-form-fields')
+            @include('pages.projects.monitor-form-fields', ['projectNamePrefix' => $this->selectedMonitor()?->project?->name])
 
             <div class="flex justify-end gap-2">
                 <flux:modal.close>

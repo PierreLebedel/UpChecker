@@ -449,6 +449,7 @@ new #[Title('Projet')] class extends Component
         }
 
         return Monitor::query()
+            ->with('project:id,user_id,name')
             ->whereKey($monitorId)
             ->whereBelongsTo($this->currentProject, 'project')
             ->first();
@@ -481,7 +482,7 @@ new #[Title('Projet')] class extends Component
     </flux:breadcrumbs>
 
     <div class="space-y-4">
-        <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div class="flex gap-3 flex-row items-center justify-between">
             <div class="flex flex-wrap items-center gap-3">
                 <flux:heading size="xl">
                     {{ $this->currentProject->name }}
@@ -490,13 +491,9 @@ new #[Title('Projet')] class extends Component
             </div>
 
             <div class="flex flex-wrap gap-2">
-                <flux:button icon="plus" wire:click="openAddMonitorModal">
-                    Ajouter une URL
-                </flux:button>
+                <flux:button icon="plus" wire:click="openAddMonitorModal" class="max-sm:[&>span]:hidden"><span>Ajouter une URL</span></flux:button>
 
-                <flux:button icon="pencil-square" wire:click="openEditProjectModal('{{ $this->project }}')">
-                    Modifier
-                </flux:button>
+                <flux:button icon="pencil-square" wire:click="openEditProjectModal('{{ $this->project }}')" class="max-sm:[&>span]:hidden"><span>Modifier</span></flux:button>
             </div>
         </div>
 
@@ -547,7 +544,7 @@ new #[Title('Projet')] class extends Component
                 <flux:subheading>{{ $this->currentProject->name }}</flux:subheading>
             </div>
 
-            @include('pages.projects.monitor-form-fields')
+            @include('pages.projects.monitor-form-fields', ['projectNamePrefix' => $this->currentProject->name])
 
             <div class="flex justify-end gap-2">
                 <flux:modal.close>
@@ -565,7 +562,7 @@ new #[Title('Projet')] class extends Component
                 <flux:subheading>{{ $this->selectedMonitor()?->url }}</flux:subheading>
             </div>
 
-            @include('pages.projects.monitor-form-fields')
+            @include('pages.projects.monitor-form-fields', ['projectNamePrefix' => $this->selectedMonitor()?->project?->name ?? $this->currentProject->name])
 
             <div class="flex justify-end gap-2">
                 <flux:modal.close>

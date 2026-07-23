@@ -376,6 +376,7 @@ new #[Title('Détail URL')] class extends Component
         }
 
         return Monitor::query()
+            ->with('project:id,user_id,name')
             ->whereKey($monitorId)
             ->whereHas('project', fn ($query) => $query->whereBelongsTo(Auth::user()))
             ->first();
@@ -403,9 +404,9 @@ new #[Title('Détail URL')] class extends Component
     </flux:breadcrumbs>
 
     <div class="space-y-4">
-        <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div class="flex gap-3 flex-row items-center justify-between">
             <div class="min-w-0">
-                <div class="flex flex-wrap items-center gap-3">
+                <div class="flex flex-wrap items-center gap-y-1 gap-x-3">
                     <flux:heading size="xl">{{ $this->currentMonitor->name }}</flux:heading>
                     <flux:badge variant="solid" :color="$this->currentMonitor->current_status->color()">
                         {{ $this->currentMonitor->current_status->label() }}
@@ -418,14 +419,10 @@ new #[Title('Détail URL')] class extends Component
                 </div>
             </div>
 
-            <div class="flex flex-wrap gap-2">
-                <flux:button icon="pencil-square" wire:click="openEditMonitorModal('{{ $this->monitor }}')">
-                    Modifier
-                </flux:button>
+            <div class="flex gap-2 flex-nowrap">
+                <flux:button icon="pencil-square" wire:click="openEditMonitorModal('{{ $this->monitor }}')" class="max-sm:[&>span]:hidden"><span>Modifier</span></flux:button>
 
-                <flux:button icon="arrow-path" wire:click="checkNow">
-                    Vérifier maintenant
-                </flux:button>
+                <flux:button icon="arrow-path" wire:click="checkNow" class="max-sm:[&>span]:hidden"><span>Vérifier maintenant</span></flux:button>
             </div>
         </div>
 
@@ -557,7 +554,7 @@ new #[Title('Détail URL')] class extends Component
                 <flux:subheading>{{ $this->selectedMonitor()?->url }}</flux:subheading>
             </div>
 
-            @include('pages.projects.monitor-form-fields')
+            @include('pages.projects.monitor-form-fields', ['projectNamePrefix' => $this->selectedMonitor()?->project?->name ?? $this->currentMonitor->project->name])
 
             <div class="flex justify-end gap-2">
                 <flux:modal.close>
