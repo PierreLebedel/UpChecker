@@ -68,6 +68,85 @@ test('dashboard displays monitor cards sorted by name', function () {
         ->assertSee('250 ms');
 });
 
+test('dashboard displays recent failure cards above monitored urls', function () {
+    Carbon::setTestNow(Carbon::parse('2026-07-16 12:00:00'));
+
+    $user = User::factory()->create();
+    $project = Project::factory()->for($user)->create(['name' => 'Production']);
+    $monitor = Monitor::factory()->for($project)->create([
+        'name' => 'API publique',
+        'url' => 'https://example.com/health',
+        'current_status' => MonitorStatus::Down,
+        'last_failure_at' => now()->subMinutes(20),
+    ]);
+    $oldMonitor = Monitor::factory()->for($project)->create([
+        'name' => 'Ancienne erreur',
+    ]);
+    $otherUser = User::factory()->create();
+    $otherProject = Project::factory()->for($otherUser)->create();
+    $otherMonitor = Monitor::factory()->for($otherProject)->create([
+        'name' => 'Erreur privée',
+    ]);
+
+    CheckResult::factory()->down()->for($monitor)->create([
+        'checked_at' => now()->subMinutes(20),
+        'checked_url' => $monitor->url,
+        'error_message' => 'Unexpected HTTP status 500.',
+    ]);
+    CheckResult::factory()->down()->for($monitor)->create([
+        'checked_at' => now()->subHours(2),
+        'checked_url' => $monitor->url,
+        'error_message' => 'Timeout marker.',
+    ]);
+    CheckResult::factory()->down()->for($oldMonitor)->create([
+        'checked_at' => now()->subDay()->subMinute(),
+        'checked_url' => $oldMonitor->url,
+        'error_message' => 'Old failure marker.',
+    ]);
+    CheckResult::factory()->down()->for($otherMonitor)->create([
+        'checked_at' => now()->subMinute(),
+        'checked_url' => $otherMonitor->url,
+        'error_message' => 'Private failure marker.',
+    ]);
+
+    $this->actingAs($user)
+        ->get(route('dashboard'))
+        ->assertOk()
+        ->assertSeeInOrder(['Erreurs des dernières 24 h', 'Dernière exec.'])
+        ->assertSee('API publique')
+        ->assertSee('https://example.com/health')
+        ->assertSee('Production')
+        ->assertSee('2 erreurs')
+        ->assertSee('Unexpected HTTP status 500.')
+        ->assertDontSee('Old failure marker.')
+        ->assertDontSee('Private failure marker.');
+});
+
+test('dashboard hides recent failure section when there are no failures in the last day', function () {
+    Carbon::setTestNow(Carbon::parse('2026-07-16 12:00:00'));
+
+    $user = User::factory()->create();
+    $project = Project::factory()->for($user)->create();
+    $monitor = Monitor::factory()->for($project)->create();
+
+    CheckResult::factory()->for($monitor)->create([
+        'status' => CheckStatus::Up,
+        'checked_at' => now()->subMinute(),
+        'checked_url' => $monitor->url,
+    ]);
+    CheckResult::factory()->down()->for($monitor)->create([
+        'checked_at' => now()->subDay()->subMinute(),
+        'checked_url' => $monitor->url,
+        'error_message' => 'Old failure marker.',
+    ]);
+
+    $this->actingAs($user)
+        ->get(route('dashboard'))
+        ->assertOk()
+        ->assertDontSee('Erreurs des dernières 24 h')
+        ->assertDontSee('Old failure marker.');
+});
+
 test('dashboard displays an overdue next check as now', function () {
     Carbon::setTestNow(Carbon::parse('2026-07-16 12:00:00'));
 
@@ -193,7 +272,9 @@ test('dashboard refreshes monitor cards when a monitor check completed event is 
 
     $component
         ->call('refreshAfterMonitorCheckCompleted')
+        ->assertSee('Erreurs des dernières 24 h')
         ->assertSee('Indisponible')
+        ->assertSee('1 erreur')
         ->assertSee('300 ms')
         ->assertSee('dans 15 minutes');
 });

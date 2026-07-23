@@ -43,8 +43,8 @@
         @endphp
 
         <div
-            class="{{ $color }} flex-1 shrink-0 rounded-sm max-w-1.25 {{ $isSuccess ? '' : 'rounded-full aspect-square' }}"
-            style="height: {{ $height }}px"
+            class="{{ $color }} flex-1 shrink-0 rounded-sm max-w-1.25 {{ $isSuccess ? '' : 'rounded-full h-full' }}"
+            @if ($isSuccess) style="height: {{ $height }}px" @endif
             title="{{ $title }}"
         ><span class="block w-full"></span></div>
     @endforeach
