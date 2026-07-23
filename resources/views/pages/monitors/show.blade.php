@@ -402,149 +402,151 @@ new #[Title('Détail URL')] class extends Component
         <flux:breadcrumbs.item separator="slash">{{ $this->currentMonitor->name }}</flux:breadcrumbs.item>
     </flux:breadcrumbs>
 
-    <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div class="min-w-0">
-            <div class="flex flex-wrap items-center gap-3">
-                <flux:heading size="xl">{{ $this->currentMonitor->name }}</flux:heading>
-                <flux:badge variant="solid" :color="$this->currentMonitor->current_status->color()">
-                    {{ $this->currentMonitor->current_status->label() }}
-                </flux:badge>
-                @unless ($this->currentMonitor->enabled)
-                    <flux:badge color="zinc">Désactivé</flux:badge>
-                @endunless
-                
-                <flux:text class="">{{ $this->currentMonitor->url }}</flux:text>
-            </div>
-        </div>
-
-        <div class="flex flex-wrap gap-2">
-            <flux:button icon="pencil-square" wire:click="openEditMonitorModal('{{ $this->monitor }}')">
-                Modifier
-            </flux:button>
-
-            <flux:button icon="arrow-path" wire:click="checkNow">
-                Vérifier maintenant
-            </flux:button>
-        </div>
-    </div>
-
-    <div class="grid grid-cols-1 gap-4 lg:grid-cols-5">
-        <flux:card class="lg:col-span-2 py-3">
-            <div class="flex flex-col gap-4">
-                <div>
-                    <flux:heading size="lg">Statut actuel</flux:heading>
-                </div>
-
-                <div class="grid grid-cols-1 gap-3 text-sm sm:grid-cols-2">
-                    <div>
-                        <div class="text-zinc-500 dark:text-zinc-400">Dernière vérification</div>
-                        <x-relative-time :date="$this->lastCheckedAt()" class="mt-1 block font-medium text-zinc-900 dark:text-zinc-100" />
-                    </div>
-                    <div>
-                        <div class="text-zinc-500 dark:text-zinc-400">Prochaine vérification</div>
-                        <x-relative-time :date="$this->nextCheckAt()" fallback="Non planifiée" due class="mt-1 block font-medium text-zinc-900 dark:text-zinc-100" />
-                    </div>
-                    <div>
-                        <div class="text-zinc-500 dark:text-zinc-400">Dernier succès</div>
-                        <x-relative-time :date="$this->currentMonitor->last_success_at" class="mt-1 block font-medium text-zinc-900 dark:text-zinc-100" />
-                    </div>
-                    <div>
-                        <div class="text-zinc-500 dark:text-zinc-400">Dernier échec</div>
-                        <x-relative-time :date="$this->currentMonitor->last_failure_at" class="mt-1 block font-medium text-zinc-900 dark:text-zinc-100" />
-                    </div>
-                </div>
-            </div>
-        </flux:card>
-
-        <flux:card class=" py-3">
-            <div class="flex flex-col gap-4">
-                <flux:heading size="lg">Vérification</flux:heading>
-
-                <div class="grid gap-3 text-sm">
-                    <div>
-                        <div class="text-zinc-500 dark:text-zinc-400">Intervalle</div>
-                        <div class="mt-1 font-medium text-zinc-900 dark:text-zinc-100">{{ $this->currentMonitor->interval_minutes }} min</div>
-                    </div>
-                    <div>
-                        <div class="text-zinc-500 dark:text-zinc-400">Timeout</div>
-                        <div class="mt-1 font-medium text-zinc-900 dark:text-zinc-100">{{ $this->currentMonitor->timeout_seconds }} s</div>
-                    </div>
-                </div>
-            </div>
-        </flux:card>
-
-        <flux:card class="lg:col-span-2 py-3">
-            <div class="flex flex-col gap-3">
-                <flux:heading size="lg">Critères attendus</flux:heading>
-
-                <div class="flex flex-wrap gap-2">
-                    @foreach ($this->currentMonitor->check_criteria ?: Monitor::defaultCheckCriteria() as $criterion)
-                        <flux:badge>{{ $this->criterionLabel($criterion) }}</flux:badge>
-                    @endforeach
-                </div>
-            </div>
-        </flux:card>
-    </div>
-
-    <flux:card class="flex flex-col gap-3 py-3">
-        <div>
-            <flux:heading size="lg">Temps de réponse</flux:heading>
-        </div>
-
-        <x-monitor-response-time-sparkline :results="$this->chartCheckResults" description="Temps de réponse et erreurs sur les 150 dernières exécutions" />
-    </flux:card>
-
-    <flux:card id="monitor-check-history" class="flex flex-col gap-3 py-3">
+    <div class="space-y-4">
         <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <flux:heading size="lg">Historique</flux:heading>
-
-            <flux:checkbox wire:model.live="includeSuccessfulCheckResults" label="Inclure les succès" />
-        </div>
-
-        @if ($this->checkResults->isEmpty())
-            <flux:text>
-                {{ $this->includeSuccessfulCheckResults ? 'Aucune vérification enregistrée pour cette URL.' : 'Aucune erreur enregistrée pour cette URL.' }}
-            </flux:text>
-        @else
-            <div class="overflow-x-auto">
-                <flux:table>
-                    <flux:table.columns>
-                        <flux:table.column>Date</flux:table.column>
-                        <flux:table.column></flux:table.column>
-                        <flux:table.column>Statut</flux:table.column>
-                        <flux:table.column>HTTP</flux:table.column>
-                        <flux:table.column>Temps</flux:table.column>
-                        <flux:table.column>Message</flux:table.column>
-                    </flux:table.columns>
-
-                    <flux:table.rows>
-                        @foreach ($this->checkResults as $checkResult)
-                            <flux:table.row :key="$checkResult->id">
-                                <flux:table.cell>
-                                    <div class="whitespace-nowrap">{{ $checkResult->checked_at->format('d/m/Y H:i') }}</div>
-                                </flux:table.cell>
-                                <flux:table.cell>
-                                    <x-relative-time :date="$checkResult->checked_at" class="block text-sm text-zinc-500 dark:text-zinc-400" />
-                                </flux:table.cell>
-                                <flux:table.cell>
-                                    <flux:badge :color="$checkResult->status->color()">{{ $checkResult->status->label() }}</flux:badge>
-                                </flux:table.cell>
-                                <flux:table.cell>{{ $checkResult->http_status ?? '—' }}</flux:table.cell>
-                                <flux:table.cell>{{ $checkResult->response_time_ms ? $checkResult->response_time_ms.' ms' : '—' }}</flux:table.cell>
-                                <flux:table.cell>
-                                    <div class="max-w-xl truncate">{{ $checkResult->error_message ?? $checkResult->response_excerpt ?? '—' }}</div>
-                                </flux:table.cell>
-                            </flux:table.row>
-                        @endforeach
-                    </flux:table.rows>
-                </flux:table>
+            <div class="min-w-0">
+                <div class="flex flex-wrap items-center gap-3">
+                    <flux:heading size="xl">{{ $this->currentMonitor->name }}</flux:heading>
+                    <flux:badge variant="solid" :color="$this->currentMonitor->current_status->color()">
+                        {{ $this->currentMonitor->current_status->label() }}
+                    </flux:badge>
+                    @unless ($this->currentMonitor->enabled)
+                        <flux:badge color="zinc">Désactivé</flux:badge>
+                    @endunless
+                    
+                    <flux:text class="">{{ $this->currentMonitor->url }}</flux:text>
+                </div>
             </div>
 
-            @if ($this->checkResults->hasPages())
-                <flux:pagination :paginator="$this->checkResults" scroll-to="#monitor-check-history" />
+            <div class="flex flex-wrap gap-2">
+                <flux:button icon="pencil-square" wire:click="openEditMonitorModal('{{ $this->monitor }}')">
+                    Modifier
+                </flux:button>
+
+                <flux:button icon="arrow-path" wire:click="checkNow">
+                    Vérifier maintenant
+                </flux:button>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 gap-4 lg:grid-cols-5">
+            <flux:card class="lg:col-span-2 py-3">
+                <div class="flex flex-col gap-4">
+                    <div>
+                        <flux:heading size="lg">Statut actuel</flux:heading>
+                    </div>
+
+                    <div class="grid grid-cols-1 gap-3 text-sm sm:grid-cols-2">
+                        <div>
+                            <div class="text-zinc-500 dark:text-zinc-400">Dernière vérification</div>
+                            <x-relative-time :date="$this->lastCheckedAt()" class="mt-1 block font-medium text-zinc-900 dark:text-zinc-100" />
+                        </div>
+                        <div>
+                            <div class="text-zinc-500 dark:text-zinc-400">Prochaine vérification</div>
+                            <x-relative-time :date="$this->nextCheckAt()" fallback="Non planifiée" due class="mt-1 block font-medium text-zinc-900 dark:text-zinc-100" />
+                        </div>
+                        <div>
+                            <div class="text-zinc-500 dark:text-zinc-400">Dernier succès</div>
+                            <x-relative-time :date="$this->currentMonitor->last_success_at" class="mt-1 block font-medium text-zinc-900 dark:text-zinc-100" />
+                        </div>
+                        <div>
+                            <div class="text-zinc-500 dark:text-zinc-400">Dernier échec</div>
+                            <x-relative-time :date="$this->currentMonitor->last_failure_at" class="mt-1 block font-medium text-zinc-900 dark:text-zinc-100" />
+                        </div>
+                    </div>
+                </div>
+            </flux:card>
+
+            <flux:card class=" py-3">
+                <div class="flex flex-col gap-4">
+                    <flux:heading size="lg">Vérification</flux:heading>
+
+                    <div class="grid gap-3 text-sm">
+                        <div>
+                            <div class="text-zinc-500 dark:text-zinc-400">Intervalle</div>
+                            <div class="mt-1 font-medium text-zinc-900 dark:text-zinc-100">{{ $this->currentMonitor->interval_minutes }} min</div>
+                        </div>
+                        <div>
+                            <div class="text-zinc-500 dark:text-zinc-400">Timeout</div>
+                            <div class="mt-1 font-medium text-zinc-900 dark:text-zinc-100">{{ $this->currentMonitor->timeout_seconds }} s</div>
+                        </div>
+                    </div>
+                </div>
+            </flux:card>
+
+            <flux:card class="lg:col-span-2 py-3">
+                <div class="flex flex-col gap-3">
+                    <flux:heading size="lg">Critères attendus</flux:heading>
+
+                    <div class="flex flex-wrap gap-2">
+                        @foreach ($this->currentMonitor->check_criteria ?: Monitor::defaultCheckCriteria() as $criterion)
+                            <flux:badge>{{ $this->criterionLabel($criterion) }}</flux:badge>
+                        @endforeach
+                    </div>
+                </div>
+            </flux:card>
+        </div>
+
+        <flux:card class="flex flex-col gap-3 py-3">
+            <div>
+                <flux:heading size="lg">Temps de réponse</flux:heading>
+            </div>
+
+            <x-monitor-response-time-sparkline :results="$this->chartCheckResults" description="Temps de réponse et erreurs sur les 150 dernières exécutions" />
+        </flux:card>
+
+        <flux:card id="monitor-check-history" class="flex flex-col gap-3 py-3">
+            <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                <flux:heading size="lg">Historique</flux:heading>
+
+                <flux:checkbox wire:model.live="includeSuccessfulCheckResults" label="Inclure les succès" />
+            </div>
+
+            @if ($this->checkResults->isEmpty())
+                <flux:text>
+                    {{ $this->includeSuccessfulCheckResults ? 'Aucune vérification enregistrée pour cette URL.' : 'Aucune erreur enregistrée pour cette URL.' }}
+                </flux:text>
+            @else
+                <div class="overflow-x-auto">
+                    <flux:table>
+                        <flux:table.columns>
+                            <flux:table.column>Date</flux:table.column>
+                            <flux:table.column></flux:table.column>
+                            <flux:table.column>Statut</flux:table.column>
+                            <flux:table.column>HTTP</flux:table.column>
+                            <flux:table.column>Temps</flux:table.column>
+                            <flux:table.column>Message</flux:table.column>
+                        </flux:table.columns>
+
+                        <flux:table.rows>
+                            @foreach ($this->checkResults as $checkResult)
+                                <flux:table.row :key="$checkResult->id">
+                                    <flux:table.cell>
+                                        <div class="whitespace-nowrap">{{ $checkResult->checked_at->format('d/m/Y H:i') }}</div>
+                                    </flux:table.cell>
+                                    <flux:table.cell>
+                                        <x-relative-time :date="$checkResult->checked_at" class="block text-sm text-zinc-500 dark:text-zinc-400" />
+                                    </flux:table.cell>
+                                    <flux:table.cell>
+                                        <flux:badge :color="$checkResult->status->color()">{{ $checkResult->status->label() }}</flux:badge>
+                                    </flux:table.cell>
+                                    <flux:table.cell>{{ $checkResult->http_status ?? '—' }}</flux:table.cell>
+                                    <flux:table.cell>{{ $checkResult->response_time_ms ? $checkResult->response_time_ms.' ms' : '—' }}</flux:table.cell>
+                                    <flux:table.cell>
+                                        <div class="max-w-xl truncate">{{ $checkResult->error_message ?? $checkResult->response_excerpt ?? '—' }}</div>
+                                    </flux:table.cell>
+                                </flux:table.row>
+                            @endforeach
+                        </flux:table.rows>
+                    </flux:table>
+                </div>
+
+                @if ($this->checkResults->hasPages())
+                    <flux:pagination :paginator="$this->checkResults" scroll-to="#monitor-check-history" />
+                @endif
             @endif
-        @endif
-    </flux:card>
+        </flux:card>
+    </div>
 
     <flux:modal wire:model="showEditMonitorModal" class="md:w-[42rem]">
         <form wire:submit="updateMonitor" class="space-y-6">

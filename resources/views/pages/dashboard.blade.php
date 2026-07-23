@@ -120,7 +120,7 @@ new #[Title('Dashboard')] class extends Component
     @if ($this->monitorsWithRecentFailures->isNotEmpty())
     <div class="space-y-4">
         <div>
-            <div class="flex flex-wrap items-center gap-3">
+            <div class="flex flex-wrap items-center gap-3 min-h-10">
                 <flux:heading size="xl">
                     Erreurs récentes
                 </flux:heading>
@@ -134,7 +134,7 @@ new #[Title('Dashboard')] class extends Component
                         $latestFailure = $monitor->checkResults->first();
                     @endphp
 
-                    <flux:card wire:key="recent-failure-{{ $monitor->id }}" class="flex flex-col gap-4">
+                    <flux:card wire:key="recent-failure-{{ $monitor->id }}" class="flex flex-col gap-4 py-4">
                         <div class="flex items-center justify-between gap-3">
                             <div class="min-w-0">
                                 <flux:heading size="lg">
@@ -183,7 +183,7 @@ new #[Title('Dashboard')] class extends Component
     </div>
     @endif
 
-    <div clmazss="space-y-4">
+    <div class="space-y-4">
         <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div class="flex flex-wrap items-center gap-3">
                 <flux:heading size="xl">
@@ -192,7 +192,7 @@ new #[Title('Dashboard')] class extends Component
                 <flux:badge inset="top bottom">{{ $this->monitors->count() }}</flux:badge>
             </div>
 
-            <flux:button icon="folder-plus" :href="route('projects.index')" wire:navigate>
+            <flux:button icon="folder-git-2" :href="route('projects.index')" wire:navigate>
                 Gérer les projets
             </flux:button>
         </div>

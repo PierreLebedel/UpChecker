@@ -87,7 +87,7 @@
     };
 @endphp
 
-<div {{ $attributes->merge(['class' => 'rounded-lg border border-zinc-200 p-3 dark:border-zinc-700']) }} data-monitor-response-time-sparkline>
+<div {{ $attributes->merge(['class' => 'rounded-lg border border-zinc-200 dark:border-zinc-700']) }} data-monitor-response-time-sparkline>
     @if ($points->isEmpty())
         <div class="flex h-56 items-center justify-center rounded border border-dashed border-zinc-200 text-sm text-zinc-500 dark:border-zinc-700 dark:text-zinc-400">
             Aucune vérification à afficher
@@ -99,10 +99,10 @@
                     $gridY = $top + (($chartHeight / 3) * $line);
                 @endphp
 
-                <line x1="{{ $left }}" y1="{{ $gridY }}" x2="{{ $width - $right }}" y2="{{ $gridY }}" stroke="currentColor" class="text-zinc-200 dark:text-zinc-800" stroke-width="1" vector-effect="non-scaling-stroke" />
+                <line x1="{{ $left }}" y1="{{ $gridY }}" x2="{{ $width - $right }}" y2="{{ $gridY }}" stroke="currentColor" class="text-zinc-200 dark:text-zinc-600" stroke-width="1" vector-effect="non-scaling-stroke" />
             @endforeach
 
-            <line x1="{{ $left }}" y1="{{ $baseline }}" x2="{{ $width - $right }}" y2="{{ $baseline }}" stroke="currentColor" class="text-zinc-300 dark:text-zinc-700" stroke-width="1" vector-effect="non-scaling-stroke" />
+            <line x1="{{ $left }}" y1="{{ $baseline }}" x2="{{ $width - $right }}" y2="{{ $baseline }}" stroke="currentColor" class="text-zinc-300 dark:text-zinc-600" stroke-width="1" vector-effect="non-scaling-stroke" />
 
             @foreach ($points as $checkResult)
                 @php

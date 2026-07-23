@@ -25,14 +25,17 @@
 
     <flux:checkbox wire:model="enabled" label="Contrôle actif" />
 
+    <flux:separator />
+
     <div class="grid gap-3">
         <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div>
                 <flux:heading size="sm">Critères de vérification</flux:heading>
                 <flux:text class="mt-1">Ajoutez au moins un critère. Le code HTTP ne peut apparaître qu’une seule fois.</flux:text>
             </div>
+        </div>
 
-            <div class="flex flex-wrap gap-2">
+        <div class="flex flex-wrap gap-2">
                 <flux:button size="sm" icon="plus" wire:click="addCriterion('{{ $httpStatusCriterion->value }}')" :disabled="$this->hasHttpStatusCriterion()">
                     Code HTTP
                 </flux:button>
@@ -43,7 +46,6 @@
                     Texte réponse
                 </flux:button>
             </div>
-        </div>
 
         <flux:error name="checkCriteria" />
 

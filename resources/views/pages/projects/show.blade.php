@@ -479,45 +479,47 @@ new #[Title('Projet')] class extends Component
         <flux:breadcrumbs.item separator="slash">{{ $this->currentProject->name }}</flux:breadcrumbs.item>
     </flux:breadcrumbs>
 
-    <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div class="flex flex-wrap items-center gap-3">
-            <flux:heading size="xl">
-                {{ $this->currentProject->name }}
-            </flux:heading>
-            <flux:badge inset="top bottom">{{ $this->monitors->count() }}</flux:badge>
-        </div>
-
-        <div class="flex flex-wrap gap-2">
-            <flux:button icon="plus" wire:click="openAddMonitorModal">
-                Ajouter une URL
-            </flux:button>
-
-            <flux:button icon="pencil-square" wire:click="openEditProjectModal('{{ $this->project }}')">
-                Modifier
-            </flux:button>
-        </div>
-    </div>
-
-    @if ($this->monitors->isEmpty())
-        <flux:card class="max-w-2xl">
-            <div class="flex flex-col gap-4">
-                <div>
-                    <flux:heading>Aucune URL surveillée</flux:heading>
-                    <flux:text class="mt-1">Ajoutez une URL depuis la page Projets pour démarrer la surveillance de ce projet.</flux:text>
-                </div>
-
-                <div>
-                    <flux:button variant="primary" icon="plus" :href="route('projects.index')" wire:navigate>
-                        Gérer les projets
-                    </flux:button>
-                </div>
+    <div class="space-y-4">
+        <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div class="flex flex-wrap items-center gap-3">
+                <flux:heading size="xl">
+                    {{ $this->currentProject->name }}
+                </flux:heading>
+                <flux:badge inset="top bottom">{{ $this->monitors->count() }}</flux:badge>
             </div>
-        </flux:card>
-    @else
-        <flux:card class="overflow-hidden py-3">
-            <x-monitors-status-table :monitors="$this->monitors" :show-project-column="false" />
-        </flux:card>
-    @endif
+
+            <div class="flex flex-wrap gap-2">
+                <flux:button icon="plus" wire:click="openAddMonitorModal">
+                    Ajouter une URL
+                </flux:button>
+
+                <flux:button icon="pencil-square" wire:click="openEditProjectModal('{{ $this->project }}')">
+                    Modifier
+                </flux:button>
+            </div>
+        </div>
+
+        @if ($this->monitors->isEmpty())
+            <flux:card class="max-w-2xl">
+                <div class="flex flex-col gap-4">
+                    <div>
+                        <flux:heading>Aucune URL surveillée</flux:heading>
+                        <flux:text class="mt-1">Ajoutez une URL depuis la page Projets pour démarrer la surveillance de ce projet.</flux:text>
+                    </div>
+
+                    <div>
+                        <flux:button variant="primary" icon="plus" :href="route('projects.index')" wire:navigate>
+                            Gérer les projets
+                        </flux:button>
+                    </div>
+                </div>
+            </flux:card>
+        @else
+            <flux:card class="overflow-hidden py-3">
+                <x-monitors-status-table :monitors="$this->monitors" :show-project-column="false" />
+            </flux:card>
+        @endif
+    </div>
 
     <flux:modal wire:model="showEditProjectModal" class="max-w-lg">
         <form wire:submit="updateProject" class="space-y-6">

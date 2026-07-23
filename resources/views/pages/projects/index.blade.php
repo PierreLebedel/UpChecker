@@ -545,44 +545,44 @@ new #[Title('Projets')] class extends Component
         <flux:breadcrumbs.item separator="slash">Projets</flux:breadcrumbs.item>
     </flux:breadcrumbs>
 
-    <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div class="flex flex-wrap items-center gap-3">
-            <flux:heading size="xl">
-                Projets
-            </flux:heading>
-            <flux:badge inset="top bottom">{{ $this->projects->count() }}</flux:badge>
+    <div class="space-y-4">
+        <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div class="flex flex-wrap items-center gap-3">
+                <flux:heading size="xl">
+                    Projets
+                </flux:heading>
+                <flux:badge inset="top bottom">{{ $this->projects->count() }}</flux:badge>
+            </div>
+
+            <flux:button icon="plus" wire:click="openCreateProjectModal">
+                Ajouter un projet
+            </flux:button>
         </div>
 
-        <flux:button icon="plus" wire:click="openCreateProjectModal">
-            Ajouter un projet
-        </flux:button>
-    </div>
+        @if ($this->projects->isEmpty())
+            <flux:card class="max-w-2xl py-3">
+                <div class="flex flex-col gap-4">
+                    <div>
+                        <flux:heading>Aucun projet</flux:heading>
+                        <flux:text class="mt-1">Créez un projet avec sa première URL pour démarrer la surveillance.</flux:text>
+                    </div>
 
-    @if ($this->projects->isEmpty())
-        <flux:card class="max-w-2xl py-3">
+                    <div>
+                        <flux:button variant="primary" icon="plus" wire:click="openCreateProjectModal">
+                            Ajouter un projet
+                        </flux:button>
+                    </div>
+                </div>
+            </flux:card>
+        @else
             <div class="flex flex-col gap-4">
-                <div>
-                    <flux:heading>Aucun projet</flux:heading>
-                    <flux:text class="mt-1">Créez un projet avec sa première URL pour démarrer la surveillance.</flux:text>
-                </div>
+                @foreach ($this->projects as $project)
+                    @php
+                        $status = $this->projectStatus($project);
+                    @endphp
 
-                <div>
-                    <flux:button variant="primary" icon="plus" wire:click="openCreateProjectModal">
-                        Ajouter un projet
-                    </flux:button>
-                </div>
-            </div>
-        </flux:card>
-    @else
-        <div class="flex flex-col gap-4">
-            @foreach ($this->projects as $project)
-                @php
-                    $status = $this->projectStatus($project);
-                @endphp
-
-                <flux:card wire:key="project-row-{{ $project->id }}" class="flex flex-col gap-3 py-3">
-                    <div class="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-                        <div class="min-w-0">
+                    <flux:card wire:key="project-row-{{ $project->id }}" class="flex flex-col gap-1 py-3">
+                        <div class="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between pt-1">
                             <div class="flex flex-wrap items-center gap-3">
                                 <flux:heading size="lg">
                                     <a href="{{ route('projects.show', $project) }}" wire:navigate class="hover:text-zinc-700 dark:hover:text-zinc-300">
@@ -591,37 +591,37 @@ new #[Title('Projets')] class extends Component
                                 </flux:heading>
                                 <flux:badge variant="solid" :color="$status->color()">{{ $status->label() }}</flux:badge>
                             </div>
+
+                            <div class="flex flex-wrap justify-end gap-2">
+                                <flux:dropdown align="end">
+                                    <flux:button size="sm" variant="subtle" icon="ellipsis-horizontal" square aria-label="Actions du projet" />
+
+                                    <flux:menu>
+                                        <flux:menu.item icon="pencil" wire:click="openEditProjectModal('{{ $project->id }}')">
+                                            Modifier le projet
+                                        </flux:menu.item>
+                                        <flux:menu.item icon="plus" wire:click="openAddMonitorModal('{{ $project->id }}')">
+                                            Ajouter une URL
+                                        </flux:menu.item>
+                                        <flux:menu.separator />
+                                        <flux:menu.item icon="trash" class="text-rose-600 hover:bg-rose-50 hover:text-rose-700 dark:text-rose-400 dark:hover:bg-rose-950/40 dark:hover:text-rose-300" wire:click="openDeleteProjectModal('{{ $project->id }}')">
+                                            Supprimer le projet
+                                        </flux:menu.item>
+                                    </flux:menu>
+                                </flux:dropdown>
+                            </div>
                         </div>
 
-                        <div class="flex flex-wrap justify-end gap-2">
-                            <flux:dropdown align="end">
-                                <flux:button size="sm" variant="subtle" icon="ellipsis-horizontal" square aria-label="Actions du projet" />
-
-                                <flux:menu>
-                                    <flux:menu.item icon="pencil" wire:click="openEditProjectModal('{{ $project->id }}')">
-                                        Modifier le projet
-                                    </flux:menu.item>
-                                    <flux:menu.item icon="plus" wire:click="openAddMonitorModal('{{ $project->id }}')">
-                                        Ajouter une URL
-                                    </flux:menu.item>
-                                    <flux:menu.separator />
-                                    <flux:menu.item icon="trash" class="text-rose-600 hover:bg-rose-50 hover:text-rose-700 dark:text-rose-400 dark:hover:bg-rose-950/40 dark:hover:text-rose-300" wire:click="openDeleteProjectModal('{{ $project->id }}')">
-                                        Supprimer le projet
-                                    </flux:menu.item>
-                                </flux:menu>
-                            </flux:dropdown>
-                        </div>
-                    </div>
-
-                    @if ($project->monitors->isEmpty())
-                        <flux:text>Aucune URL surveillée.</flux:text>
-                    @else
-                        <x-monitors-status-table :monitors="$project->monitors" :show-project-column="false" />
-                    @endif
-                </flux:card>
-            @endforeach
-        </div>
-    @endif
+                        @if ($project->monitors->isEmpty())
+                            <flux:text>Aucune URL surveillée.</flux:text>
+                        @else
+                            <x-monitors-status-table :monitors="$project->monitors" :show-project-column="false" />
+                        @endif
+                    </flux:card>
+                @endforeach
+            </div>
+        @endif
+    </div>
 
     <flux:modal wire:model="showCreateProjectModal" class="md:w-[42rem]" :dismissible="false">
         <form wire:submit="createProject" class="space-y-6">
