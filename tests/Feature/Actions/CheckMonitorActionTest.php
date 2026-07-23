@@ -163,6 +163,85 @@ test('it sends a recovery alert only to channels configured for down to up', fun
     expect($monitor->refresh()->last_alerted_at)->not->toBeNull();
 });
 
+test('it sends a failure alert to every channel configured for up to down', function () {
+    Notification::fake();
+    config(['upchecker.notifications.channels.telegram.enabled' => true]);
+    Http::fake([
+        'https://example.com/health' => Http::response('Server error', 500),
+    ]);
+    $monitor = Monitor::factory()->up()->create([
+        'url' => 'https://example.com/health',
+        'check_criteria' => [
+            ['type' => MonitorCheckCriterionType::HttpStatus->value, 'expected' => 200],
+        ],
+    ]);
+    $user = $monitor->project->user;
+    $user->forceFill([
+        'notification_channels' => [
+            AlertChannel::Mail->value => [
+                'enabled' => true,
+                'transitions' => [AlertTransition::UpToDown->value],
+            ],
+            AlertChannel::Telegram->value => [
+                'enabled' => true,
+                'transitions' => [
+                    AlertTransition::UpToDown->value,
+                    AlertTransition::DownToUp->value,
+                ],
+            ],
+        ],
+    ])->save();
+
+    $result = app(CheckMonitorAction::class)->handle($monitor);
+
+    Notification::assertSentTo(
+        $user,
+        fn (MonitorAlertNotification $notification, array $channels): bool => $notification->checkResult->is($result)
+            && $notification->transition === AlertTransition::UpToDown
+            && $channels === ['mail', 'telegram']
+    );
+
+    expect($monitor->refresh()->last_alerted_at)->not->toBeNull();
+});
+
+test('it does not mark an alert as sent when no channel is configured for the transition', function () {
+    Notification::fake();
+    config(['upchecker.notifications.channels.telegram.enabled' => true]);
+    Http::fake([
+        'https://example.com/health' => Http::response('ok', 200),
+    ]);
+    $monitor = Monitor::factory()->create([
+        'url' => 'https://example.com/health',
+        'current_status' => MonitorStatus::Down,
+        'last_failure_at' => now()->subMinute(),
+        'check_criteria' => [
+            ['type' => MonitorCheckCriterionType::HttpStatus->value, 'expected' => 200],
+        ],
+    ]);
+    $user = $monitor->project->user;
+    $user->forceFill([
+        'notification_channels' => [
+            AlertChannel::Mail->value => [
+                'enabled' => true,
+                'transitions' => [AlertTransition::UpToDown->value],
+            ],
+            AlertChannel::Telegram->value => [
+                'enabled' => false,
+                'transitions' => [
+                    AlertTransition::UpToDown->value,
+                    AlertTransition::DownToUp->value,
+                ],
+            ],
+        ],
+    ])->save();
+
+    app(CheckMonitorAction::class)->handle($monitor);
+
+    Notification::assertNothingSent();
+
+    expect($monitor->refresh()->last_alerted_at)->toBeNull();
+});
+
 test('it does not repeat alert notifications while the monitor is already failing', function () {
     Notification::fake();
     Http::fake([

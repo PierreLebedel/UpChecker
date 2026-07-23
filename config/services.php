@@ -36,7 +36,7 @@ return [
     ],
 
     'telegram' => [
-        'token' => env('TELEGRAM_BOT_TOKEN', env('UPCHECKER_NOTIFICATIONS_TELEGRAM_BOT_TOKEN')),
+        'token' => env('TELEGRAM_BOT_TOKEN'),
     ],
 
 ];

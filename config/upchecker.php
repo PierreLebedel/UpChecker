@@ -14,7 +14,10 @@ return [
             ],
 
             'telegram' => [
-                'enabled' => env('TELEGRAM_BOT_TOKEN', null),
+                'enabled' => env('TELEGRAM_BOT_TOKEN') !== null
+                    && env('TELEGRAM_BOT_TOKEN') !== ''
+                    && env('TELEGRAM_CHAT_ID') !== null
+                    && env('TELEGRAM_CHAT_ID') !== '',
                 'testable' => true,
                 'transitions' => [
                     AlertTransition::UpToDown->value,
@@ -22,12 +25,6 @@ return [
                 ],
                 'bot_token' => env('TELEGRAM_BOT_TOKEN', null),
                 'chat_id' => env('TELEGRAM_CHAT_ID', null),
-            ],
-
-            'sms' => [
-                'enabled' => env('UPCHECKER_NOTIFICATIONS_SMS_ENABLED', false),
-                'testable' => false,
-                'transitions' => [AlertTransition::UpToDown->value],
             ],
         ],
     ],

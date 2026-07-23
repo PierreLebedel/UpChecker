@@ -235,12 +235,13 @@ class CheckMonitorAction
         }
 
         $monitor->loadMissing('project.user');
+        $notification = new MonitorAlertNotification($result, $transition);
 
-        try {
-            $monitor->project->user->notify(new MonitorAlertNotification($result, $transition));
-        } catch (Throwable) {
+        if ($notification->via($monitor->project->user) === []) {
             return;
         }
+
+        $monitor->project->user->notify($notification);
 
         $monitor->forceFill([
             'last_alerted_at' => $checkedAt,

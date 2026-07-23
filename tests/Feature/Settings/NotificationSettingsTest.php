@@ -11,7 +11,6 @@ test('notification settings page lists channels enabled by configuration', funct
     config([
         'upchecker.notifications.channels.mail.enabled' => true,
         'upchecker.notifications.channels.telegram.enabled' => true,
-        'upchecker.notifications.channels.sms.enabled' => false,
     ]);
 
     $user = User::factory()->create();
@@ -21,8 +20,7 @@ test('notification settings page lists channels enabled by configuration', funct
         ->assertOk()
         ->assertSee('Notifications')
         ->assertSee('Mail')
-        ->assertSee('Telegram')
-        ->assertDontSee('SMS');
+        ->assertSee('Telegram');
 });
 
 test('notification settings default to mail', function () {

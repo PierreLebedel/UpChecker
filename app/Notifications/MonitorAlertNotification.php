@@ -58,12 +58,14 @@ class MonitorAlertNotification extends Notification implements ShouldQueue
         return TelegramMessage::create()
             ->to((string) config('upchecker.notifications.channels.telegram.chat_id'))
             ->normal()
-            ->content($this->transition->label())
-            ->line("{$monitor->project->name} / {$monitor->name}")
+            ->lineIf(!$this->checkResult->status->isFailure(), "✅ {$monitor->project->name} / {$monitor->name}")
+            ->lineIf($this->checkResult->status->isFailure(), "🟥 {$monitor->project->name} / {$monitor->name}")
             ->line("Statut : {$this->checkResult->status->label()}")
             ->line("URL : {$this->checkResult->checked_url}")
-            ->line($this->failureSummary())
-            ->button('Voir le contrôle', route('monitors.show', $monitor));
+            ->lineIf($this->checkResult->status->isFailure(), $this->failureSummary())
+            ->when($this->checkResult->status->isFailure(), function($message) use ($monitor){
+                $message->button('Consulter les détails', route('monitors.show', $monitor));
+            });
     }
 
     private function monitor(): Monitor
@@ -117,7 +119,6 @@ class MonitorAlertNotification extends Notification implements ShouldQueue
         return match ($channel) {
             AlertChannel::Mail => 'mail',
             AlertChannel::Telegram => 'telegram',
-            AlertChannel::Sms => null,
         };
     }
 }

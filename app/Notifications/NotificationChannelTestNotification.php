@@ -24,7 +24,6 @@ class NotificationChannelTestNotification extends Notification
         return match ($this->channel) {
             AlertChannel::Mail => ['mail'],
             AlertChannel::Telegram => ['telegram'],
-            AlertChannel::Sms => [],
         };
     }
 

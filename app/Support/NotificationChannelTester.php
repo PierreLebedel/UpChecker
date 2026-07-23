@@ -21,7 +21,6 @@ class NotificationChannelTester
 
         return match ($channel) {
             AlertChannel::Mail, AlertChannel::Telegram => $this->testLaravelNotification($user, $channel),
-            AlertChannel::Sms => NotificationChannelTestResult::failed('Le test SMS n’est pas encore disponible.'),
         };
     }
 

@@ -6,14 +6,12 @@ enum AlertChannel: string
 {
     case Mail = 'mail';
     case Telegram = 'telegram';
-    case Sms = 'sms';
 
     public function label(): string
     {
         return match ($this) {
             self::Mail => 'Mail',
             self::Telegram => 'Telegram',
-            self::Sms => 'SMS',
         };
     }
 
@@ -22,7 +20,6 @@ enum AlertChannel: string
         return match ($this) {
             self::Mail => 'Recevoir les alertes sur votre adresse email.',
             self::Telegram => 'Recevoir les alertes dans un chat Telegram configuré côté serveur.',
-            self::Sms => 'Recevoir les alertes par SMS lorsqu’un connecteur sera configuré.',
         };
     }
 
