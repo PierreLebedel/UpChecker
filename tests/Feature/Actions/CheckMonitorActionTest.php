@@ -1,14 +1,18 @@
 <?php
 
 use App\Actions\CheckMonitorAction;
+use App\Enums\AlertChannel;
+use App\Enums\AlertTransition;
 use App\Enums\CheckStatus;
 use App\Enums\MonitorCheckCriterionType;
 use App\Enums\MonitorStatus;
 use App\Events\MonitorCheckCompleted;
 use App\Models\Monitor;
+use App\Notifications\MonitorAlertNotification;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Notification;
 
 beforeEach(function () {
     Http::preventStrayRequests();
@@ -89,6 +93,95 @@ test('it records a down result when the http status is unexpected', function () 
         ->and($monitor->current_status)->toBe(MonitorStatus::Down)
         ->and($monitor->last_success_at->equalTo($previousSuccessAt))->toBeTrue()
         ->and($monitor->last_failure_at)->not->toBeNull();
+});
+
+test('it sends an alert notification when a monitor transitions from up to failure', function () {
+    Notification::fake();
+    Http::fake([
+        'https://example.com/health' => Http::response('Server error', 500),
+    ]);
+    $monitor = Monitor::factory()->up()->create([
+        'url' => 'https://example.com/health',
+        'check_criteria' => [
+            ['type' => MonitorCheckCriterionType::HttpStatus->value, 'expected' => 200],
+        ],
+    ]);
+    $user = $monitor->project->user;
+
+    $result = app(CheckMonitorAction::class)->handle($monitor);
+
+    Notification::assertSentTo(
+        $user,
+        fn (MonitorAlertNotification $notification, array $channels): bool => $notification->checkResult->is($result)
+            && $notification->transition === AlertTransition::UpToDown
+            && $channels === ['mail']
+    );
+
+    expect($monitor->refresh()->last_alerted_at)->not->toBeNull();
+});
+
+test('it sends a recovery alert only to channels configured for down to up', function () {
+    Notification::fake();
+    config(['upchecker.notifications.channels.telegram.enabled' => true]);
+    Http::fake([
+        'https://example.com/health' => Http::response('ok', 200),
+    ]);
+    $monitor = Monitor::factory()->create([
+        'url' => 'https://example.com/health',
+        'current_status' => MonitorStatus::Down,
+        'last_failure_at' => now()->subMinute(),
+        'check_criteria' => [
+            ['type' => MonitorCheckCriterionType::HttpStatus->value, 'expected' => 200],
+        ],
+    ]);
+    $user = $monitor->project->user;
+    $user->forceFill([
+        'notification_channels' => [
+            AlertChannel::Mail->value => [
+                'enabled' => true,
+                'transitions' => [AlertTransition::UpToDown->value],
+            ],
+            AlertChannel::Telegram->value => [
+                'enabled' => true,
+                'transitions' => [
+                    AlertTransition::UpToDown->value,
+                    AlertTransition::DownToUp->value,
+                ],
+            ],
+        ],
+    ])->save();
+
+    $result = app(CheckMonitorAction::class)->handle($monitor);
+
+    Notification::assertSentTo(
+        $user,
+        fn (MonitorAlertNotification $notification, array $channels): bool => $notification->checkResult->is($result)
+            && $notification->transition === AlertTransition::DownToUp
+            && $channels === ['telegram']
+    );
+
+    expect($monitor->refresh()->last_alerted_at)->not->toBeNull();
+});
+
+test('it does not repeat alert notifications while the monitor is already failing', function () {
+    Notification::fake();
+    Http::fake([
+        'https://example.com/health' => Http::response('Server error', 500),
+    ]);
+    $monitor = Monitor::factory()->create([
+        'url' => 'https://example.com/health',
+        'current_status' => MonitorStatus::Down,
+        'last_failure_at' => now()->subMinute(),
+        'check_criteria' => [
+            ['type' => MonitorCheckCriterionType::HttpStatus->value, 'expected' => 200],
+        ],
+    ]);
+
+    app(CheckMonitorAction::class)->handle($monitor);
+
+    Notification::assertNothingSent();
+
+    expect($monitor->refresh()->last_alerted_at)->toBeNull();
 });
 
 test('it records an up result for a matching json expectation', function () {

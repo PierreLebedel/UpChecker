@@ -3,8 +3,8 @@
 use App\Enums\CheckStatus;
 use App\Models\Monitor;
 use Carbon\CarbonInterface;
-use Illuminate\Support\Carbon;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Livewire\Attributes\Computed;
@@ -151,17 +151,17 @@ new #[Title('Dashboard')] class extends Component
 
     @if ($this->monitorsWithRecentFailures->isNotEmpty())
     <div class="space-y-4">
-	        <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-	            <div class="flex flex-wrap items-center gap-3 min-h-10">
-	                <flux:heading size="xl">
-	                    Erreurs récentes
-	                </flux:heading>
-	                <flux:badge variant="solid" color="rose">{{ $this->monitorsWithRecentFailures->count() }}</flux:badge>
-	            </div>
-                <flux:button icon="x-mark" wire:click="forgetRecentFailures" wire:loading.attr="disabled">
-                    Oublier
-                </flux:button>
-	        </div>
+        <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div class="flex flex-wrap items-center gap-3 min-h-10">
+                <flux:heading size="xl">
+                    Erreurs récentes
+                </flux:heading>
+                <flux:badge variant="solid" color="rose">{{ $this->monitorsWithRecentFailures->count() }}</flux:badge>
+            </div>
+            <flux:button size="sm" variant="filled" icon="x-mark" wire:click="forgetRecentFailures" wire:loading.attr="disabled">
+                Oublier
+            </flux:button>
+        </div>
         <div class="grid gap-3">
             <div class="grid gap-3 lg:grid-cols-2 2xl:grid-cols-3">
                 @foreach ($this->monitorsWithRecentFailures as $monitor)

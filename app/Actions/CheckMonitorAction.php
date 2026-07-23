@@ -2,12 +2,14 @@
 
 namespace App\Actions;
 
+use App\Enums\AlertTransition;
 use App\Enums\CheckStatus;
 use App\Enums\MonitorCheckCriterionType;
 use App\Enums\MonitorStatus;
 use App\Events\MonitorCheckCompleted;
 use App\Models\CheckResult;
 use App\Models\Monitor;
+use App\Notifications\MonitorAlertNotification;
 use Carbon\CarbonInterface;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Client\Response;
@@ -186,6 +188,8 @@ class CheckMonitorAction
         ?string $errorMessage = null,
         ?string $responseExcerpt = null,
     ): CheckResult {
+        $previousStatus = $monitor->current_status;
+
         $result = CheckResult::create([
             'monitor_id' => $monitor->id,
             'status' => $status,
@@ -205,6 +209,8 @@ class CheckMonitorAction
             'next_check_at' => $checkedAt->copy()->addMinutes($monitor->interval_minutes),
         ])->save();
 
+        $this->sendAlertNotificationIfNeeded($monitor, $result, $previousStatus, $checkedAt);
+
         broadcast(new MonitorCheckCompleted(
             monitorId: $monitor->id,
             userId: (string) $monitor->project()->value('user_id'),
@@ -214,6 +220,44 @@ class CheckMonitorAction
         ));
 
         return $result;
+    }
+
+    private function sendAlertNotificationIfNeeded(
+        Monitor $monitor,
+        CheckResult $result,
+        MonitorStatus $previousStatus,
+        CarbonInterface $checkedAt,
+    ): void {
+        $transition = $this->alertTransitionFor($result->status, $previousStatus);
+
+        if (! $transition instanceof AlertTransition) {
+            return;
+        }
+
+        $monitor->loadMissing('project.user');
+
+        try {
+            $monitor->project->user->notify(new MonitorAlertNotification($result, $transition));
+        } catch (Throwable) {
+            return;
+        }
+
+        $monitor->forceFill([
+            'last_alerted_at' => $checkedAt,
+        ])->save();
+    }
+
+    private function alertTransitionFor(CheckStatus $status, MonitorStatus $previousStatus): ?AlertTransition
+    {
+        if ($status->isFailure() && $previousStatus === MonitorStatus::Up) {
+            return AlertTransition::UpToDown;
+        }
+
+        if ($status === CheckStatus::Up && $previousStatus->isFailure()) {
+            return AlertTransition::DownToUp;
+        }
+
+        return null;
     }
 
     private function monitorStatusFor(CheckStatus $status): MonitorStatus
