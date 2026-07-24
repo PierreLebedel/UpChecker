@@ -29,6 +29,7 @@ class CheckMonitorAction
             $response = Http::timeout($monitor->timeout_seconds)
                 ->connectTimeout($monitor->timeout_seconds)
                 ->withOptions(['allow_redirects' => true])
+                ->withUserAgent('UpChecker/1.0.0')
                 ->get($monitor->url);
 
             $responseTimeMs = (int) round((microtime(true) - $startedAt) * 1000);
