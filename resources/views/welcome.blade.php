@@ -67,7 +67,7 @@
             <div class="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3 sm:px-6 lg:px-8">
                 <x-app-logo href="{{ route('home') }}" />
 
-                <nav class="flex items-center gap-2">
+                <nav class="flex items-center gap-3">
                     <flux:button
                         icon="arrow-top-right-on-square"
                         variant="subtle"
@@ -77,6 +77,13 @@
                         <span class="hidden sm:inline">GitHub</span>
                     </flux:button>
 
+                    
+                    <div>
+                        <flux:button square x-data x-on:click="$flux.dark = ! $flux.dark" variant="subtle">
+                            <flux:icon.sun x-show="($flux.appearance === 'dark' || $flux.appearance === 'system') && $flux.dark" variant="mini" />
+                            <flux:icon.moon x-show="($flux.appearance === 'light' || $flux.appearance === 'system') && ! $flux.dark" x-cloak variant="mini" />
+                        </flux:button>
+                    </div>
 
                     @auth
                         @if (Route::has('dashboard'))
