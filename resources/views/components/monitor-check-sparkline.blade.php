@@ -1,5 +1,6 @@
 @props([
     'results',
+    'count' => 30,
 ])
 
 @php
@@ -8,7 +9,7 @@
         ->take(-30)
         ->values();
 
-    $placeholderCount = max(0, 30 - $points->count());
+    $placeholderCount = max(0, $count - $points->count());
     $maxResponseTime = max(1, (int) $points->pluck('response_time_ms')->filter()->max());
 @endphp
 
