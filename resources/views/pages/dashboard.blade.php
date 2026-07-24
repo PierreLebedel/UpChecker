@@ -170,7 +170,7 @@ new #[Title('Dashboard')] class extends Component
                 </flux:heading>
                 <flux:badge variant="solid" color="rose">{{ $this->monitorsWithRecentFailures->count() }}</flux:badge>
             </div>
-            <flux:button size="sm" variant="filled" icon="x-mark" wire:click="forgetRecentFailures" wire:loading.attr="disabled">
+            <flux:button icon="x-mark" wire:click="forgetRecentFailures" wire:loading.attr="disabled">
                 Oublier
             </flux:button>
         </div>
@@ -183,13 +183,25 @@ new #[Title('Dashboard')] class extends Component
 
                     <flux:card wire:key="recent-failure-{{ $monitor->id }}" class="flex flex-col gap-4 py-4">
                         <div class="flex items-center justify-between gap-3">
-                            <div class="min-w-0">
-                                <flux:heading size="lg">
-                                    <a href="{{ route('monitors.show', $monitor) }}" wire:navigate class="hover:text-zinc-700 dark:hover:text-zinc-300">
-                                        {{ $monitor->name }}
-                                    </a>
-                                </flux:heading>
-                                <flux:text class="truncate text-xs text-zinc-500 dark:text-zinc-400">{{ $monitor->url }}</flux:text>
+                            <div class="flex min-w-0 items-center gap-3">
+                                <flux:badge variant="solid" :color="$monitor->current_status->color()" class="mt-1 size-3.5 rounded-full! p-0!" title="Statut actuel : {{ $monitor->current_status->label() }}">
+                                    <span class="sr-only">{{ $monitor->current_status->label() }}</span>
+                                </flux:badge>
+
+                                <div class="min-w-0">
+                                    <flux:heading size="base">
+                                        <span class="text-xs">
+                                            <a href="{{ route('projects.show', $monitor->project) }}" wire:navigate class="font-medium text-zinc-500 hover:text-zinc-950 dark:text-zinc-400 dark:hover:text-zinc-100">
+                                                {{ $monitor->project->name }}
+                                            </a>
+                                            <span class="text-zinc-400 dark:text-zinc-500">/</span>
+                                        </span>
+                                        <a href="{{ route('monitors.show', $monitor) }}" wire:navigate class="hover:text-zinc-700 dark:hover:text-zinc-300">
+                                            {{ $monitor->name }}
+                                        </a>
+                                    </flux:heading>
+                                    <flux:text class="truncate text-xs text-zinc-500 dark:text-zinc-400">{{ $monitor->url }}</flux:text>
+                                </div>
                             </div>
 
                             @if ($latestFailure)
@@ -200,12 +212,6 @@ new #[Title('Dashboard')] class extends Component
                         </div>
 
                         <div class="flex gap-3 items-start justify-between text-sm">
-                            <div>
-                                <div class="text-zinc-500 dark:text-zinc-400">Projet</div>
-                                <a href="{{ route('projects.show', $monitor->project) }}" wire:navigate class="font-medium text-zinc-800 hover:text-zinc-950 dark:text-zinc-200 dark:hover:text-white">
-                                    {{ $monitor->project->name }}
-                                </a>
-                            </div>
                             <div>
                                 <div class="text-zinc-500 dark:text-zinc-400">Dernière erreur</div>
                                 <div class="font-medium text-zinc-800 dark:text-zinc-200">
