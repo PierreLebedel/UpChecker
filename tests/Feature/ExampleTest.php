@@ -11,7 +11,7 @@ test('returns a successful response', function () {
         ->assertSee('Connexion')
         ->assertSee('GitHub')
         ->assertSee('Production API')
-        ->assertSee('Choisissez vos canaux d’alerte');
+        ->assertSee("Choisissez vos canaux d'alerte");
 
     if (Route::has('register')) {
         $response->assertSee('Créer un compte');
