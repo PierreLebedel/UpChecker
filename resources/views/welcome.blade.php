@@ -92,13 +92,13 @@
                             </flux:button>
                         @endif
                     @else
-                        @if (Route::has('login') || true)
+                        @if (Route::has('login'))
                             <flux:button :href="route('login')" wire:navigate>
                                 Connexion
                             </flux:button>
                         @endif
 
-                        @if (Route::has('register') || true)
+                        @if (Route::has('register'))
                             <flux:button variant="primary" :href="route('register')" wire:navigate>
                                 Créer un compte
                             </flux:button>
