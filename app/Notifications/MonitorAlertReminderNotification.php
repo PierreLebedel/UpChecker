@@ -69,7 +69,8 @@ class MonitorAlertReminderNotification extends Notification implements ShouldQue
         return TelegramMessage::create()
             ->to((string) config('upchecker.notifications.channels.telegram.chat_id'))
             ->normal()
-            ->content($intro."\n".implode("\n", $services));
+            ->content($intro."\n".implode("\n", $services))
+            ->button('Consulter les incidents', route('dashboard'));
     }
 
     /**

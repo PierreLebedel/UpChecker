@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Queue;
+use Illuminate\Support\Facades\URL;
 
 beforeEach(function () {
     Carbon::setTestNow(now()->startOfSecond());
@@ -254,6 +255,8 @@ test('it does not mark an alert as sent when no channel is configured for the tr
 
 test('telegram alerts summarize every failure after each outage and recovery', function () {
     Notification::fake();
+    URL::forceRootUrl('https://monitoring.example.com');
+    URL::forceScheme('https');
     config([
         'upchecker.notifications.channels.telegram.enabled' => true,
         'upchecker.notifications.channels.telegram.chat_id' => 'test-chat',
@@ -290,8 +293,18 @@ test('telegram alerts summarize every failure after each outage and recovery', f
             $queuedNotification = unserialize(serialize($notification));
             $message = $queuedNotification->toTelegram($user)->toArray();
 
-            expect($message['chat_id'])->toBe('test-chat')
-                ->and($message)->not->toHaveKey('reply_markup');
+            expect($message['chat_id'])->toBe('test-chat');
+
+            if ($notification->transition === AlertTransition::UpToDown) {
+                expect(json_decode($message['reply_markup'], true, flags: JSON_THROW_ON_ERROR))->toBe([
+                    'inline_keyboard' => [[[
+                        'text' => 'Consulter le nouvel incident',
+                        'url' => "https://monitoring.example.com/monitors/{$notification->checkResult->monitor_id}",
+                    ]]],
+                ]);
+            } else {
+                expect($message)->not->toHaveKey('reply_markup');
+            }
 
             return [$notification->transition, $message['text']];
         })

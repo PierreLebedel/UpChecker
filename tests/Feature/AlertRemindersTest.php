@@ -10,6 +10,7 @@ use App\Notifications\MonitorAlertReminderNotification;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Queue;
+use Illuminate\Support\Facades\URL;
 
 beforeEach(function () {
     $this->freezeSecond();
@@ -20,6 +21,8 @@ beforeEach(function () {
 });
 
 test('hourly reminders group confirmed failures by account for both mail and telegram', function () {
+    URL::forceRootUrl('https://monitoring.example.com');
+    URL::forceScheme('https');
     $user = User::factory()->create([
         'notification_channels' => ['mail', 'telegram'],
         'next_alert_reminder_at' => now(),
@@ -44,6 +47,12 @@ test('hourly reminders group confirmed failures by account for both mail and tel
             ->and($notification->toTelegram($user)->toArray()['text'])->toBe(
                 "2 incidents en cours :\n🟨 Alpha / API\n🟨 Beta / Site",
             )
+            ->and(json_decode($notification->toTelegram($user)->toArray()['reply_markup'], true, flags: JSON_THROW_ON_ERROR))->toBe([
+                'inline_keyboard' => [[[
+                    'text' => 'Consulter les incidents',
+                    'url' => 'https://monitoring.example.com/dashboard',
+                ]]],
+            ])
             ->and($notification->toMail($user)->subject)->toBe('Rappel UpChecker : services toujours en erreur')
             ->and($notification->toMail($user)->introLines)->toBe([
                 'Rappel : les services suivants sont toujours en erreur.',

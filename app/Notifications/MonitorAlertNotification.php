@@ -85,10 +85,16 @@ class MonitorAlertNotification extends Notification implements ShouldQueue
 
     public function toTelegram(object $notifiable): TelegramMessage
     {
-        return TelegramMessage::create()
+        $message = TelegramMessage::create()
             ->to((string) config('upchecker.notifications.channels.telegram.chat_id'))
             ->normal()
             ->content(implode("\n", $this->telegramLines));
+
+        if ($this->transition === AlertTransition::UpToDown) {
+            $message->button('Consulter le nouvel incident', route('monitors.show', $this->checkResult->monitor_id));
+        }
+
+        return $message;
     }
 
     private function monitor(): Monitor
