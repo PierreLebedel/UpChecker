@@ -4,6 +4,7 @@ namespace App\Notifications;
 
 use App\Enums\AlertChannel;
 use App\Enums\AlertTransition;
+use App\Enums\MonitorStatus;
 use App\Models\CheckResult;
 use App\Models\Monitor;
 use App\Models\User;
@@ -17,10 +18,40 @@ class MonitorAlertNotification extends Notification implements ShouldQueue
 {
     use Queueable;
 
+    /**
+     * @var list<string>
+     */
+    private array $telegramLines;
+
     public function __construct(
         public CheckResult $checkResult,
         public AlertTransition $transition,
-    ) {}
+    ) {
+        $monitor = $this->monitor();
+
+        $this->telegramLines = array_values(Monitor::query()
+            ->with('project:id,name')
+            ->whereRelation('project', 'user_id', $monitor->project->user_id)
+            ->where('enabled', true)
+            ->whereIn('current_status', array_filter(
+                MonitorStatus::cases(),
+                fn (MonitorStatus $status): bool => $status->isFailure(),
+            ))
+            ->get(['id', 'project_id', 'name'])
+            ->map(function (Monitor $failingMonitor) use ($monitor): string {
+                $icon = $this->transition === AlertTransition::UpToDown && $failingMonitor->is($monitor)
+                    ? '🟥'
+                    : '🟨';
+
+                return "{$icon} {$failingMonitor->project->name} / {$failingMonitor->name}";
+            })
+            ->sort()
+            ->all());
+
+        if ($this->telegramLines === []) {
+            $this->telegramLines = ['✅ Tout est OK'];
+        }
+    }
 
     /**
      * @return array<int, string>
@@ -53,19 +84,10 @@ class MonitorAlertNotification extends Notification implements ShouldQueue
 
     public function toTelegram(object $notifiable): TelegramMessage
     {
-        $monitor = $this->monitor();
-
         return TelegramMessage::create()
             ->to((string) config('upchecker.notifications.channels.telegram.chat_id'))
             ->normal()
-            ->lineIf(! $this->checkResult->status->isFailure(), "✅ {$monitor->project->name} / {$monitor->name}")
-            ->lineIf($this->checkResult->status->isFailure(), "🟥 {$monitor->project->name} / {$monitor->name}")
-            ->line("Statut : {$this->checkResult->status->label()}")
-            ->line("URL : {$this->checkResult->checked_url}")
-            ->lineIf($this->checkResult->status->isFailure(), $this->failureSummary())
-            ->when($this->checkResult->status->isFailure(), function ($message) use ($monitor) {
-                $message->button('Consulter les détails', route('monitors.show', $monitor));
-            });
+            ->content(implode("\n", $this->telegramLines));
     }
 
     private function monitor(): Monitor

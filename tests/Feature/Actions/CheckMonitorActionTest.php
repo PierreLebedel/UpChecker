@@ -8,6 +8,8 @@ use App\Enums\MonitorCheckCriterionType;
 use App\Enums\MonitorStatus;
 use App\Events\MonitorCheckCompleted;
 use App\Models\Monitor;
+use App\Models\Project;
+use App\Models\User;
 use App\Notifications\MonitorAlertNotification;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Event;
@@ -240,6 +242,111 @@ test('it does not mark an alert as sent when no channel is configured for the tr
     Notification::assertNothingSent();
 
     expect($monitor->refresh()->last_alerted_at)->toBeNull();
+});
+
+test('telegram alerts summarize every failure after each outage and recovery', function () {
+    Notification::fake();
+    config([
+        'upchecker.notifications.channels.telegram.enabled' => true,
+        'upchecker.notifications.channels.telegram.chat_id' => 'test-chat',
+    ]);
+    Http::fake([
+        'https://example.com/api' => Http::sequence()->push('error', 500)->push('ok', 200),
+        'https://example.com/site' => Http::sequence()->push('error', 503)->push('ok', 200),
+    ]);
+    $user = User::factory()->create(['notification_channels' => ['telegram']]);
+    $project = Project::factory()->for($user)->create(['name' => 'Application']);
+    $api = Monitor::factory()->for($project)->up()->create([
+        'name' => 'API',
+        'url' => 'https://example.com/api',
+    ]);
+    $site = Monitor::factory()->for($project)->up()->create([
+        'name' => 'Site',
+        'url' => 'https://example.com/site',
+    ]);
+
+    $action = app(CheckMonitorAction::class);
+    $action->handle($api);
+    $action->handle($site);
+    $action->handle($api);
+    $action->handle($site);
+
+    Notification::assertSentToTimes($user, MonitorAlertNotification::class, 4);
+
+    $messages = Notification::sent($user, MonitorAlertNotification::class)
+        ->map(function (MonitorAlertNotification $notification) use ($user): array {
+            $queuedNotification = unserialize(serialize($notification));
+            $message = $queuedNotification->toTelegram($user)->toArray();
+
+            expect($message['chat_id'])->toBe('test-chat')
+                ->and($message)->not->toHaveKey('reply_markup');
+
+            return [$notification->transition, $message['text']];
+        })
+        ->all();
+
+    expect($messages)->toBe([
+        [AlertTransition::UpToDown, '🟥 Application / API'],
+        [AlertTransition::UpToDown, "🟥 Application / Site\n🟨 Application / API"],
+        [AlertTransition::DownToUp, '🟨 Application / Site'],
+        [AlertTransition::DownToUp, '✅ Tout est OK'],
+    ]);
+});
+
+test('telegram summaries include all failure types across the users active projects', function () {
+    Notification::fake();
+    config(['upchecker.notifications.channels.telegram.enabled' => true]);
+    Http::fake(['https://example.com/health' => Http::response('error', 500)]);
+    $user = User::factory()->create(['notification_channels' => ['telegram']]);
+    $project = Project::factory()->for($user)->create(['name' => 'Alpha']);
+    $otherProject = Project::factory()->for($user)->create(['name' => 'Beta']);
+    $monitor = Monitor::factory()->for($project)->up()->create([
+        'name' => 'API',
+        'url' => 'https://example.com/health',
+    ]);
+    Monitor::factory()->for($otherProject)->createMany([
+        ['name' => 'Timeout', 'current_status' => MonitorStatus::Timeout],
+        ['name' => 'Invalid', 'current_status' => MonitorStatus::Invalid],
+        ['name' => 'Down', 'current_status' => MonitorStatus::Down],
+        ['name' => 'Healthy', 'current_status' => MonitorStatus::Up],
+        ['name' => 'New', 'current_status' => MonitorStatus::Unknown],
+    ]);
+    Monitor::factory()->for($project)->disabled()->down()->create(['name' => 'Paused']);
+    Monitor::factory()->down()->create(['name' => 'Another users service']);
+
+    app(CheckMonitorAction::class)->handle($monitor);
+
+    Notification::assertSentTo($user, function (MonitorAlertNotification $notification, array $channels) use ($user): bool {
+        expect($channels)->toBe(['telegram'])
+            ->and($notification->toTelegram($user)->toArray()['text'])->toBe(
+                "🟥 Alpha / API\n🟨 Beta / Down\n🟨 Beta / Invalid\n🟨 Beta / Timeout",
+            );
+
+        return true;
+    });
+});
+
+test('telegram alerts are not repeated when availability stays unchanged', function () {
+    Notification::fake();
+    config(['upchecker.notifications.channels.telegram.enabled' => true]);
+    Http::fake([
+        'https://example.com/health' => Http::sequence()
+            ->push('error', 500)
+            ->push('error', 500)
+            ->push('ok', 200)
+            ->push('ok', 200),
+    ]);
+    $user = User::factory()->create(['notification_channels' => ['telegram']]);
+    $project = Project::factory()->for($user)->create();
+    $monitor = Monitor::factory()->for($project)->up()->create(['url' => 'https://example.com/health']);
+
+    $action = app(CheckMonitorAction::class);
+    $action->handle($monitor);
+    $action->handle($monitor);
+    $action->handle($monitor);
+    $action->handle($monitor);
+
+    Notification::assertSentToTimes($user, MonitorAlertNotification::class, 2);
 });
 
 test('it does not repeat alert notifications while the monitor is already failing', function () {
