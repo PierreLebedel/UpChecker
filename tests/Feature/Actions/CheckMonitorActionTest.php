@@ -7,6 +7,7 @@ use App\Enums\CheckStatus;
 use App\Enums\MonitorCheckCriterionType;
 use App\Enums\MonitorStatus;
 use App\Events\MonitorCheckCompleted;
+use App\Jobs\CheckMonitorJob;
 use App\Models\Monitor;
 use App\Models\Project;
 use App\Models\User;
@@ -15,9 +16,12 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Facades\Queue;
 
 beforeEach(function () {
+    Carbon::setTestNow(now()->startOfSecond());
     Http::preventStrayRequests();
+    Queue::fake([CheckMonitorJob::class]);
 });
 
 afterEach(function () {
@@ -97,7 +101,7 @@ test('it records a down result when the http status is unexpected', function () 
         ->and($monitor->last_failure_at)->not->toBeNull();
 });
 
-test('it sends an alert notification when a monitor transitions from up to failure', function () {
+test('it sends an alert notification when a monitor failure is confirmed', function () {
     Notification::fake();
     Http::fake([
         'https://example.com/health' => Http::response('Server error', 500),
@@ -110,6 +114,8 @@ test('it sends an alert notification when a monitor transitions from up to failu
     ]);
     $user = $monitor->project->user;
 
+    app(CheckMonitorAction::class)->handle($monitor);
+    $this->travel(1)->minutes();
     $result = app(CheckMonitorAction::class)->handle($monitor);
 
     Notification::assertSentTo(
@@ -128,7 +134,7 @@ test('it sends a recovery alert only to channels configured for down to up', fun
     Http::fake([
         'https://example.com/health' => Http::response('ok', 200),
     ]);
-    $monitor = Monitor::factory()->create([
+    $monitor = Monitor::factory()->confirmedFailure()->create([
         'url' => 'https://example.com/health',
         'current_status' => MonitorStatus::Down,
         'last_failure_at' => now()->subMinute(),
@@ -194,6 +200,8 @@ test('it sends a failure alert to every channel configured for up to down', func
         ],
     ])->save();
 
+    app(CheckMonitorAction::class)->handle($monitor);
+    $this->travel(1)->minutes();
     $result = app(CheckMonitorAction::class)->handle($monitor);
 
     Notification::assertSentTo(
@@ -212,7 +220,7 @@ test('it does not mark an alert as sent when no channel is configured for the tr
     Http::fake([
         'https://example.com/health' => Http::response('ok', 200),
     ]);
-    $monitor = Monitor::factory()->create([
+    $monitor = Monitor::factory()->confirmedFailure()->create([
         'url' => 'https://example.com/health',
         'current_status' => MonitorStatus::Down,
         'last_failure_at' => now()->subMinute(),
@@ -251,8 +259,8 @@ test('telegram alerts summarize every failure after each outage and recovery', f
         'upchecker.notifications.channels.telegram.chat_id' => 'test-chat',
     ]);
     Http::fake([
-        'https://example.com/api' => Http::sequence()->push('error', 500)->push('ok', 200),
-        'https://example.com/site' => Http::sequence()->push('error', 503)->push('ok', 200),
+        'https://example.com/api' => Http::sequence()->push('error', 500)->push('error', 500)->push('ok', 200),
+        'https://example.com/site' => Http::sequence()->push('error', 503)->push('error', 503)->push('ok', 200),
     ]);
     $user = User::factory()->create(['notification_channels' => ['telegram']]);
     $project = Project::factory()->for($user)->create(['name' => 'Application']);
@@ -267,6 +275,10 @@ test('telegram alerts summarize every failure after each outage and recovery', f
 
     $action = app(CheckMonitorAction::class);
     $action->handle($api);
+    $this->travel(1)->minutes();
+    $action->handle($api);
+    $action->handle($site);
+    $this->travel(1)->minutes();
     $action->handle($site);
     $action->handle($api);
     $action->handle($site);
@@ -304,7 +316,7 @@ test('telegram summaries include all failure types across the users active proje
         'name' => 'API',
         'url' => 'https://example.com/health',
     ]);
-    Monitor::factory()->for($otherProject)->createMany([
+    Monitor::factory()->for($otherProject)->confirmedFailure()->createMany([
         ['name' => 'Timeout', 'current_status' => MonitorStatus::Timeout],
         ['name' => 'Invalid', 'current_status' => MonitorStatus::Invalid],
         ['name' => 'Down', 'current_status' => MonitorStatus::Down],
@@ -313,7 +325,10 @@ test('telegram summaries include all failure types across the users active proje
     ]);
     Monitor::factory()->for($project)->disabled()->down()->create(['name' => 'Paused']);
     Monitor::factory()->down()->create(['name' => 'Another users service']);
+    Monitor::factory()->for($project)->down()->create(['name' => 'Unconfirmed']);
 
+    app(CheckMonitorAction::class)->handle($monitor);
+    $this->travel(1)->minutes();
     app(CheckMonitorAction::class)->handle($monitor);
 
     Notification::assertSentTo($user, function (MonitorAlertNotification $notification, array $channels) use ($user): bool {
@@ -342,6 +357,7 @@ test('telegram alerts are not repeated when availability stays unchanged', funct
 
     $action = app(CheckMonitorAction::class);
     $action->handle($monitor);
+    $this->travel(1)->minutes();
     $action->handle($monitor);
     $action->handle($monitor);
     $action->handle($monitor);
@@ -354,7 +370,7 @@ test('it does not repeat alert notifications while the monitor is already failin
     Http::fake([
         'https://example.com/health' => Http::response('Server error', 500),
     ]);
-    $monitor = Monitor::factory()->create([
+    $monitor = Monitor::factory()->confirmedFailure()->create([
         'url' => 'https://example.com/health',
         'current_status' => MonitorStatus::Down,
         'last_failure_at' => now()->subMinute(),

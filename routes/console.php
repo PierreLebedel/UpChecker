@@ -15,3 +15,7 @@ Schedule::command('monitors:dispatch-due-checks')
 Schedule::command('monitors:prune-check-results')
     ->daily()
     ->withoutOverlapping(30);
+
+Schedule::command('monitors:send-alert-reminders')
+    ->everyMinute()
+    ->withoutOverlapping(5);

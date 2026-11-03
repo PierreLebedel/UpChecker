@@ -7,13 +7,16 @@ use App\Enums\CheckStatus;
 use App\Enums\MonitorCheckCriterionType;
 use App\Enums\MonitorStatus;
 use App\Events\MonitorCheckCompleted;
+use App\Jobs\CheckMonitorJob;
 use App\Models\CheckResult;
 use App\Models\Monitor;
+use App\Models\User;
 use App\Notifications\MonitorAlertNotification;
 use Carbon\CarbonInterface;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use JsonException;
 use Throwable;
@@ -24,6 +27,9 @@ class CheckMonitorAction
     {
         $checkedAt = now();
         $startedAt = microtime(true);
+        $httpStatus = null;
+        $responseTimeMs = null;
+        $responseExcerpt = null;
 
         try {
             $response = Http::timeout($monitor->timeout_seconds)
@@ -33,32 +39,26 @@ class CheckMonitorAction
                 ->get($monitor->url);
 
             $responseTimeMs = (int) round((microtime(true) - $startedAt) * 1000);
+            $httpStatus = $response->status();
+            $responseExcerpt = $this->excerpt($response->body());
             [$status, $errorMessage] = $this->evaluateResponse($monitor, $response);
-
-            return $this->recordResult(
-                monitor: $monitor,
-                status: $status,
-                checkedAt: $checkedAt,
-                httpStatus: $response->status(),
-                responseTimeMs: $responseTimeMs,
-                errorMessage: $errorMessage,
-                responseExcerpt: $this->excerpt($response->body()),
-            );
         } catch (ConnectionException $exception) {
-            return $this->recordResult(
-                monitor: $monitor,
-                status: CheckStatus::Timeout,
-                checkedAt: $checkedAt,
-                errorMessage: $exception->getMessage(),
-            );
+            $status = CheckStatus::Timeout;
+            $errorMessage = $exception->getMessage();
         } catch (Throwable $exception) {
-            return $this->recordResult(
-                monitor: $monitor,
-                status: CheckStatus::Invalid,
-                checkedAt: $checkedAt,
-                errorMessage: $exception->getMessage(),
-            );
+            $status = CheckStatus::Invalid;
+            $errorMessage = $exception->getMessage();
         }
+
+        return $this->recordResult(
+            monitor: $monitor,
+            status: $status,
+            checkedAt: $checkedAt,
+            httpStatus: $httpStatus,
+            responseTimeMs: $responseTimeMs,
+            errorMessage: $errorMessage,
+            responseExcerpt: $responseExcerpt,
+        );
     }
 
     /**
@@ -189,28 +189,64 @@ class CheckMonitorAction
         ?string $errorMessage = null,
         ?string $responseExcerpt = null,
     ): CheckResult {
-        $previousStatus = $monitor->current_status;
+        $monitor->loadMissing('project.user');
+        $user = $monitor->project->user;
+        $checkedUrl = $monitor->url;
 
-        $result = CheckResult::create([
-            'monitor_id' => $monitor->id,
-            'status' => $status,
-            'http_status' => $httpStatus,
-            'response_time_ms' => $responseTimeMs,
-            'error_message' => $errorMessage,
-            'checked_url' => $monitor->url,
-            'checked_at' => $checkedAt,
-            'response_excerpt' => $responseExcerpt,
-        ]);
+        $result = DB::transaction(function () use ($monitor, $user, $status, $checkedAt, $httpStatus, $responseTimeMs, $errorMessage, $responseExcerpt, $checkedUrl): CheckResult {
+            $user = User::query()->lockForUpdate()->findOrFail($user->id);
+            $monitor->refresh();
+            $completedAt = now();
+            $wasConfirmed = $monitor->failure_confirmed_at !== null;
+            $isFirstFailure = $status->isFailure() && $monitor->failure_detected_at === null;
+            $transition = null;
 
-        $monitor->forceFill([
-            'current_status' => $this->monitorStatusFor($status),
-            'last_checked_at' => $checkedAt,
-            'last_success_at' => $status === CheckStatus::Up ? $checkedAt : $monitor->last_success_at,
-            'last_failure_at' => $status->isFailure() ? $checkedAt : $monitor->last_failure_at,
-            'next_check_at' => $checkedAt->copy()->addMinutes($monitor->interval_minutes),
-        ])->save();
+            if ($status === CheckStatus::Up) {
+                $monitor->failure_detected_at = null;
+                $monitor->failure_confirmed_at = null;
+                $transition = $wasConfirmed ? AlertTransition::DownToUp : null;
+            } elseif ($isFirstFailure) {
+                $monitor->forceFill(['failure_detected_at' => $completedAt]);
+            } elseif (! $wasConfirmed && $checkedAt->greaterThanOrEqualTo($monitor->failure_detected_at->copy()->addMinute())) {
+                $monitor->forceFill(['failure_confirmed_at' => $completedAt]);
+                $transition = AlertTransition::UpToDown;
+            }
 
-        $this->sendAlertNotificationIfNeeded($monitor, $result, $previousStatus, $checkedAt);
+            $result = CheckResult::create([
+                'monitor_id' => $monitor->id,
+                'status' => $status,
+                'http_status' => $httpStatus,
+                'response_time_ms' => $responseTimeMs,
+                'error_message' => $errorMessage,
+                'checked_url' => $checkedUrl,
+                'checked_at' => $checkedAt,
+                'response_excerpt' => $responseExcerpt,
+            ]);
+
+            $monitor->forceFill([
+                'current_status' => $this->monitorStatusFor($status),
+                'last_checked_at' => $checkedAt,
+                'last_success_at' => $status === CheckStatus::Up ? $checkedAt : $monitor->last_success_at,
+                'last_failure_at' => $status->isFailure() ? $checkedAt : $monitor->last_failure_at,
+                'next_check_at' => $status->isFailure() && $monitor->failure_confirmed_at === null
+                    ? $monitor->failure_detected_at->copy()->addMinute()
+                    : $completedAt->copy()->addMinutes($monitor->interval_minutes),
+            ])->save();
+
+            if ($isFirstFailure) {
+                CheckMonitorJob::dispatch($monitor->id, $monitor->failure_detected_at->toIso8601String())
+                    ->delay($monitor->next_check_at)
+                    ->afterCommit();
+            }
+
+            $this->updateReminderSchedule($user, $completedAt);
+
+            if ($transition !== null) {
+                $this->sendAlertNotification($monitor, $user, $result, $transition, $completedAt);
+            }
+
+            return $result;
+        });
 
         broadcast(new MonitorCheckCompleted(
             monitorId: $monitor->id,
@@ -223,43 +259,38 @@ class CheckMonitorAction
         return $result;
     }
 
-    private function sendAlertNotificationIfNeeded(
+    private function sendAlertNotification(
         Monitor $monitor,
+        User $user,
         CheckResult $result,
-        MonitorStatus $previousStatus,
+        AlertTransition $transition,
         CarbonInterface $checkedAt,
     ): void {
-        $transition = $this->alertTransitionFor($result->status, $previousStatus);
-
-        if (! $transition instanceof AlertTransition) {
-            return;
-        }
-
-        $monitor->loadMissing('project.user');
         $notification = new MonitorAlertNotification($result, $transition);
 
-        if ($notification->via($monitor->project->user) === []) {
+        if ($notification->via($user) === []) {
             return;
         }
 
-        $monitor->project->user->notify($notification);
+        $user->notify($notification->afterCommit());
 
         $monitor->forceFill([
             'last_alerted_at' => $checkedAt,
         ])->save();
     }
 
-    private function alertTransitionFor(CheckStatus $status, MonitorStatus $previousStatus): ?AlertTransition
+    private function updateReminderSchedule(User $user, CarbonInterface $completedAt): void
     {
-        if ($status->isFailure() && $previousStatus === MonitorStatus::Up) {
-            return AlertTransition::UpToDown;
-        }
+        $hasConfirmedFailures = Monitor::query()
+            ->confirmedFailures()
+            ->whereRelation('project', 'user_id', $user->id)
+            ->exists();
 
-        if ($status === CheckStatus::Up && $previousStatus->isFailure()) {
-            return AlertTransition::DownToUp;
-        }
-
-        return null;
+        $user->forceFill([
+            'next_alert_reminder_at' => $hasConfirmedFailures
+                ? ($user->next_alert_reminder_at ?? $completedAt->copy()->addHour())
+                : null,
+        ])->save();
     }
 
     private function monitorStatusFor(CheckStatus $status): MonitorStatus

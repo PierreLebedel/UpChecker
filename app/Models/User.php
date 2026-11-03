@@ -23,6 +23,7 @@ use Illuminate\Support\Str;
  * @property Carbon|null $email_verified_at
  * @property string $password
  * @property array<mixed>|null $notification_channels
+ * @property Carbon|null $next_alert_reminder_at
  * @property string|null $two_factor_secret
  * @property string|null $two_factor_recovery_codes
  * @property Carbon|null $two_factor_confirmed_at
@@ -56,6 +57,7 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'notification_channels' => 'array',
+            'next_alert_reminder_at' => 'datetime',
         ];
     }
 

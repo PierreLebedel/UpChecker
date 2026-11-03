@@ -17,8 +17,10 @@ class CheckMonitorJob implements ShouldQueue
     /**
      * Create a new job instance.
      */
-    public function __construct(public string $monitorId)
-    {
+    public function __construct(
+        public string $monitorId,
+        public ?string $failureDetectedAt = null,
+    ) {
         $this->onQueue('default');
     }
 
@@ -30,6 +32,14 @@ class CheckMonitorJob implements ShouldQueue
         $monitor = Monitor::query()->find($this->monitorId);
 
         if (! $monitor instanceof Monitor || ! $monitor->enabled) {
+            return;
+        }
+
+        if (($this->failureDetectedAt ?? null) !== null && (
+            $monitor->failure_detected_at?->toIso8601String() !== $this->failureDetectedAt
+            || $monitor->failure_confirmed_at !== null
+            || $monitor->failure_detected_at->copy()->addMinute()->isFuture()
+        )) {
             return;
         }
 

@@ -70,4 +70,12 @@ class MonitorFactory extends Factory
             'last_failure_at' => now(),
         ]);
     }
+
+    public function confirmedFailure(): static
+    {
+        return $this->down()->state(fn (array $attributes) => [
+            'failure_detected_at' => now()->subMinutes(2),
+            'failure_confirmed_at' => now()->subMinute(),
+        ]);
+    }
 }

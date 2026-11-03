@@ -41,3 +41,16 @@ test('it ignores missing monitors', function () {
 
     expect(CheckResult::query()->count())->toBe(0);
 });
+
+test('it can process a check queued before failure confirmation was introduced', function () {
+    Http::fake(['https://example.com/health' => Http::response('ok', 200)]);
+    $monitor = Monitor::factory()->create(['url' => 'https://example.com/health']);
+    $job = new CheckMonitorJob($monitor->id);
+    unset($job->failureDetectedAt);
+    $queuedJob = unserialize(serialize($job));
+
+    $queuedJob->handle(app(CheckMonitorAction::class));
+
+    expect($monitor->refresh()->current_status)->toBe(MonitorStatus::Up);
+    Http::assertSentCount(1);
+});

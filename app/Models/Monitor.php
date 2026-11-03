@@ -29,6 +29,8 @@ use Illuminate\Support\Carbon;
  * @property Carbon|null $last_failure_at
  * @property Carbon|null $last_alerted_at
  * @property Carbon|null $next_check_at
+ * @property Carbon|null $failure_detected_at
+ * @property Carbon|null $failure_confirmed_at
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  */
@@ -46,6 +48,8 @@ use Illuminate\Support\Carbon;
     'last_failure_at',
     'last_alerted_at',
     'next_check_at',
+    'failure_detected_at',
+    'failure_confirmed_at',
 ])]
 class Monitor extends Model
 {
@@ -116,6 +120,21 @@ class Monitor extends Model
     }
 
     /**
+     * @param  Builder<Monitor>  $query
+     * @return Builder<Monitor>
+     */
+    public function scopeConfirmedFailures(Builder $query): Builder
+    {
+        return $query
+            ->where('enabled', true)
+            ->whereNotNull('failure_confirmed_at')
+            ->whereIn('current_status', array_filter(
+                MonitorStatus::cases(),
+                fn (MonitorStatus $status): bool => $status->isFailure(),
+            ));
+    }
+
+    /**
      * @return array<string, string>
      */
     protected function casts(): array
@@ -131,6 +150,8 @@ class Monitor extends Model
             'last_failure_at' => 'datetime',
             'last_alerted_at' => 'datetime',
             'next_check_at' => 'datetime',
+            'failure_detected_at' => 'datetime',
+            'failure_confirmed_at' => 'datetime',
         ];
     }
 }

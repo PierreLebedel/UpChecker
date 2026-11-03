@@ -4,7 +4,6 @@ namespace App\Notifications;
 
 use App\Enums\AlertChannel;
 use App\Enums\AlertTransition;
-use App\Enums\MonitorStatus;
 use App\Models\CheckResult;
 use App\Models\Monitor;
 use App\Models\User;
@@ -30,13 +29,9 @@ class MonitorAlertNotification extends Notification implements ShouldQueue
         $monitor = $this->monitor();
 
         $this->telegramLines = array_values(Monitor::query()
+            ->confirmedFailures()
             ->with('project:id,name')
             ->whereRelation('project', 'user_id', $monitor->project->user_id)
-            ->where('enabled', true)
-            ->whereIn('current_status', array_filter(
-                MonitorStatus::cases(),
-                fn (MonitorStatus $status): bool => $status->isFailure(),
-            ))
             ->get(['id', 'project_id', 'name'])
             ->map(function (Monitor $failingMonitor) use ($monitor): string {
                 $icon = $this->transition === AlertTransition::UpToDown && $failingMonitor->is($monitor)
