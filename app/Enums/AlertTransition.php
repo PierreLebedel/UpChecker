@@ -10,7 +10,7 @@ enum AlertTransition: string
     public function label(): string
     {
         return match ($this) {
-            self::UpToDown => 'Panne détectée',
+            self::UpToDown => 'Incident détecté',
             self::DownToUp => 'Retour à la normale',
         };
     }
