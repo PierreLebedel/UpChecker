@@ -42,7 +42,7 @@ test('hourly reminders group confirmed failures by account for both mail and tel
     Notification::assertSentTo($user, function (MonitorAlertReminderNotification $notification, array $channels) use ($user): bool {
         expect($channels)->toBe(['mail', 'telegram'])
             ->and($notification->toTelegram($user)->toArray()['text'])->toBe(
-                "Rappel : services toujours en erreur\n🟨 Alpha / API\n🟨 Beta / Site",
+                "2 incidents en cours :\n🟨 Alpha / API\n🟨 Beta / Site",
             )
             ->and($notification->toMail($user)->subject)->toBe('Rappel UpChecker : services toujours en erreur')
             ->and($notification->toMail($user)->introLines)->toBe([
@@ -179,7 +179,7 @@ test('queued reminders use current failures and are cancelled if everything has 
     expect($notification->shouldSend($user, 'mail'))->toBeTrue()
         ->and($notification->shouldSend($user, 'telegram'))->toBeTrue()
         ->and($notification->toTelegram($user)->toArray()['text'])->toBe(
-            "Rappel : services toujours en erreur\n🟨 Application / Site",
+            "1 incident en cours :\n🟨 Application / Site",
         );
 
     $second->update(['current_status' => MonitorStatus::Up, 'failure_confirmed_at' => null]);

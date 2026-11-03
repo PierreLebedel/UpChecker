@@ -298,10 +298,10 @@ test('telegram alerts summarize every failure after each outage and recovery', f
         ->all();
 
     expect($messages)->toBe([
-        [AlertTransition::UpToDown, '🟥 Application / API'],
-        [AlertTransition::UpToDown, "🟥 Application / Site\n🟨 Application / API"],
-        [AlertTransition::DownToUp, '🟨 Application / Site'],
-        [AlertTransition::DownToUp, '✅ Tout est OK'],
+        [AlertTransition::UpToDown, "1 incident en cours :\n🟥 Application / API"],
+        [AlertTransition::UpToDown, "2 incidents en cours :\n🟥 Application / Site\n🟨 Application / API"],
+        [AlertTransition::DownToUp, "1 incident en cours :\n🟨 Application / Site"],
+        [AlertTransition::DownToUp, '✅ Aucun incident en cours'],
     ]);
 });
 
@@ -334,7 +334,7 @@ test('telegram summaries include all failure types across the users active proje
     Notification::assertSentTo($user, function (MonitorAlertNotification $notification, array $channels) use ($user): bool {
         expect($channels)->toBe(['telegram'])
             ->and($notification->toTelegram($user)->toArray()['text'])->toBe(
-                "🟥 Alpha / API\n🟨 Beta / Down\n🟨 Beta / Invalid\n🟨 Beta / Timeout",
+                "4 incidents en cours :\n🟥 Alpha / API\n🟨 Beta / Down\n🟨 Beta / Invalid\n🟨 Beta / Timeout",
             );
 
         return true;

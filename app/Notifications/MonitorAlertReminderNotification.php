@@ -62,10 +62,14 @@ class MonitorAlertReminderNotification extends Notification implements ShouldQue
 
     public function toTelegram(object $notifiable): TelegramMessage
     {
+        $services = $this->failingServices($notifiable);
+        $incidentCount = count($services);
+        $intro = $incidentCount === 1 ? '1 incident en cours :' : "{$incidentCount} incidents en cours :";
+
         return TelegramMessage::create()
             ->to((string) config('upchecker.notifications.channels.telegram.chat_id'))
             ->normal()
-            ->content("Rappel : services toujours en erreur\n".implode("\n", $this->failingServices($notifiable)));
+            ->content($intro."\n".implode("\n", $services));
     }
 
     /**

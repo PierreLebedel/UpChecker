@@ -77,7 +77,7 @@ test('only a second failure after a full minute alerts both channels including f
         expect($channels)->toBe(['mail', 'telegram'])
             ->and($notification->checkResult->is($result))->toBeTrue()
             ->and($notification->toMail($user)->subject)->toStartWith('Alerte UpChecker')
-            ->and($notification->toTelegram($user)->toArray()['text'])->toStartWith('🟥');
+            ->and($notification->toTelegram($user)->toArray()['text'])->toStartWith("1 incident en cours :\n🟥");
 
         return true;
     });
@@ -210,7 +210,7 @@ test('pending and disabled services never enter another services alert', functio
     $action->handle($confirmed);
 
     Notification::assertSentTo($user, function (MonitorAlertNotification $notification) use ($user): bool {
-        return $notification->toTelegram($user)->toArray()['text'] === '🟥 Application / Confirmed';
+        return $notification->toTelegram($user)->toArray()['text'] === "1 incident en cours :\n🟥 Application / Confirmed";
     });
     expect($pending->refresh()->failure_confirmed_at)->toBeNull();
 });

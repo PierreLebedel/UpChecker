@@ -44,7 +44,13 @@ class MonitorAlertNotification extends Notification implements ShouldQueue
             ->all());
 
         if ($this->telegramLines === []) {
-            $this->telegramLines = ['✅ Tout est OK'];
+            $this->telegramLines = ['✅ Aucun incident en cours'];
+        } else {
+            $incidentCount = count($this->telegramLines);
+
+            array_unshift($this->telegramLines, $incidentCount === 1
+                ? '1 incident en cours :'
+                : "{$incidentCount} incidents en cours :");
         }
     }
 
