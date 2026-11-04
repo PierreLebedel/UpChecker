@@ -313,7 +313,7 @@ test('telegram alerts summarize every failure after each outage and recovery', f
     expect($messages)->toBe([
         [AlertTransition::UpToDown, "1 incident en cours :\n🟥 Application / API"],
         [AlertTransition::UpToDown, "2 incidents en cours :\n🟥 Application / Site\n🟨 Application / API"],
-        [AlertTransition::DownToUp, "1 incident en cours :\n🟨 Application / Site"],
+        [AlertTransition::DownToUp, "1 incident en cours :\n🟩 Application / API\n🟨 Application / Site"],
         [AlertTransition::DownToUp, '✅ Aucun incident en cours'],
     ]);
 });

@@ -31,7 +31,7 @@
         <flux:input wire:model="timeoutSeconds" label="Timeout" type="number" min="1" max="60" />
 
         <div class="pt-9">
-            <flux:checkbox wire:model="enabled" label="Contrôle actif" />
+            <flux:checkbox wire:model="enabled" label="Contrôle actif" description="Décochez pour suspendre les vérifications tout en gardant l’URL visible." />
         </div>
     </div>
 

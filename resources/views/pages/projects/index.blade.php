@@ -271,7 +271,7 @@ new #[Title('Projets')] class extends Component
     {
         $monitor = $this->ownedMonitor($monitorId);
 
-        if (! $monitor instanceof Monitor) {
+        if (! $monitor instanceof Monitor || ! $monitor->enabled) {
             return;
         }
 

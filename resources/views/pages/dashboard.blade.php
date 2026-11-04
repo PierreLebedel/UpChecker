@@ -83,6 +83,7 @@ new #[Title('Dashboard')] class extends Component
                 'project_id',
                 'name',
                 'url',
+                'enabled',
                 'current_status',
                 'last_checked_at',
                 'last_failure_at',
@@ -184,9 +185,7 @@ new #[Title('Dashboard')] class extends Component
                     <flux:card wire:key="recent-failure-{{ $monitor->id }}" class="flex flex-col gap-4 py-4">
                         <div class="flex items-center justify-between gap-3">
                             <div class="flex min-w-0 items-center gap-3">
-                                <flux:badge variant="solid" :color="$monitor->current_status->color()" class="mt-1 size-3.5 rounded-full! p-0!" title="Statut actuel : {{ $monitor->current_status->label() }}">
-                                    <span class="sr-only">{{ $monitor->current_status->label() }}</span>
-                                </flux:badge>
+                                <x-monitor-status-badge :monitor="$monitor" title-prefix="Statut actuel" class="mt-1" />
 
                                 <div class="min-w-0">
                                     <flux:heading size="base">

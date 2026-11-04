@@ -28,9 +28,7 @@
                 <flux:table.row :key="$monitor->id">
 
                     <flux:table.cell class="w-1 pe-1">
-                        <flux:badge variant="solid" :color="$monitor->current_status->color()" class="size-3.5 rounded-full! p-0!" title="Statut : {{ $monitor->current_status->label() }}">
-                            <span class="sr-only">{{ $monitor->current_status->label() }}</span>
-                        </flux:badge>
+                        <x-monitor-status-badge :monitor="$monitor" />
                     </flux:table.cell>
 
                     <flux:table.cell>
@@ -67,7 +65,11 @@
                     </flux:table.cell>
 
                     <flux:table.cell class="w-1">
-                        <x-relative-time :date="$monitor->next_check_at" fallback="non-planifiée" due />
+                        @if ($monitor->enabled)
+                            <x-relative-time :date="$monitor->next_check_at" fallback="non-planifiée" due />
+                        @else
+                            En pause
+                        @endif
                     </flux:table.cell>
 
                     @if ($showMonitorActions)
@@ -80,7 +82,7 @@
                                         <flux:menu.item icon="eye" :href="route('monitors.show', $monitor)" wire:navigate>
                                             Voir le détail
                                         </flux:menu.item>
-                                        <flux:menu.item icon="arrow-path" wire:click="checkNow('{{ $monitor->id }}')">
+                                        <flux:menu.item icon="arrow-path" wire:click="checkNow('{{ $monitor->id }}')" :disabled="! $monitor->enabled">
                                             Vérifier maintenant
                                         </flux:menu.item>
                                         <flux:menu.item icon="pencil" wire:click="openEditMonitorModal('{{ $monitor->id }}')">

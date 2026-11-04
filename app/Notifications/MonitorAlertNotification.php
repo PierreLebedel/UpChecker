@@ -48,6 +48,10 @@ class MonitorAlertNotification extends Notification implements ShouldQueue
         } else {
             $incidentCount = count($this->telegramLines);
 
+            if ($this->transition === AlertTransition::DownToUp) {
+                array_unshift($this->telegramLines, "🟩 {$monitor->project->name} / {$monitor->name}");
+            }
+
             array_unshift($this->telegramLines, $incidentCount === 1
                 ? '1 incident en cours :'
                 : "{$incidentCount} incidents en cours :");

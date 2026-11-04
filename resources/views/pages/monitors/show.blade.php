@@ -116,6 +116,10 @@ new #[Title('Détail URL')] class extends Component
     {
         $monitor = $this->currentMonitor;
 
+        if (! $monitor->enabled) {
+            return;
+        }
+
         $monitor->forceFill([
             'next_check_at' => now()->addMinutes($monitor->interval_minutes),
         ])->save();
@@ -408,12 +412,7 @@ new #[Title('Détail URL')] class extends Component
             <div class="min-w-0">
                 <div class="flex flex-wrap items-center gap-y-1 gap-x-3">
                     <flux:heading size="xl">{{ $this->currentMonitor->name }}</flux:heading>
-                    <flux:badge variant="solid" :color="$this->currentMonitor->current_status->color()">
-                        {{ $this->currentMonitor->current_status->label() }}
-                    </flux:badge>
-                    @unless ($this->currentMonitor->enabled)
-                        <flux:badge color="zinc">Désactivé</flux:badge>
-                    @endunless
+                    <x-monitor-status-badge :monitor="$this->currentMonitor" :dot="false" />
                     
                     <flux:text class="">{{ $this->currentMonitor->url }}</flux:text>
                 </div>
@@ -422,7 +421,7 @@ new #[Title('Détail URL')] class extends Component
             <div class="flex gap-2 flex-nowrap">
                 <flux:button icon="pencil-square" wire:click="openEditMonitorModal('{{ $this->monitor }}')" class="max-sm:[&>span]:hidden"><span>Modifier</span></flux:button>
 
-                <flux:button icon="arrow-path" wire:click="checkNow" class="max-sm:[&>span]:hidden"><span>Vérifier maintenant</span></flux:button>
+                <flux:button icon="arrow-path" wire:click="checkNow" :disabled="! $this->currentMonitor->enabled" class="max-sm:[&>span]:hidden"><span>Vérifier maintenant</span></flux:button>
             </div>
         </div>
 
@@ -440,7 +439,11 @@ new #[Title('Détail URL')] class extends Component
                         </div>
                         <div>
                             <div class="text-zinc-500 dark:text-zinc-400">Prochaine vérification</div>
-                            <x-relative-time :date="$this->nextCheckAt()" fallback="Non planifiée" due class="mt-1 block font-medium text-zinc-900 dark:text-zinc-100" />
+                            @if ($this->currentMonitor->enabled)
+                                <x-relative-time :date="$this->nextCheckAt()" fallback="Non planifiée" due class="mt-1 block font-medium text-zinc-900 dark:text-zinc-100" />
+                            @else
+                                <div class="mt-1 font-medium text-zinc-900 dark:text-zinc-100">En pause</div>
+                            @endif
                         </div>
                         <div>
                             <div class="text-zinc-500 dark:text-zinc-400">Dernier succès</div>
